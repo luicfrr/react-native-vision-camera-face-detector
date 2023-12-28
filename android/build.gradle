@@ -1,0 +1,63 @@
+buildscript {
+    if (project == rootProject) {
+        repositories {
+            google()
+            jcenter()
+        }
+
+        dependencies {
+            classpath 'com.android.tools.build:gradle:7.3.1'
+        }
+    }
+}
+
+apply plugin: 'com.android.library'
+
+def safeExtGet(prop, fallback) {
+    rootProject.ext.has(prop) ? rootProject.ext.get(prop) : fallback
+}
+
+android {
+    compileSdkVersion safeExtGet('VisionCameraFaceDetector_compileSdkVersion', 33)
+    ndkVersion "21.4.7075529"
+    defaultConfig {
+        minSdkVersion safeExtGet('VisionCameraFaceDetector_minSdkVersion', 21)
+        targetSdkVersion safeExtGet('VisionCameraFaceDetector_targetSdkVersion', 33)
+        versionCode 1
+        versionName "1.0"
+
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+        }
+    }
+    lintOptions {
+        disable 'GradleCompatible'
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+repositories {
+    mavenLocal()
+    maven {
+        // All of React Native (JS, Obj-C sources, Android binaries) is installed from npm
+        url("$rootDir/../node_modules/react-native/android")
+    }
+    google()
+    jcenter()
+}
+
+dependencies {
+    //noinspection GradleDynamicVersion
+    implementation "com.facebook.react:react-native:+"  // From node_modules
+    api project(":react-native-vision-camera")
+    implementation 'androidx.annotation:annotation:1.1.0'
+    implementation "androidx.camera:camera-core:1.1.0-alpha06"
+    implementation 'com.google.mlkit:face-detection:16.1.5'
+    implementation 'com.google.code.gson:gson:2.8.8'
+}
