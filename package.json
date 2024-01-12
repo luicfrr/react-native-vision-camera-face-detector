@@ -1,6 +1,6 @@
 {
   "name": "vision-camera-trustee-face-detector-v3",
-  "version": "1.2.8",
+  "version": "1.2.9",
   "description": "VisionCamera Frame Processor Plugin to detect faces using MLKit Vision Face Detector for react native vision camera V3",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
