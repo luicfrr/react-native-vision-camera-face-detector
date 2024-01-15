@@ -21,11 +21,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import com.google.gson.Gson;
 
-import androidx.camera.core.ImageProxy;
-import java.io.ByteArrayOutputStream;
-import android.graphics.Bitmap;
-import android.util.Base64;
-
 import com.facebook.react.bridge.Arguments;
 import com.google.mlkit.vision.common.InputImage;
 import com.google.mlkit.vision.face.Face;
@@ -40,8 +35,8 @@ public class VisionCameraFaceDetectorPlugin extends FrameProcessorPlugin {
     Map<String, Object> bounds = new HashMap<>();
 
     // Calculate offset (we need to center the overlay on the target)
-    Double offsetX =  (boundingBox.exactCenterX() - ceil(boundingBox.width())) / 2.0f;
-    Double offsetY =  (boundingBox.exactCenterY() - ceil(boundingBox.height())) / 2.0f;
+    Double offsetX = (boundingBox.exactCenterX() - ceil(boundingBox.width())) / 2.0f;
+    Double offsetY = (boundingBox.exactCenterY() - ceil(boundingBox.height())) / 2.0f;
 
     Double x = boundingBox.right + offsetX;
     Double y = boundingBox.top + offsetY;
@@ -53,7 +48,6 @@ public class VisionCameraFaceDetectorPlugin extends FrameProcessorPlugin {
     bounds.put("width", (double) boundingBox.width());
     bounds.put("height", (double) boundingBox.height());
 
-
     bounds.put("boundingCenterX", boundingBox.centerX());
     bounds.put("boundingCenterY", boundingBox.centerY());
     bounds.put("boundingExactCenterX", boundingBox.exactCenterX());
@@ -61,10 +55,9 @@ public class VisionCameraFaceDetectorPlugin extends FrameProcessorPlugin {
 
     return bounds;
   }
-  
- private Map processFaceContours(Face face) {
-   int[] faceContoursTypes =
-      new int[] {
+
+  private Map processFaceContours(Face face) {
+    int[] faceContoursTypes = new int[] {
         FaceContour.FACE,
         FaceContour.LEFT_EYEBROW_TOP,
         FaceContour.LEFT_EYEBROW_BOTTOM,
@@ -80,7 +73,7 @@ public class VisionCameraFaceDetectorPlugin extends FrameProcessorPlugin {
         FaceContour.NOSE_BOTTOM,
         FaceContour.LEFT_CHEEK,
         FaceContour.RIGHT_CHEEK
-      };
+    };
 
     String[] faceContoursTypesStrings = {
         "FACE",
@@ -98,48 +91,25 @@ public class VisionCameraFaceDetectorPlugin extends FrameProcessorPlugin {
         "NOSE_BOTTOM",
         "LEFT_CHEEK",
         "RIGHT_CHEEK"
-      };
-
+    };
 
     Map<String, Object> faceContoursTypesMap = new HashMap<>();
 
     for (int i = 0; i < faceContoursTypesStrings.length; i++) {
-        FaceContour contour = face.getContour(faceContoursTypes[i]);
-        List<PointF> points = contour.getPoints();
-        List <Map<String, Double>> pointsArray = new ArrayList<>();
+      FaceContour contour = face.getContour(faceContoursTypes[i]);
+      List<PointF> points = contour.getPoints();
+      List<Map<String, Double>> pointsArray = new ArrayList<>();
 
-        for (int j = 0; j < points.size(); j++) {
-            Map<String, Double> currentPointsMap = new HashMap<>();
-            currentPointsMap.put("x", (double) points.get(j).x);
-            currentPointsMap.put("y", (double) points.get(j).y);
-            pointsArray.add(currentPointsMap);
-        }
-        faceContoursTypesMap.put(faceContoursTypesStrings[contour.getFaceContourType() - 1], pointsArray);
+      for (int j = 0; j < points.size(); j++) {
+        Map<String, Double> currentPointsMap = new HashMap<>();
+        currentPointsMap.put("x", (double) points.get(j).x);
+        currentPointsMap.put("y", (double) points.get(j).y);
+        pointsArray.add(currentPointsMap);
+      }
+      faceContoursTypesMap.put(faceContoursTypesStrings[contour.getFaceContourType() - 1], pointsArray);
     }
 
     return faceContoursTypesMap;
-  }
-
-  /** Converts a bitmap to base64 format string */
-  public static String bitmapToBase64(Bitmap bitmap, Bitmap.CompressFormat format, int quality)
-  {
-    ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-    bitmap.compress(format, quality, outputStream);
-
-    return Base64.encodeToString(outputStream.toByteArray(), Base64.DEFAULT);
-  }
-
-  public static int convertRotationDegreeFromString(String orientation){
-      switch (orientation){
-        case "portrait-upside-down":
-            return 90;
-        case "landscape-left":
-            return 0;
-        case "landscape-right":
-            return 180;
-        default:
-            return 270;
-    }
   }
 
   @Override
@@ -147,46 +117,43 @@ public class VisionCameraFaceDetectorPlugin extends FrameProcessorPlugin {
     @SuppressLint("UnsafeOptInUsageError")
     Image mediaImage = frame.getImage();
 
-    FaceDetectorOptions options =
-    new FaceDetectorOptions.Builder()
-      .setPerformanceMode(FaceDetectorOptions.PERFORMANCE_MODE_ACCURATE)
-      .setContourMode(FaceDetectorOptions.CONTOUR_MODE_ALL)
-      .setClassificationMode(FaceDetectorOptions.CLASSIFICATION_MODE_ALL)
-      .setMinFaceSize(0.15f)
-      .build();
-    
+    FaceDetectorOptions options = new FaceDetectorOptions.Builder()
+        .setPerformanceMode(FaceDetectorOptions.PERFORMANCE_MODE_ACCURATE)
+        .setContourMode(FaceDetectorOptions.CONTOUR_MODE_ALL)
+        .setClassificationMode(FaceDetectorOptions.CLASSIFICATION_MODE_ALL)
+        .setMinFaceSize(0.15f)
+        .build();
+
     FaceDetector faceDetector = FaceDetection.getClient(options);
 
     if (mediaImage != null) {
-      InputImage image = InputImage.fromMediaImage(mediaImage, convertRotationDegreeFromString(frame.getOrientation()));
+      InputImage image = InputImage.fromMediaImage(mediaImage, 270);
       Task<List<Face>> task = faceDetector.process(image);
       List<Map<String, Object>> faceList = new ArrayList<>();
       Map<String, Object> resultMap = new HashMap<>();
       Gson gson = new Gson();
-
-      Bitmap bitmap = BitmapUtils.convertImageToBitmap(image);
-      String frameInBase64 = bitmapToBase64(bitmap, Bitmap.CompressFormat.PNG, 100);
-
-      resultMap.put("frameData", frameInBase64);
 
       try {
         List<Face> faces = Tasks.await(task);
         for (Face face : faces) {
           Map<String, Object> map = new HashMap<>();
 
-          map.put("rollAngle",(double) face.getHeadEulerAngleZ());
-          map.put("pitchAngle",(double) face.getHeadEulerAngleX());
-          map.put("yawAngle",(double) face.getHeadEulerAngleY());
-          map.put("leftEyeOpenProbability",(double) face.getLeftEyeOpenProbability());
-          map.put("rightEyeOpenProbability",(double) face.getRightEyeOpenProbability());
-          map.put("smilingProbability",(double) face.getSmilingProbability());
+          map.put("rollAngle", (double) face.getHeadEulerAngleZ());
+          map.put("pitchAngle", (double) face.getHeadEulerAngleX());
+          map.put("yawAngle", (double) face.getHeadEulerAngleY());
+          map.put("leftEyeOpenProbability", (double) face.getLeftEyeOpenProbability());
+          map.put("rightEyeOpenProbability", (double) face.getRightEyeOpenProbability());
+          map.put("smilingProbability", (double) face.getSmilingProbability());
           map.put("contours", processFaceContours(face));
           map.put("bounds", processBoundingBox(face.getBoundingBox()));
 
           faceList.add(map);
         }
 
-        resultMap.put("faces", gson.toJson(faceList));
+        if (faceList.size() > 0) {
+          resultMap.put("faces", gson.toJson(faceList));
+          resultMap.put("frameData", BitmapUtils.convertYuvToRgba(mediaImage));
+        }
         return resultMap;
       } catch (Exception e) {
         Log.e("FaceDetector", "Error processing face detection", e);
