@@ -2,14 +2,18 @@
   "compilerOptions": {
     "rootDir": ".",
     "paths": {
-      "vision-camera-face-detector": ["./src/index"]
+      "react-native-vision-camera-face-detector": [
+        "./src/index"
+      ]
     },
     "allowUnreachableCode": false,
     "allowUnusedLabels": false,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "jsx": "react",
-    "lib": ["esnext"],
+    "lib": [
+      "esnext"
+    ],
     "module": "esnext",
     "moduleResolution": "node",
     "noFallthroughCasesInSwitch": true,

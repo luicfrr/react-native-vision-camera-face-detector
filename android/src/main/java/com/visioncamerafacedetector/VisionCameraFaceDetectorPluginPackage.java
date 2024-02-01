@@ -15,7 +15,7 @@ import java.util.List;
 
 public class VisionCameraFaceDetectorPluginPackage implements ReactPackage {
   static {
-    FrameProcessorPluginRegistry.addFrameProcessorPlugin("detectFaces", options -> new VisionCameraFaceDetectorPlugin(options));
+    FrameProcessorPluginRegistry.addFrameProcessorPlugin("detectFaces", VisionCameraFaceDetectorPlugin::new);
   }
 
   @NonNull

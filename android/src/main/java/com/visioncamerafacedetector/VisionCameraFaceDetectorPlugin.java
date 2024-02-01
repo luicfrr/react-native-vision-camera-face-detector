@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.mrousavy.camera.frameprocessor.Frame;
 import com.mrousavy.camera.frameprocessor.FrameProcessorPlugin;
+import com.mrousavy.camera.frameprocessor.VisionCameraProxy;
 
 import com.google.android.gms.tasks.Tasks;
 import com.google.android.gms.tasks.Task;
@@ -163,7 +164,7 @@ public class VisionCameraFaceDetectorPlugin extends FrameProcessorPlugin {
     return null;
   }
 
-  VisionCameraFaceDetectorPlugin(@Nullable Map<String, Object> options) {
-    super(options);
+  VisionCameraFaceDetectorPlugin(@NonNull VisionCameraProxy proxy, @Nullable Map<String, Object> options) {
+    super();
   }
 }

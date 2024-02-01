@@ -1,20 +1,60 @@
-import Foundation
+#if VISION_CAMERA_ENABLE_FRAME_PROCESSORS
 import VisionCamera
+import Foundation
 import MLKitFaceDetection
 import MLKitVision
 import CoreML
-
 import UIKit
 import AVFoundation
 
 @objc(VisionCameraFaceDetector)
 public class VisionCameraFaceDetector: FrameProcessorPlugin {
+    public override init(proxy: VisionCameraProxyHolder, options: [AnyHashable : Any]! = [:]) {
+      super.init(proxy: proxy, options: options)
+    }
+
+    public override func callback(_ frame: Frame, withArguments arguments: [AnyHashable: Any]?) -> Any {
+        let config = getConfig(withArguments: arguments)
+        // if faceDetector == nil {
+            initFD(config: config)
+        // }
+        let image = VisionImage(buffer: frame.buffer)
+        let photoWidth = MLImage(sampleBuffer: frame.buffer)?.width
+        image.orientation = .up
+        var result: [String: Any] = [:]
+        var faceAttributes: [Any] = []
+        
+        do {
+            let faces: [Face] =  try faceDetector.results(in: image)
+            if (!faces.isEmpty){
+                for face in faces {
+                    var map: [String: Any] = [:]
+                    map["rollAngle"] = face.headEulerAngleZ  // Head is tilted sideways rotZ degrees
+                    map["pitchAngle"] = face.headEulerAngleX  // Head is rotated to the uptoward rotX degrees
+                    map["yawAngle"] = face.headEulerAngleY   // Head is rotated to the right rotY degrees
+                    map["leftEyeOpenProbability"] = face.leftEyeOpenProbability
+                    map["rightEyeOpenProbability"] = face.rightEyeOpenProbability
+                    map["smilingProbability"] = face.smilingProbability
+                    map["bounds"] = processBoundingBox(from: face, photoWidth: photoWidth)
+                    // map["contours"] = processContours(from: face)
+                    map["landMarks"] = processLandMarks(from: face)
+                    
+                    faceAttributes.append(map)
+                }
+            }
+        } catch _ {
+            return []
+        }
+
+        result = ["faces": faceAttributes, "frameData": convertFrameToBase64(frame)]
+        return result
+    }
+
     class func newInstance() -> VisionCameraFaceDetector {
       return VisionCameraFaceDetector()
     }
 
     var context = CIContext(options: nil)
-
     var faceDetector: FaceDetector! = nil;
     
     func processContours(from face: Face) -> [String:[[String:CGFloat]]] {
@@ -121,8 +161,8 @@ public class VisionCameraFaceDetector: FrameProcessorPlugin {
     
     func processBoundingBox(from face: Face, photoWidth: CGFloat?) -> [String:Any] {
         let frameRect = face.frame
-//      The implementation from this github repo seems to work better for the frameRect
-//      Github link -> https://github.com/a7medev/react-native-ml-kit/blob/main/face-detection/ios/FaceDetection.m
+        // The implementation from this github repo seems to work better for the frameRect
+        // Github link -> https://github.com/a7medev/react-native-ml-kit/blob/main/face-detection/ios/FaceDetection.m
         return [
           "x":frameRect.origin.x,
           "y": frameRect.origin.y,
@@ -132,43 +172,6 @@ public class VisionCameraFaceDetector: FrameProcessorPlugin {
           "boundingCenterY": frameRect.midY,
           "aspectRatio": frameRect.size.width / photoWidth!
         ]
-    }
-    
-    public override func callback(_ frame: Frame, withArguments arguments: [AnyHashable: Any]?) -> Any {
-        let config = getConfig(withArguments: arguments)
-        // if faceDetector == nil {
-            initFD(config: config)
-        // }
-        let image = VisionImage(buffer: frame.buffer)
-        let photoWidth = MLImage(sampleBuffer: frame.buffer)?.width
-        image.orientation = .up
-        var result: [String: Any] = [:]
-        var faceAttributes: [Any] = []
-        
-        do {
-            let faces: [Face] =  try faceDetector.results(in: image)
-            if (!faces.isEmpty){
-                for face in faces {
-                    var map: [String: Any] = [:]
-                    map["rollAngle"] = face.headEulerAngleZ  // Head is tilted sideways rotZ degrees
-                    map["pitchAngle"] = face.headEulerAngleX  // Head is rotated to the uptoward rotX degrees
-                    map["yawAngle"] = face.headEulerAngleY   // Head is rotated to the right rotY degrees
-                    map["leftEyeOpenProbability"] = face.leftEyeOpenProbability
-                    map["rightEyeOpenProbability"] = face.rightEyeOpenProbability
-                    map["smilingProbability"] = face.smilingProbability
-                    map["bounds"] = processBoundingBox(from: face, photoWidth: photoWidth)
-                    // map["contours"] = processContours(from: face)
-                    map["landMarks"] = processLandMarks(from: face)
-                    
-                    faceAttributes.append(map)
-                }
-            }
-        } catch _ {
-            return []
-        }
-
-        result = ["faces": faceAttributes, "frameData": convertFrameToBase64(frame)]
-        return result
     }
 
     func convertFrameToBase64(_ frame: Frame) -> Any! {

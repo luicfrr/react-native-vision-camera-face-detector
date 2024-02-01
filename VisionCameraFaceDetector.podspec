@@ -11,7 +11,7 @@ Pod::Spec.new do |s|
   s.authors      = package["author"]
 
   s.platforms    = { :ios => "12.4" }
-  s.source       = { :git => "https://github.com/trustee-wallet/vision-camera-trustee-face-detector-v3.git", :tag => "#{s.version}" }
+  s.source       = { :git => "https://github.com/nonam4/react-native-vision-camera-face-detector.git", :tag => "#{s.version}" }
 
   s.source_files = "ios/**/*.{h,m,mm,swift}"
 

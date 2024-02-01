@@ -1,10 +1,10 @@
-# vision-camera-trustee-face-detector-v3
+# react-native-vision-camera-face-detector
 
-![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg) [![npm version](https://badge.fury.io/js/vision-camera-trustee-face-detector-v3.svg)](https://www.npmjs.com/package/vision-camera-trustee-face-detector-v3)
+![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg) [![npm version](https://badge.fury.io/js/react-native-vision-camera-face-detector.svg)](https://www.npmjs.com/package/react-native-vision-camera-face-detector)
 
 ## Description
 
-`vision-camera-trustee-face-detector-v3` is a React Native library that integrates with the Vision Camera module to provide face detection functionality. It allows you to easily detect faces in real-time using the front camera and visualize the detected faces on the screen.
+`react-native-vision-camera-face-detector` is a React Native library that integrates with the Vision Camera module to provide face detection functionality. It allows you to easily detect faces in real-time using the front camera and visualize the detected faces on the screen.
 
 ## Features
 
@@ -16,57 +16,67 @@
 ## Installation
 
 ```bash
-yarn add vision-camera-trustee-face-detector-v3
+yarn add react-native-vision-camera-face-detector
 ```
 
 ## Usage
 
+OBS: Pixel format should be either `yuv` (recomended)` or `rgb`` (lower performance).
+
 ```jsx
-import { StyleSheet, Text, View } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import { 
+  StyleSheet, 
+  Text, 
+  View 
+} from 'react-native'
+import { 
+  useEffect, 
+  useState 
+} from 'react'
 import {
   Camera,
   useCameraDevice,
-  useFrameProcessor,
-} from 'react-native-vision-camera';
-import { scanFaces } from 'vision-camera-trustee-face-detector-v3';
-import { Worklets } from 'react-native-worklets-core';
+  useFrameProcessor
+} from 'react-native-vision-camera'
+import { scanFaces } from 'react-native-vision-camera-face-detector'
+import { Worklets } from 'react-native-worklets-core'
 
 export default function App() {
-  const device = useCameraDevice('front');
+  const device = useCameraDevice('front')
 
   React.useEffect(() => {
     (async () => {
-      const status = await Camera.requestCameraPermission();
-      console.log({ status });
-    })();
-  }, [device]);
+      const status = await Camera.requestCameraPermission()
+      console.log({ status })
+    })()
+  }, [device])
 
   const frameProcessor = useFrameProcessor((frame) => {
     'worklet';
 
     try {
-      const scannedFaces = scanFaces(frame, {});
-      console.log(scannedFaces?.faces);
+      const scannedFaces = scanFaces(frame, {})
+      console.log(scannedFaces?.faces)
     } catch (error) {
-      console.error({ error });
+      console.error({ error })
     }
-  }, []);
+  }, [])
 
-  if (device == null) return <Text>No Device</Text>;
-  if (device) {
-    return (
-      <View style={{ position: 'relative', flex: 1 }}>
-        <Camera
-          style={StyleSheet.absoluteFill}
-          device={device}
-          isActive={!!device}
-          frameProcessor={frameProcessor}
-          //pixel format should be either yuv or rgb
-          pixelFormat="yuv"
-        />
-      </View>
-    );
-  }
+  return (
+    <View style={{ 
+      position: 'relative', 
+      flex: 1
+    }}>
+      {device? <Camera
+        style={StyleSheet.absoluteFill}
+        device={device}
+        isActive={!!device}
+        frameProcessor={frameProcessor}
+        pixelFormat="yuv"
+      /> : <Text>
+        No Device
+      </Text>}
+    </View>
+  )
 }
 ```
