@@ -85,13 +85,11 @@ export interface FaceDetectionOptions {
   /**
    * Sets the smallest desired face size, expressed as the ratio of the width of the head to width of the image.
    *
-   * @default 0.1
+   * @default 0.15
    */
   minFaceSize?: number
 
   /**
-   * **(COMING SOON)**
-   *
    * Whether or not to assign faces an ID, which can be used to track faces across images.
    *
    * Note that when contour detection is enabled, only one face is detected, so face tracking doesn't produce useful results. For this reason, and to improve detection speed, don't enable both contour detection and face tracking.
@@ -102,11 +100,19 @@ export interface FaceDetectionOptions {
 }
 
 const plugin = VisionCameraProxy.initFrameProcessorPlugin( 'detectFaces' )
-export function scanFaces( frame: Frame, options?: FaceDetectionOptions ): Face[] {
+export function scanFaces( frame: Frame, options: FaceDetectionOptions = {
+  performanceMode: 'fast',
+  landmarkMode: 'none',
+  contourMode: 'none',
+  classificationMode: 'none',
+  minFaceSize: 0.1,
+  trackingEnabled: false
+} ): Face[] {
   'worklet'
+
   if ( plugin == null ) {
-    throw new Error( 'Failed to load Frame Processor Plugin "scanFaces"!' )
+    throw new Error( 'Failed to load Frame Processor Plugin "detectFaces"!' )
   }
   // @ts-ignore
-  return plugin.call( frame, options )?.faces ?? []
+  return plugin.call( frame, options )//?.faces ?? []
 }

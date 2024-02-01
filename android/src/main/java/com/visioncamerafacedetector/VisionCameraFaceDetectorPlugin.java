@@ -30,6 +30,11 @@ import com.google.mlkit.vision.face.FaceDetection;
 import com.google.mlkit.vision.face.FaceDetector;
 import com.google.mlkit.vision.face.FaceDetectorOptions;
 
+import androidx.camera.core.ImageProxy;
+import com.facebook.react.bridge.WritableMap;
+import com.facebook.react.bridge.WritableNativeArray;
+import com.facebook.react.bridge.WritableNativeMap;
+
 public class VisionCameraFaceDetectorPlugin extends FrameProcessorPlugin {
 
   private Map processBoundingBox(Rect boundingBox) {
@@ -119,17 +124,48 @@ public class VisionCameraFaceDetectorPlugin extends FrameProcessorPlugin {
     @SuppressLint("UnsafeOptInUsageError")
     Image mediaImage = frame.getImage();
 
-    FaceDetectorOptions options = new FaceDetectorOptions.Builder()
-        .setPerformanceMode(FaceDetectorOptions.PERFORMANCE_MODE_ACCURATE)
-        .setContourMode(FaceDetectorOptions.CONTOUR_MODE_ALL)
-        .setClassificationMode(FaceDetectorOptions.CLASSIFICATION_MODE_ALL)
-        .setMinFaceSize(0.15f)
-        .build();
+    Integer performanceModeValue = FaceDetectorOptions.PERFORMANCE_MODE_FAST;
+    if (String.valueOf(params.get("performanceMode")).equals("accurate")) {
+      performanceModeValue = FaceDetectorOptions.PERFORMANCE_MODE_ACCURATE;
+    }
 
+    Integer landmarkModeValue = FaceDetectorOptions.LANDMARK_MODE_NONE;
+    if (String.valueOf(params.get("performanceMode")).equals("all")) {
+      landmarkModeValue = FaceDetectorOptions.LANDMARK_MODE_ALL;
+    }
+
+    Integer classificationModeValue = FaceDetectorOptions.CLASSIFICATION_MODE_NONE;
+    if (String.valueOf(params.get("classificationMode")).equals("all")) {
+      classificationModeValue = FaceDetectorOptions.CLASSIFICATION_MODE_ALL;
+    }
+
+    Integer contourModeValue = FaceDetectorOptions.CONTOUR_MODE_NONE;
+    if (String.valueOf(params.get("contourMode")).equals("all")) {
+      contourModeValue = FaceDetectorOptions.CONTOUR_MODE_ALL;
+    }
+
+    Float minFaceSize = 0.15f;
+    String minFaceSizeParam = String.valueOf(params.get("minFaceSize"));
+    if (!minFaceSizeParam.equals(String.valueOf(minFaceSize))) {
+      minFaceSize = Float.parseFloat(minFaceSizeParam);
+    }
+
+    FaceDetectorOptions.Builder optionsBuilder = new FaceDetectorOptions.Builder()
+        .setPerformanceMode(performanceModeValue)
+        .setLandmarkMode(landmarkModeValue)
+        .setContourMode(contourModeValue)
+        .setClassificationMode(classificationModeValue)
+        .setMinFaceSize(minFaceSize);
+
+    if (String.valueOf(params.get("trackingEnabled")).equals("true")) {
+      optionsBuilder.enableTracking();
+    }
+
+    FaceDetectorOptions options = optionsBuilder.build();
     FaceDetector faceDetector = FaceDetection.getClient(options);
 
     if (mediaImage != null) {
-      InputImage image = InputImage.fromMediaImage(mediaImage, 270);
+      InputImage image = InputImage.fromMediaImage(mediaImage, frame.getOrientation().toDegrees());
       Task<List<Face>> task = faceDetector.process(image);
       List<Map<String, Object>> faceList = new ArrayList<>();
       Map<String, Object> resultMap = new HashMap<>();
@@ -140,13 +176,19 @@ public class VisionCameraFaceDetectorPlugin extends FrameProcessorPlugin {
         for (Face face : faces) {
           Map<String, Object> map = new HashMap<>();
 
+          if(String.valueOf(params.get("classificationMode")).equals("all")) {
+            map.put("leftEyeOpenProbability", (double) face.getLeftEyeOpenProbability());
+            map.put("rightEyeOpenProbability", (double) face.getRightEyeOpenProbability());
+            map.put("smilingProbability", (double) face.getSmilingProbability());
+          }
+
+          if(String.valueOf(params.get("contourMode")).equals("all")){
+            map.put("contours", processFaceContours(face));
+          }
+
           map.put("rollAngle", (double) face.getHeadEulerAngleZ());
           map.put("pitchAngle", (double) face.getHeadEulerAngleX());
           map.put("yawAngle", (double) face.getHeadEulerAngleY());
-          map.put("leftEyeOpenProbability", (double) face.getLeftEyeOpenProbability());
-          map.put("rightEyeOpenProbability", (double) face.getRightEyeOpenProbability());
-          map.put("smilingProbability", (double) face.getSmilingProbability());
-          map.put("contours", processFaceContours(face));
           map.put("bounds", processBoundingBox(face.getBoundingBox()));
 
           faceList.add(map);
@@ -154,7 +196,7 @@ public class VisionCameraFaceDetectorPlugin extends FrameProcessorPlugin {
 
         if (faceList.size() > 0) {
           resultMap.put("faces", gson.toJson(faceList));
-          resultMap.put("frameData", BitmapUtils.convertYuvToRgba(mediaImage));
+          // resultMap.put("frameData", BitmapUtils.convertYuvToRgba(mediaImage));
         }
         return resultMap;
       } catch (Exception e) {
