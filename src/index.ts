@@ -108,5 +108,5 @@ export function scanFaces( frame: Frame, options?: FaceDetectionOptions ): Face[
     throw new Error( 'Failed to load Frame Processor Plugin "scanFaces"!' )
   }
   // @ts-ignore
-  return plugin.call( frame, options )
+  return plugin.call( frame, options )?.faces ?? []
 }

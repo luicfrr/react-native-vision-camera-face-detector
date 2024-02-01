@@ -113,6 +113,7 @@ public class VisionCameraFaceDetectorPlugin extends FrameProcessorPlugin {
     return faceContoursTypesMap;
   }
 
+  @Nullable
   @Override
   public Object callback(@NonNull Frame frame, @Nullable Map<String, Object> params) {
     @SuppressLint("UnsafeOptInUsageError")
@@ -164,7 +165,7 @@ public class VisionCameraFaceDetectorPlugin extends FrameProcessorPlugin {
     return null;
   }
 
-  VisionCameraFaceDetectorPlugin(@NonNull VisionCameraProxy proxy, @Nullable Map<String, Object> options) {
+  public VisionCameraFaceDetectorPlugin(@NonNull VisionCameraProxy proxy, @Nullable Map<String, Object> options) {
     super();
   }
 }
