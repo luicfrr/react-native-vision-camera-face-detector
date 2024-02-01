@@ -21,7 +21,7 @@ yarn add react-native-vision-camera-face-detector
 
 ## Usage
 
-OBS: Pixel format should be either `yuv` (recomended)` or `rgb`` (lower performance).
+OBS: Pixel format should be either `yuv` (recomended) or `rgb` (lower performance).
 
 ```jsx
 import { 
