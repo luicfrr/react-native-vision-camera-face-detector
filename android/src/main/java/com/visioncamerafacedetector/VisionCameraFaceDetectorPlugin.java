@@ -41,14 +41,11 @@ import com.facebook.react.bridge.WritableNativeArray;
 import com.facebook.react.bridge.WritableNativeMap;
 
 public class VisionCameraFaceDetectorPlugin extends FrameProcessorPlugin {
-
   private Map processBoundingBox(Rect boundingBox) {
     Map<String, Object> bounds = new HashMap<>();
-
     // Calculate offset (we need to center the overlay on the target)
     Double offsetX =  (boundingBox.exactCenterX() - ceil(boundingBox.width())) / 2.0f;
     Double offsetY =  (boundingBox.exactCenterY() - ceil(boundingBox.height())) / 2.0f;
-
     Double x = boundingBox.right + offsetX;
     Double y = boundingBox.top + offsetY;
 
@@ -58,8 +55,6 @@ public class VisionCameraFaceDetectorPlugin extends FrameProcessorPlugin {
     bounds.put("left", (double) boundingBox.left);
     bounds.put("width", (double) boundingBox.width());
     bounds.put("height", (double) boundingBox.height());
-
-
     bounds.put("boundingCenterX", boundingBox.centerX());
     bounds.put("boundingCenterY", boundingBox.centerY());
     bounds.put("boundingExactCenterX", boundingBox.exactCenterX());
@@ -68,59 +63,56 @@ public class VisionCameraFaceDetectorPlugin extends FrameProcessorPlugin {
     return bounds;
   }
   
- private Map processFaceContours(Face face) {
-   int[] faceContoursTypes =
-      new int[] {
-        FaceContour.FACE,
-        FaceContour.LEFT_EYEBROW_TOP,
-        FaceContour.LEFT_EYEBROW_BOTTOM,
-        FaceContour.RIGHT_EYEBROW_TOP,
-        FaceContour.RIGHT_EYEBROW_BOTTOM,
-        FaceContour.LEFT_EYE,
-        FaceContour.RIGHT_EYE,
-        FaceContour.UPPER_LIP_TOP,
-        FaceContour.UPPER_LIP_BOTTOM,
-        FaceContour.LOWER_LIP_TOP,
-        FaceContour.LOWER_LIP_BOTTOM,
-        FaceContour.NOSE_BRIDGE,
-        FaceContour.NOSE_BOTTOM,
-        FaceContour.LEFT_CHEEK,
-        FaceContour.RIGHT_CHEEK
-      };
+  private Map processFaceContours(Face face) {
+    int[] faceContoursTypes = new int[] {
+      FaceContour.FACE,
+      FaceContour.LEFT_EYEBROW_TOP,
+      FaceContour.LEFT_EYEBROW_BOTTOM,
+      FaceContour.RIGHT_EYEBROW_TOP,
+      FaceContour.RIGHT_EYEBROW_BOTTOM,
+      FaceContour.LEFT_EYE,
+      FaceContour.RIGHT_EYE,
+      FaceContour.UPPER_LIP_TOP,
+      FaceContour.UPPER_LIP_BOTTOM,
+      FaceContour.LOWER_LIP_TOP,
+      FaceContour.LOWER_LIP_BOTTOM,
+      FaceContour.NOSE_BRIDGE,
+      FaceContour.NOSE_BOTTOM,
+      FaceContour.LEFT_CHEEK,
+      FaceContour.RIGHT_CHEEK
+    };
 
     String[] faceContoursTypesStrings = {
-        "FACE",
-        "LEFT_EYEBROW_TOP",
-        "LEFT_EYEBROW_BOTTOM",
-        "RIGHT_EYEBROW_TOP",
-        "RIGHT_EYEBROW_BOTTOM",
-        "LEFT_EYE",
-        "RIGHT_EYE",
-        "UPPER_LIP_TOP",
-        "UPPER_LIP_BOTTOM",
-        "LOWER_LIP_TOP",
-        "LOWER_LIP_BOTTOM",
-        "NOSE_BRIDGE",
-        "NOSE_BOTTOM",
-        "LEFT_CHEEK",
-        "RIGHT_CHEEK"
-      };
-
+      "FACE",
+      "LEFT_EYEBROW_TOP",
+      "LEFT_EYEBROW_BOTTOM",
+      "RIGHT_EYEBROW_TOP",
+      "RIGHT_EYEBROW_BOTTOM",
+      "LEFT_EYE",
+      "RIGHT_EYE",
+      "UPPER_LIP_TOP",
+      "UPPER_LIP_BOTTOM",
+      "LOWER_LIP_TOP",
+      "LOWER_LIP_BOTTOM",
+      "NOSE_BRIDGE",
+      "NOSE_BOTTOM",
+      "LEFT_CHEEK",
+      "RIGHT_CHEEK"
+    };
 
     Map<String, Object> faceContoursTypesMap = new HashMap<>();
-
     for (int i = 0; i < faceContoursTypesStrings.length; i++) {
-        FaceContour contour = face.getContour(faceContoursTypes[i]);
-        List<PointF> points = contour.getPoints();
-        List <Map<String, Double>> pointsArray = new ArrayList<>();
+      FaceContour contour = face.getContour(faceContoursTypes[i]);
+      List<PointF> points = contour.getPoints();
+      List <Map<String, Double>> pointsArray = new ArrayList<>();
 
-        for (int j = 0; j < points.size(); j++) {
-            Map<String, Double> currentPointsMap = new HashMap<>();
-            currentPointsMap.put("x", (double) points.get(j).x);
-            currentPointsMap.put("y", (double) points.get(j).y);
-            pointsArray.add(currentPointsMap);
-        }
-        faceContoursTypesMap.put(faceContoursTypesStrings[contour.getFaceContourType() - 1], pointsArray);
+      for (int j = 0; j < points.size(); j++) {
+        Map<String, Double> currentPointsMap = new HashMap<>();
+        currentPointsMap.put("x", (double) points.get(j).x);
+        currentPointsMap.put("y", (double) points.get(j).y);
+        pointsArray.add(currentPointsMap);
+      }
+      faceContoursTypesMap.put(faceContoursTypesStrings[contour.getFaceContourType() - 1], pointsArray);
     }
 
     return faceContoursTypesMap;
@@ -131,7 +123,6 @@ public class VisionCameraFaceDetectorPlugin extends FrameProcessorPlugin {
   public Object callback(@NonNull Frame frame, @Nullable Map<String, Object> params) {
     @SuppressLint("UnsafeOptInUsageError")
     Image mediaImage = frame.getImage();
-
     Integer performanceModeValue = FaceDetectorOptions.PERFORMANCE_MODE_FAST;
     if (String.valueOf(params.get("performanceMode")).equals("accurate")) {
       performanceModeValue = FaceDetectorOptions.PERFORMANCE_MODE_ACCURATE;
@@ -159,11 +150,11 @@ public class VisionCameraFaceDetectorPlugin extends FrameProcessorPlugin {
     }
 
     FaceDetectorOptions.Builder optionsBuilder = new FaceDetectorOptions.Builder()
-        .setPerformanceMode(performanceModeValue)
-        .setLandmarkMode(landmarkModeValue)
-        .setContourMode(contourModeValue)
-        .setClassificationMode(classificationModeValue)
-        .setMinFaceSize(minFaceSize);
+      .setPerformanceMode(performanceModeValue)
+      .setLandmarkMode(landmarkModeValue)
+      .setContourMode(contourModeValue)
+      .setClassificationMode(classificationModeValue)
+      .setMinFaceSize(minFaceSize);
 
     if (String.valueOf(params.get("trackingEnabled")).equals("true")) {
       optionsBuilder.enableTracking();
@@ -178,7 +169,6 @@ public class VisionCameraFaceDetectorPlugin extends FrameProcessorPlugin {
       List<Map<String, Object>> faceList = new ArrayList<>();
       Map<String, Object> resultMap = new HashMap<>();
       Gson gson = new Gson();
-
       Bitmap bitmap = BitmapUtils.convertImageToBitmap(image);
       String frameInBase64 = bitmapToBase64(bitmap, Bitmap.CompressFormat.PNG, 100);
 
