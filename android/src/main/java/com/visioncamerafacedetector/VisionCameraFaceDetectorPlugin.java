@@ -130,7 +130,7 @@ public class VisionCameraFaceDetectorPlugin extends FrameProcessorPlugin {
     }
 
     Integer landmarkModeValue = FaceDetectorOptions.LANDMARK_MODE_NONE;
-    if (String.valueOf(params.get("performanceMode")).equals("all")) {
+    if (String.valueOf(params.get("landmarkMode")).equals("all")) {
       landmarkModeValue = FaceDetectorOptions.LANDMARK_MODE_ALL;
     }
 
@@ -144,7 +144,7 @@ public class VisionCameraFaceDetectorPlugin extends FrameProcessorPlugin {
       contourModeValue = FaceDetectorOptions.CONTOUR_MODE_ALL;
     }
 
-    Float minFaceSize = 0.15f;
+    Float minFaceSize = 0.1f;
     String minFaceSizeParam = String.valueOf(params.get("minFaceSize"));
     if (!minFaceSizeParam.equals(String.valueOf(minFaceSize))) {
       minFaceSize = Float.parseFloat(minFaceSizeParam);
@@ -176,6 +176,10 @@ public class VisionCameraFaceDetectorPlugin extends FrameProcessorPlugin {
         for (Face face : faces) {
           Map<String, Object> map = new HashMap<>();
 
+          // if(String.valueOf(params.get("landmarkMode")).equals("all")){
+          //   map.put("landMarks", processLandMarks(face));
+          // }
+
           if(String.valueOf(params.get("classificationMode")).equals("all")) {
             map.put("leftEyeOpenProbability", (double) face.getLeftEyeOpenProbability());
             map.put("rightEyeOpenProbability", (double) face.getRightEyeOpenProbability());
@@ -184,6 +188,10 @@ public class VisionCameraFaceDetectorPlugin extends FrameProcessorPlugin {
 
           if(String.valueOf(params.get("contourMode")).equals("all")){
             map.put("contours", processFaceContours(face));
+          }
+
+          if (String.valueOf(params.get("trackingEnabled")).equals("true")) {
+            map.put("trackingId", face.getTrackingId());
           }
 
           map.put("rollAngle", (double) face.getHeadEulerAngleZ());
