@@ -4,6 +4,11 @@ import {
 } from 'react-native-vision-camera'
 type Point = { x: number; y: number }
 
+export interface DetectionResult {
+  faces: Face[]
+  frameData?: string
+}
+
 export interface Face {
   leftEyeOpenProbability: number
   rollAngle: number
@@ -97,6 +102,15 @@ export interface FaceDetectionOptions {
    * @default false
    */
   trackingEnabled?: boolean
+
+  /**
+   * Should return converted frame as base64?
+   * 
+   * Note that no frame data will be returned if disabled.
+   * 
+   * @default false
+   */
+  convertFrame?: boolean
 }
 
 const plugin = VisionCameraProxy.initFrameProcessorPlugin( 'detectFaces' )
@@ -106,13 +120,14 @@ export function detectFaces( frame: Frame, options: FaceDetectionOptions = {
   contourMode: 'none',
   classificationMode: 'none',
   minFaceSize: 0.1,
-  trackingEnabled: false
-} ): Face[] {
+  trackingEnabled: false,
+  convertFrame: false
+} ): DetectionResult {
   'worklet'
 
   if ( plugin == null ) {
     throw new Error( 'Failed to load Frame Processor Plugin "detectFaces"!' )
   }
   // @ts-ignore
-  return plugin.call( frame, options )?.faces ?? []
+  return plugin.call( frame, options )
 }
