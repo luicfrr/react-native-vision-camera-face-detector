@@ -52,8 +52,8 @@ export default function App() {
     runAsync(frame, () => {
       'worklet'
       try {
-        const faces = detectFaces(frame)
-        console.log('faces detected:', faces)
+        const detectionResult = detectFaces(frame)
+        console.log('faces detected:', detectionResult.faces)
       } catch (error) {
         console.error(error)
       }
