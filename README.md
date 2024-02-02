@@ -7,7 +7,7 @@
 - Real-time face detection using front camera
 - Integration with Vision Camera library
 - Adjustable face visualization with customizable styles
-- **Frame Resize Functionality**: Includes a function called `frameResize()` that fixes the mismatch between the frame and view size, allowing for accurate face visualization on the screen.
+- Base64 frame convertion
 
 ## 🧰 Installation
 
