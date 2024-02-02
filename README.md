@@ -1,15 +1,11 @@
-# react-native-vision-camera-face-detector
-
-![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg) [![npm version](https://badge.fury.io/js/react-native-vision-camera-face-detector.svg)](https://www.npmjs.com/package/react-native-vision-camera-face-detector)
-
-## Description
+# Description
 
 `react-native-vision-camera-face-detector` is a React Native library that integrates with the Vision Camera module to provide face detection functionality. It allows you to easily detect faces in real-time using the front camera and visualize the detected faces on the screen.
 
 ## Features
 
 - Real-time face detection using the front camera
-- Integration with the Vision Camera module
+- Integration with [Vision Camera](https://react-native-vision-camera.com/)
 - Adjustable face visualization with customizable styles
 - Convert frame to base64
 
@@ -38,13 +34,13 @@ import {
   useCameraDevice,
   useFrameProcessor
 } from 'react-native-vision-camera'
-import { scanFaces } from 'react-native-vision-camera-face-detector'
+import { detectFaces } from 'react-native-vision-camera-face-detector'
 import { Worklets } from 'react-native-worklets-core'
 
 export default function App() {
   const device = useCameraDevice('front')
 
-  React.useEffect(() => {
+  useEffect(() => {
     (async () => {
       const status = await Camera.requestCameraPermission()
       console.log({ status })
@@ -52,21 +48,20 @@ export default function App() {
   }, [device])
 
   const frameProcessor = useFrameProcessor((frame) => {
-    'worklet';
-
-    try {
-      const scannedFaces = scanFaces(frame, {})
-      console.log(scannedFaces?.faces)
-    } catch (error) {
-      console.error({ error })
-    }
+    'worklet'
+    runAsync(frame, () => {
+      'worklet'
+      try {
+        const faces = detectFaces(frame)
+        console.log('faces detected:', faces)
+      } catch (error) {
+        console.error(error)
+      }
+    })
   }, [])
 
   return (
-    <View style={{ 
-      position: 'relative', 
-      flex: 1
-    }}>
+    <View style={{ flex: 1 }}>
       {device? <Camera
         style={StyleSheet.absoluteFill}
         device={device}

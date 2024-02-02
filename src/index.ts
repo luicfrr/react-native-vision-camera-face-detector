@@ -100,7 +100,7 @@ export interface FaceDetectionOptions {
 }
 
 const plugin = VisionCameraProxy.initFrameProcessorPlugin( 'detectFaces' )
-export function scanFaces( frame: Frame, options: FaceDetectionOptions = {
+export function detectFaces( frame: Frame, options: FaceDetectionOptions = {
   performanceMode: 'fast',
   landmarkMode: 'none',
   contourMode: 'none',
@@ -114,5 +114,5 @@ export function scanFaces( frame: Frame, options: FaceDetectionOptions = {
     throw new Error( 'Failed to load Frame Processor Plugin "detectFaces"!' )
   }
   // @ts-ignore
-  return plugin.call( frame, options )//?.faces ?? []
+  return plugin.call( frame, options )?.faces ?? []
 }
