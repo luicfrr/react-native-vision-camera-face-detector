@@ -45,7 +45,7 @@ public class VisionCameraFaceDetector: FrameProcessorPlugin {
             map["contours"] = processContours(from: face)
           }
 
-          if config?["trackingEnabled"] as? String == "false" {
+          if config?["trackingEnabled"] as? String == "true" {
             map["trackingId"] = face.trackingID
           }
 
@@ -61,10 +61,15 @@ public class VisionCameraFaceDetector: FrameProcessorPlugin {
       return []
     }
 
-    result = [
-      "faces": faceAttributes
-      // "frameData": convertFrameToBase64(frame)
-    ]
+    if config?["convertFrame"] as? String == "true" {
+      result = [
+        "faces": faceAttributes,
+        "frameData": convertFrameToBase64(frame)
+      ]
+    } else {
+      result = ["faces": faceAttributes]
+    }
+    
     return result
   }
     
@@ -99,7 +104,7 @@ public class VisionCameraFaceDetector: FrameProcessorPlugin {
       options.minFaceSize = CGFloat(config?["minFaceSize"] as? Double)
     }
 
-    if config?["trackingEnabled"] as? String == "false" {
+    if config?["trackingEnabled"] as? String == "true" {
       options.isTrackingEnabled = true
     }
        

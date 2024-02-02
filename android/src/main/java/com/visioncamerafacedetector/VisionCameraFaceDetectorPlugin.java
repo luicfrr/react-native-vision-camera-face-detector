@@ -204,7 +204,10 @@ public class VisionCameraFaceDetectorPlugin extends FrameProcessorPlugin {
 
         if (faceList.size() > 0) {
           resultMap.put("faces", gson.toJson(faceList));
-          // resultMap.put("frameData", BitmapUtils.convertYuvToRgba(mediaImage));
+          
+          if (String.valueOf(params.get("convertFrame")).equals("true")) {
+            resultMap.put("frameData", BitmapUtils.convertYuvToRgba(mediaImage));
+          }
         }
         return resultMap;
       } catch (Exception e) {
