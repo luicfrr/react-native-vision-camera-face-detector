@@ -169,10 +169,6 @@ public class VisionCameraFaceDetectorPlugin extends FrameProcessorPlugin {
       List<Map<String, Object>> faceList = new ArrayList<>();
       Map<String, Object> resultMap = new HashMap<>();
       Gson gson = new Gson();
-      Bitmap bitmap = BitmapUtils.convertImageToBitmap(image);
-      String frameInBase64 = bitmapToBase64(bitmap, Bitmap.CompressFormat.PNG, 100);
-
-      resultMap.put("frameData", frameInBase64);
 
       try {
         List<Face> faces = Tasks.await(task);
