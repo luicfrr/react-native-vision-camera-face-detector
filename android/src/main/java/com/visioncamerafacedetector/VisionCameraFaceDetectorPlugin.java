@@ -2,19 +2,20 @@ package com.visioncamerafacedetector;
 
 import static java.lang.Math.ceil;
 import android.annotation.SuppressLint;
-import android.media.Image;
 import android.graphics.PointF;
 import android.graphics.Rect;
+import android.graphics.Bitmap;
+import android.media.Image;
 import android.util.Log;
+import android.util.Base64;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.camera.core.ImageProxy;
+
 import com.mrousavy.camera.frameprocessor.Frame;
 import com.mrousavy.camera.frameprocessor.FrameProcessorPlugin;
 import com.mrousavy.camera.frameprocessor.VisionCameraProxy;
-
-import com.google.android.gms.tasks.Tasks;
-import com.google.android.gms.tasks.Task;
 
 import java.util.List;
 import java.util.Map;
@@ -22,30 +23,26 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import com.google.gson.Gson;
 
-import androidx.camera.core.ImageProxy;
 import java.io.ByteArrayOutputStream;
-import android.graphics.Bitmap;
-import android.util.Base64;
 
-import com.facebook.react.bridge.Arguments;
+import com.google.android.gms.tasks.Tasks;
+import com.google.android.gms.tasks.Task;
 import com.google.mlkit.vision.common.InputImage;
 import com.google.mlkit.vision.face.Face;
 import com.google.mlkit.vision.face.FaceContour;
 import com.google.mlkit.vision.face.FaceDetection;
 import com.google.mlkit.vision.face.FaceDetector;
 import com.google.mlkit.vision.face.FaceDetectorOptions;
-
-import androidx.camera.core.ImageProxy;
-import com.facebook.react.bridge.WritableMap;
-import com.facebook.react.bridge.WritableNativeArray;
-import com.facebook.react.bridge.WritableNativeMap;
+import com.google.mlkit.vision.face.FaceLandmark;
 
 public class VisionCameraFaceDetectorPlugin extends FrameProcessorPlugin {
+  private static final String TAG = "FaceDetector";
+
   private Map processBoundingBox(Rect boundingBox) {
     Map<String, Object> bounds = new HashMap<>();
     // Calculate offset (we need to center the overlay on the target)
-    Double offsetX =  (boundingBox.exactCenterX() - ceil(boundingBox.width())) / 2.0f;
-    Double offsetY =  (boundingBox.exactCenterY() - ceil(boundingBox.height())) / 2.0f;
+    Double offsetX = (boundingBox.exactCenterX() - ceil(boundingBox.width())) / 2.0f;
+    Double offsetY = (boundingBox.exactCenterY() - ceil(boundingBox.height())) / 2.0f;
     Double x = boundingBox.right + offsetX;
     Double y = boundingBox.top + offsetY;
 
@@ -55,12 +52,52 @@ public class VisionCameraFaceDetectorPlugin extends FrameProcessorPlugin {
     bounds.put("left", (double) boundingBox.left);
     bounds.put("width", (double) boundingBox.width());
     bounds.put("height", (double) boundingBox.height());
-    bounds.put("boundingCenterX", boundingBox.centerX());
-    bounds.put("boundingCenterY", boundingBox.centerY());
-    bounds.put("boundingExactCenterX", boundingBox.exactCenterX());
-    bounds.put("boundingExactCenterY", boundingBox.exactCenterY());
+    bounds.put("boundingCenterX", (double) boundingBox.centerX());
+    bounds.put("boundingCenterY", (double) boundingBox.centerY());
+    bounds.put("boundingExactCenterX", (double) boundingBox.exactCenterX());
+    bounds.put("boundingExactCenterY", (double) boundingBox.exactCenterY());
 
     return bounds;
+  }
+
+  private Map processLandmarks(Face face) {
+    int[] faceLandmarksTypes = new int[] {
+      FaceLandmark.LEFT_CHEEK,
+      FaceLandmark.LEFT_EAR,
+      FaceLandmark.LEFT_EYE,
+      FaceLandmark.MOUTH_BOTTOM,
+      FaceLandmark.MOUTH_LEFT,
+      FaceLandmark.MOUTH_RIGHT,
+      FaceLandmark.NOSE_BASE,
+      FaceLandmark.RIGHT_CHEEK,
+      FaceLandmark.RIGHT_EAR,
+      FaceLandmark.RIGHT_EYE
+    };
+
+    String[] faceLandmarksTypesStrings = {
+      "LEFT_CHEEK",
+      "LEFT_EAR",
+      "LEFT_EYE",
+      "MOUTH_BOTTOM",
+      "MOUTH_LEFT",
+      "MOUTH_RIGHT",
+      "NOSE_BASE",
+      "RIGHT_CHEEK",
+      "RIGHT_EAR",
+      "RIGHT_EYE"
+    };
+
+    Map<String, Object> faceLandmarksTypesMap = new HashMap<>();
+    for (int i = 0; i < faceLandmarksTypesStrings.length; i++) {
+      FaceLandmark landmark = face.getLandmark(faceLandmarksTypes[i]);
+
+      if(landmark != null) {
+        PointF point = landmark.getPosition();
+        faceLandmarksTypesMap.put(faceLandmarksTypesStrings[landmark.getLandmarkType() - 1], point);
+      }
+    }
+
+    return faceLandmarksTypesMap;
   }
   
   private Map processFaceContours(Face face) {
@@ -104,7 +141,7 @@ public class VisionCameraFaceDetectorPlugin extends FrameProcessorPlugin {
     for (int i = 0; i < faceContoursTypesStrings.length; i++) {
       FaceContour contour = face.getContour(faceContoursTypes[i]);
       List<PointF> points = contour.getPoints();
-      List <Map<String, Double>> pointsArray = new ArrayList<>();
+      List<Map<String, Double>> pointsArray = new ArrayList<>();
 
       for (int j = 0; j < points.size(); j++) {
         Map<String, Double> currentPointsMap = new HashMap<>();
@@ -121,7 +158,6 @@ public class VisionCameraFaceDetectorPlugin extends FrameProcessorPlugin {
   @Nullable
   @Override
   public Object callback(@NonNull Frame frame, @Nullable Map<String, Object> params) {
-    @SuppressLint("UnsafeOptInUsageError")
     Image mediaImage = frame.getImage();
     Integer performanceModeValue = FaceDetectorOptions.PERFORMANCE_MODE_FAST;
     if (String.valueOf(params.get("performanceMode")).equals("accurate")) {
@@ -145,7 +181,10 @@ public class VisionCameraFaceDetectorPlugin extends FrameProcessorPlugin {
 
     Float minFaceSize = 0.1f;
     String minFaceSizeParam = String.valueOf(params.get("minFaceSize"));
-    if (!minFaceSizeParam.equals(String.valueOf(minFaceSize))) {
+    if (
+      !minFaceSizeParam.equals("null") &&
+      !minFaceSizeParam.equals(String.valueOf(minFaceSize))
+    ) {
       minFaceSize = Float.parseFloat(minFaceSizeParam);
     }
 
@@ -164,6 +203,7 @@ public class VisionCameraFaceDetectorPlugin extends FrameProcessorPlugin {
     FaceDetector faceDetector = FaceDetection.getClient(options);
 
     if (mediaImage != null) {
+      Log.d(TAG, "frame orientation - " + frame.getOrientation().toDegrees());
       InputImage image = InputImage.fromMediaImage(mediaImage, frame.getOrientation().toDegrees());
       Task<List<Face>> task = faceDetector.process(image);
       List<Map<String, Object>> faceList = new ArrayList<>();
@@ -175,17 +215,21 @@ public class VisionCameraFaceDetectorPlugin extends FrameProcessorPlugin {
         for (Face face : faces) {
           Map<String, Object> map = new HashMap<>();
 
-          // if(String.valueOf(params.get("landmarkMode")).equals("all")){
-          //   map.put("landMarks", processLandMarks(face));
-          // }
+          if(String.valueOf(params.get("landmarkMode")).equals("all")){
+            map.put("landmarks", processLandmarks(face));
+          }
 
           if(String.valueOf(params.get("classificationMode")).equals("all")) {
+            // map.put("leftEyeOpenProbability", (double) face.getLeftEyeOpenProbability());
             map.put("leftEyeOpenProbability", (double) face.getLeftEyeOpenProbability());
+            // map.put("rightEyeOpenProbability", (double) face.getRightEyeOpenProbability());
             map.put("rightEyeOpenProbability", (double) face.getRightEyeOpenProbability());
+            // map.put("smilingProbability", (double) face.getSmilingProbability());
             map.put("smilingProbability", (double) face.getSmilingProbability());
           }
 
           if(String.valueOf(params.get("contourMode")).equals("all")){
+            // map.put("contours", processFaceContours(face));
             map.put("contours", processFaceContours(face));
           }
 
@@ -201,14 +245,11 @@ public class VisionCameraFaceDetectorPlugin extends FrameProcessorPlugin {
           faceList.add(map);
         }
 
-        if (faceList.size() > 0) {
-          resultMap.put("faces", gson.toJson(faceList));
-          
-          if (String.valueOf(params.get("convertFrame")).equals("true")) {
-            resultMap.put("frameData", BitmapUtils.convertYuvToRgba(mediaImage));
-          }
+        resultMap.put("faces", faceList);
+        if (String.valueOf(params.get("convertFrame")).equals("true")) {
+          resultMap.put("frameData", BitmapUtils.convertYuvToRgba(mediaImage));
         }
-        return resultMap;
+        return gson.toJson(resultMap);
       } catch (Exception e) {
         Log.e("FaceDetector", "Error processing face detection", e);
       }
