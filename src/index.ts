@@ -125,12 +125,14 @@ export interface FaceDetectionOptions {
 const plugin = VisionCameraProxy.initFrameProcessorPlugin( 'detectFaces' )
 export function detectFaces(
   frame: Frame,
+  callback: ( result: DetectionResult ) => void | Promise<void>,
   options?: FaceDetectionOptions
-): DetectionResult {
+) {
   'worklet'
   if ( plugin == null ) {
     throw new Error( 'Failed to load Frame Processor Plugin "detectFaces"!' )
   }
   // @ts-ignore
-  return plugin.call( frame, options )
+  const result = plugin.call( frame, options ) as DetectionResult
+  callback?.( result )
 }
