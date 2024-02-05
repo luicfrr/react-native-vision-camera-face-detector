@@ -37,6 +37,52 @@ import com.google.mlkit.vision.face.FaceLandmark;
 
 public class VisionCameraFaceDetectorPlugin extends FrameProcessorPlugin {
   private static final String TAG = "FaceDetector";
+  private FaceDetector faceDetector = null;
+
+  private void initFD(@Nullable Map<String, Object> params) {
+    Integer performanceModeValue = FaceDetectorOptions.PERFORMANCE_MODE_FAST;
+    if (String.valueOf(params.get("performanceMode")).equals("accurate")) {
+      performanceModeValue = FaceDetectorOptions.PERFORMANCE_MODE_ACCURATE;
+    }
+
+    Integer landmarkModeValue = FaceDetectorOptions.LANDMARK_MODE_NONE;
+    if (String.valueOf(params.get("landmarkMode")).equals("all")) {
+      landmarkModeValue = FaceDetectorOptions.LANDMARK_MODE_ALL;
+    }
+
+    Integer classificationModeValue = FaceDetectorOptions.CLASSIFICATION_MODE_NONE;
+    if (String.valueOf(params.get("classificationMode")).equals("all")) {
+      classificationModeValue = FaceDetectorOptions.CLASSIFICATION_MODE_ALL;
+    }
+
+    Integer contourModeValue = FaceDetectorOptions.CONTOUR_MODE_NONE;
+    if (String.valueOf(params.get("contourMode")).equals("all")) {
+      contourModeValue = FaceDetectorOptions.CONTOUR_MODE_ALL;
+    }
+
+    Float minFaceSize = 0.15f;
+    String minFaceSizeParam = String.valueOf(params.get("minFaceSize"));
+    if (
+      !minFaceSizeParam.equals("null") &&
+      !minFaceSizeParam.equals(String.valueOf(minFaceSize))
+    ) {
+      minFaceSize = Float.parseFloat(minFaceSizeParam);
+    }
+
+    FaceDetectorOptions.Builder optionsBuilder = new FaceDetectorOptions.Builder()
+      .setPerformanceMode(performanceModeValue)
+      .setLandmarkMode(landmarkModeValue)
+      .setContourMode(contourModeValue)
+      .setClassificationMode(classificationModeValue)
+      .setMinFaceSize(minFaceSize);
+
+    if (String.valueOf(params.get("trackingEnabled")).equals("true")) {
+      optionsBuilder.enableTracking();
+    }
+
+    FaceDetectorOptions options = optionsBuilder.build();
+    faceDetector = FaceDetection.getClient(options);
+  }
 
   private Map processBoundingBox(Rect boundingBox) {
     Map<String, Object> bounds = new HashMap<>();
@@ -159,50 +205,12 @@ public class VisionCameraFaceDetectorPlugin extends FrameProcessorPlugin {
   @Override
   public Object callback(@NonNull Frame frame, @Nullable Map<String, Object> params) {
     Image mediaImage = frame.getImage();
-    Integer performanceModeValue = FaceDetectorOptions.PERFORMANCE_MODE_FAST;
-    if (String.valueOf(params.get("performanceMode")).equals("accurate")) {
-      performanceModeValue = FaceDetectorOptions.PERFORMANCE_MODE_ACCURATE;
-    }
-
-    Integer landmarkModeValue = FaceDetectorOptions.LANDMARK_MODE_NONE;
-    if (String.valueOf(params.get("landmarkMode")).equals("all")) {
-      landmarkModeValue = FaceDetectorOptions.LANDMARK_MODE_ALL;
-    }
-
-    Integer classificationModeValue = FaceDetectorOptions.CLASSIFICATION_MODE_NONE;
-    if (String.valueOf(params.get("classificationMode")).equals("all")) {
-      classificationModeValue = FaceDetectorOptions.CLASSIFICATION_MODE_ALL;
-    }
-
-    Integer contourModeValue = FaceDetectorOptions.CONTOUR_MODE_NONE;
-    if (String.valueOf(params.get("contourMode")).equals("all")) {
-      contourModeValue = FaceDetectorOptions.CONTOUR_MODE_ALL;
-    }
-
-    Float minFaceSize = 0.1f;
-    String minFaceSizeParam = String.valueOf(params.get("minFaceSize"));
-    if (
-      !minFaceSizeParam.equals("null") &&
-      !minFaceSizeParam.equals(String.valueOf(minFaceSize))
-    ) {
-      minFaceSize = Float.parseFloat(minFaceSizeParam);
-    }
-
-    FaceDetectorOptions.Builder optionsBuilder = new FaceDetectorOptions.Builder()
-      .setPerformanceMode(performanceModeValue)
-      .setLandmarkMode(landmarkModeValue)
-      .setContourMode(contourModeValue)
-      .setClassificationMode(classificationModeValue)
-      .setMinFaceSize(minFaceSize);
-
-    if (String.valueOf(params.get("trackingEnabled")).equals("true")) {
-      optionsBuilder.enableTracking();
-    }
-
-    FaceDetectorOptions options = optionsBuilder.build();
-    FaceDetector faceDetector = FaceDetection.getClient(options);
 
     if (mediaImage != null) {
+      if(faceDetector == null) {
+        initFD(params);
+      }
+
       Log.d(TAG, "frame orientation - " + frame.getOrientation().toDegrees());
       InputImage image = InputImage.fromMediaImage(mediaImage, frame.getOrientation().toDegrees());
       Task<List<Face>> task = faceDetector.process(image);

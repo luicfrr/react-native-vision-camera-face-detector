@@ -11,14 +11,17 @@ import AVFoundation
 public class VisionCameraFaceDetector: FrameProcessorPlugin {
   var context = CIContext(options: nil)
   var faceDetector: FaceDetector! = nil;
-  let config = getConfig(withArguments: arguments)
     
   public override init(proxy: VisionCameraProxyHolder, options: [AnyHashable : Any]! = [:]) {
     super.init(proxy: proxy, options: options)
   }
 
   public override func callback(_ frame: Frame, withArguments arguments: [AnyHashable: Any]?) -> Any {
-    initFD()
+    let config = getConfig(withArguments: arguments)
+    if faceDetector == nil {
+      initFD(config: config)
+    }
+    
     let image = VisionImage(buffer: frame.buffer)
     image.orientation = .up
     let photoWidth = MLImage(sampleBuffer: frame.buffer)?.width
@@ -73,8 +76,8 @@ public class VisionCameraFaceDetector: FrameProcessorPlugin {
     return result
   }
     
-  func initFD() {
-    let minFaceSize = 0.1
+  func initFD(config: [String: Any]!) {
+    let minFaceSize = 0.15
     let options = FaceDetectorOptions()
         options.performanceMode = .fast
         options.landmarkMode = .none
