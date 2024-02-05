@@ -12,12 +12,16 @@
 ## 🧰 Installation
 
 ```bash
-yarn add react-native-vision-camera-face-detector
+yarn add react-native-vision-camera-face-detector 
 ```
 
 ## 💡 Usage
 
-OBS: Pixel format should be either `yuv` (recomended) or `rgb` (lower performance).
+OBS 1: You need to add `react-native-worklets-core` plugin to your `babel.config.js`. More details [here](https://react-native-vision-camera.com/docs/guides/frame-processors#react-native-worklets-core).
+
+OBS 2: If you're using `react-native-reanimated`, see [this](https://github.com/mrousavy/react-native-vision-camera/issues/1791#issuecomment-1892130378).
+
+OBS 3: Pixel format should be either `yuv` (recomended) or `rgb` (lower performance).
 
 ```jsx
 import { 
@@ -34,7 +38,10 @@ import {
   useCameraDevice,
   useFrameProcessor
 } from 'react-native-vision-camera'
-import { detectFaces } from 'react-native-vision-camera-face-detector'
+import { 
+  detectFaces,
+  DetectionResult 
+} from 'react-native-vision-camera-face-detector'
 import { Worklets } from 'react-native-worklets-core'
 
 export default function App() {
@@ -47,25 +54,29 @@ export default function App() {
     })()
   }, [device])
 
+  const handleDetectionWorklet = Worklets.createRunInJsFn( (
+    result: DetectionResult
+  ) => { 
+    console.log( 'detection result', result )
+  })
   const frameProcessor = useFrameProcessor((frame) => {
     'worklet'
     runAsync(frame, () => {
       'worklet'
-      try {
-        const detectionResult = detectFaces(frame)
-        console.log('faces detected:', detectionResult.faces)
-      } catch (error) {
-        console.error(error)
-      }
+      detectFaces(
+        frame,
+        handleDetectionWorklet, {
+          // detection settings
+        }
+      )
     })
-  }, [])
+  }, [handleDetectionWorklet])
 
   return (
     <View style={{ flex: 1 }}>
-      {device? <Camera
+      {!!device? <Camera
         style={StyleSheet.absoluteFill}
         device={device}
-        isActive={!!device}
         frameProcessor={frameProcessor}
         pixelFormat="yuv"
       /> : <Text>
@@ -75,6 +86,7 @@ export default function App() {
   )
 }
 ```
+
 ## 👷 Built With
 
 - [React Native](https://reactnative.dev/)
