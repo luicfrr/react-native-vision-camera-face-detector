@@ -93,7 +93,7 @@ public class VisionCameraFaceDetectorPlugin extends FrameProcessorPlugin {
 
       if(landmark != null) {
         PointF point = landmark.getPosition();
-        faceLandmarksTypesMap.put(faceLandmarksTypesStrings[landmark.getLandmarkType() - 1], point);
+        faceLandmarksTypesMap.put(faceLandmarksTypesStrings[i], point);
       }
     }
 
@@ -220,16 +220,12 @@ public class VisionCameraFaceDetectorPlugin extends FrameProcessorPlugin {
           }
 
           if(String.valueOf(params.get("classificationMode")).equals("all")) {
-            // map.put("leftEyeOpenProbability", (double) face.getLeftEyeOpenProbability());
             map.put("leftEyeOpenProbability", (double) face.getLeftEyeOpenProbability());
-            // map.put("rightEyeOpenProbability", (double) face.getRightEyeOpenProbability());
             map.put("rightEyeOpenProbability", (double) face.getRightEyeOpenProbability());
-            // map.put("smilingProbability", (double) face.getSmilingProbability());
             map.put("smilingProbability", (double) face.getSmilingProbability());
           }
 
           if(String.valueOf(params.get("contourMode")).equals("all")){
-            // map.put("contours", processFaceContours(face));
             map.put("contours", processFaceContours(face));
           }
 

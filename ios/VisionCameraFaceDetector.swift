@@ -20,7 +20,7 @@ public class VisionCameraFaceDetector: FrameProcessorPlugin {
   public override func callback(_ frame: Frame, withArguments arguments: [AnyHashable: Any]?) -> Any {
     initFD()
     let image = VisionImage(buffer: frame.buffer)
-    image.orientation = frame.orientation
+    image.orientation = .up
     let photoWidth = MLImage(sampleBuffer: frame.buffer)?.width
     var result: [String: Any] = [:]
     var faceAttributes: [Any] = []
@@ -31,9 +31,9 @@ public class VisionCameraFaceDetector: FrameProcessorPlugin {
         for face in faces {
           var map: [String: Any] = [:]
            
-          // if config?["landmarkMode"] as? String == "all" {
-          //   map["landMarks"] = processLandMarks(from: face)
-          // }
+          if config?["landmarkMode"] as? String == "all" {
+            map["landmarks"] = processLandMarks(from: face)
+          }
 
           if config?["classificationMode"] as? String == "all" {
             map["leftEyeOpenProbability"] = face.leftEyeOpenProbability
@@ -177,28 +177,28 @@ public class VisionCameraFaceDetector: FrameProcessorPlugin {
   func processLandMarks(from face: Face) -> [String:[String: CGFloat?]] {
     let faceLandmarkTypes = [
       FaceLandmarkType.leftCheek,
-      FaceLandmarkType.rightCheek,
-      FaceLandmarkType.leftEye,
-      FaceLandmarkType.rightEye,
       FaceLandmarkType.leftEar,
-      FaceLandmarkType.rightEar,
-      FaceLandmarkType.noseBase,
+      FaceLandmarkType.leftEye,
+      FaceLandmarkType.mouthBottom,
       FaceLandmarkType.mouthLeft,
       FaceLandmarkType.mouthRight,
-      FaceLandmarkType.mouthBottom,
+      FaceLandmarkType.noseBase,
+      FaceLandmarkType.rightCheek,
+      FaceLandmarkType.rightEar,
+      FaceLandmarkType.rightEye
     ]
       
     let faceLandmarksTypesStrings = [
       "LEFT_CHEEK",
-      "RIGHT_CHEEK",
-      "LEFT_EYE",
-      "RIGHT_EYE",
       "LEFT_EAR",
-      "RIGHT_EAR",
-      "NOSE_BASE",
+      "LEFT_EYE",
+      "MOUTH_BOTTOM",
       "MOUTH_LEFT",
       "MOUTH_RIGHT",
-      "MOUTH_BOTTOM"
+      "NOSE_BASE",
+      "RIGHT_CHEEK",
+      "RIGHT_EAR",
+      "RIGHT_EYE"
     ];
       
     var faceLandMarksTypesMap: [String: [String: CGFloat?]] = [:]
