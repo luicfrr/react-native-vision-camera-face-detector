@@ -19,7 +19,7 @@ yarn add react-native-vision-camera-face-detector
 
 OBS 1: You need to add `react-native-worklets-core` plugin to your `babel.config.js`. More details [here](https://react-native-vision-camera.com/docs/guides/frame-processors#react-native-worklets-core).
 
-OBS 2: If you're using `react-native-reanimated`, see [this](https://github.com/mrousavy/react-native-vision-camera/issues/1791#issuecomment-1892130378).
+OBS 2: If you're using `react-native-reanimated` see [this](https://github.com/mrousavy/react-native-vision-camera/issues/1791#issuecomment-1892130378).
 
 OBS 3: Pixel format should be either `yuv` (recomended) or `rgb` (lower performance).
 
