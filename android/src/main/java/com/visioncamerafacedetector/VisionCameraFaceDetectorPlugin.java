@@ -211,8 +211,8 @@ public class VisionCameraFaceDetectorPlugin extends FrameProcessorPlugin {
         initFD(params);
       }
 
-      Log.d(TAG, "frame orientation - " + frame.getOrientation().toDegrees());
-      InputImage image = InputImage.fromMediaImage(mediaImage, frame.getOrientation().toDegrees());
+      int orientation = (frame.getOrientation().toDegrees() - 90 + 360) % 360;
+      InputImage image = InputImage.fromMediaImage(mediaImage, orientation);
       Task<List<Face>> task = faceDetector.process(image);
       List<Map<String, Object>> faceList = new ArrayList<>();
       Map<String, Object> resultMap = new HashMap<>();
@@ -255,7 +255,7 @@ public class VisionCameraFaceDetectorPlugin extends FrameProcessorPlugin {
         }
         return gson.toJson(resultMap);
       } catch (Exception e) {
-        Log.e("FaceDetector", "Error processing face detection", e);
+        Log.e(TAG, "Error processing face detection", e);
       }
     }
 
