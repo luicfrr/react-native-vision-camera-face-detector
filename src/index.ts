@@ -99,7 +99,7 @@ export interface FaceDetectionOptions {
   /**
    * Sets the smallest desired face size, expressed as the ratio of the width of the head to width of the image.
    *
-   * @default 0.15
+   * @default 0.1
    */
   minFaceSize?: number
 
@@ -133,6 +133,6 @@ export function detectFaces(
     throw new Error( 'Failed to load Frame Processor Plugin "detectFaces"!' )
   }
   // @ts-ignore
-  const result = plugin.call( frame, options ) as DetectionResult
-  callback?.( result )
+  const result = plugin.call( frame, options ) as string
+  callback?.( JSON.parse( result ) )
 }
