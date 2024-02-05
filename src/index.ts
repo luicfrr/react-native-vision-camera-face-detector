@@ -2,7 +2,11 @@ import {
   VisionCameraProxy,
   type Frame
 } from 'react-native-vision-camera'
-type Point = { x: number; y: number }
+
+type Point = {
+  x: number
+  y: number
+}
 
 export interface DetectionResult {
   faces: Face[]
@@ -10,52 +14,57 @@ export interface DetectionResult {
 }
 
 export interface Face {
-  leftEyeOpenProbability: number
-  rollAngle: number
   pitchAngle: number
+  rollAngle: number
   yawAngle: number
+  bounds: {
+    x: number
+    y: number
+    top: number
+    left: number
+    width: number
+    height: number
+    boundingCenterX: number
+    boundingCenterY: number
+    boundingExactCenterX: number
+    boundingExactCenterY: number
+  }
+  leftEyeOpenProbability: number
   rightEyeOpenProbability: number
   smilingProbability: number
-  bounds: {
-    y: number
-    x: number
-    height: number
-    width: number
-    aspectRatio: number
-  }
   contours: Contours
-  landMarks: Landmarks
+  landmarks: Landmarks
 }
 
 export interface Contours {
   FACE: Point[]
-  NOSE_BOTTOM: Point[]
-  LOWER_LIP_TOP: Point[]
-  RIGHT_EYEBROW_BOTTOM: Point[]
-  LOWER_LIP_BOTTOM: Point[]
-  NOSE_BRIDGE: Point[]
-  RIGHT_CHEEK: Point[]
-  RIGHT_EYEBROW_TOP: Point[]
   LEFT_EYEBROW_TOP: Point[]
-  UPPER_LIP_BOTTOM: Point[]
   LEFT_EYEBROW_BOTTOM: Point[]
-  UPPER_LIP_TOP: Point[]
+  RIGHT_EYEBROW_TOP: Point[]
+  RIGHT_EYEBROW_BOTTOM: Point[]
   LEFT_EYE: Point[]
   RIGHT_EYE: Point[]
+  UPPER_LIP_TOP: Point[]
+  UPPER_LIP_BOTTOM: Point[]
+  LOWER_LIP_TOP: Point[]
+  LOWER_LIP_BOTTOM: Point[]
+  NOSE_BRIDGE: Point[]
+  NOSE_BOTTOM: Point[]
   LEFT_CHEEK: Point[]
+  RIGHT_CHEEK: Point[]
 }
 
 export interface Landmarks {
   LEFT_CHEEK: Point
-  RIGHT_CHEEK: Point
-  LEFT_EYE: Point
-  RIGHT_EYE: Point
   LEFT_EAR: Point
-  RIGHT_EAR: Point
-  NOSE_BASE: Point
+  LEFT_EYE: Point
+  MOUTH_BOTTOM: Point
   MOUTH_LEFT: Point
   MOUTH_RIGHT: Point
-  MOUTH_BOTTOM: Point
+  NOSE_BASE: Point
+  RIGHT_CHEEK: Point
+  RIGHT_EAR: Point
+  RIGHT_EYE: Point
 }
 
 export interface FaceDetectionOptions {
@@ -114,17 +123,11 @@ export interface FaceDetectionOptions {
 }
 
 const plugin = VisionCameraProxy.initFrameProcessorPlugin( 'detectFaces' )
-export function detectFaces( frame: Frame, options: FaceDetectionOptions = {
-  performanceMode: 'fast',
-  landmarkMode: 'none',
-  contourMode: 'none',
-  classificationMode: 'none',
-  minFaceSize: 0.1,
-  trackingEnabled: false,
-  convertFrame: false
-} ): DetectionResult {
+export function detectFaces(
+  frame: Frame,
+  options?: FaceDetectionOptions
+): DetectionResult {
   'worklet'
-
   if ( plugin == null ) {
     throw new Error( 'Failed to load Frame Processor Plugin "detectFaces"!' )
   }
