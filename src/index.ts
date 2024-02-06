@@ -17,23 +17,25 @@ export interface Face {
   pitchAngle: number
   rollAngle: number
   yawAngle: number
-  bounds: {
-    x: number
-    y: number
-    top: number
-    left: number
-    width: number
-    height: number
-    boundingCenterX: number
-    boundingCenterY: number
-    boundingExactCenterX: number
-    boundingExactCenterY: number
-  }
+  bounds: Bounds
   leftEyeOpenProbability: number
   rightEyeOpenProbability: number
   smilingProbability: number
   contours: Contours
   landmarks: Landmarks
+}
+
+export interface Bounds {
+  width: number
+  height: number
+  top: number
+  left: number
+  right: number
+  bottom: number
+  centerX: number
+  centerY: number
+  // exactCenterX: number
+  // exactCenterY: number
 }
 
 export interface Contours {
@@ -134,5 +136,5 @@ export function detectFaces(
   }
   // @ts-ignore
   const result = plugin.call( frame, options ) as string
-  callback?.( JSON.parse( result ) )
+  callback( JSON.parse( result ) )
 }
