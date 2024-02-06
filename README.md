@@ -23,6 +23,8 @@ OBS 2: If you're using `react-native-reanimated` see [this](https://github.com/m
 
 OBS 3: Pixel format should be either `yuv` (recomended) or `rgb` (lower performance).
 
+OBS 4: Face bounds are relative to image size not to device screen size so you need to scale it.
+
 ```jsx
 import { 
   StyleSheet, 
@@ -92,6 +94,20 @@ export default function App() {
 - [React Native](https://reactnative.dev/)
 - [Google MLKit](https://developers.google.com/ml-kit)
 - [Vision Camera](https://react-native-vision-camera.com/)
+
+## 🔎 About
+
+This package was tested using the following:
+
+- `react-native`: `0.73.2` (new arch disabled)
+- `react-native-vision-camera`: `3.8.2`
+- `react-native-worklets-core`: `0.3.0`
+- `react-native-reanimated`: `3.6.2`
+- `expo`: `50.0.4`
+- `Android min SDK version`: `26` (Android 8)
+- `IOS min version`: `13.4`
+
+If you find any error while using this package you're wellcome to open a new issue or create a new PR.
 
 ## 📚 Author
 
