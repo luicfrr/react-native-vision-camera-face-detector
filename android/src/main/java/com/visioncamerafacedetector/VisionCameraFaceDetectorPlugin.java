@@ -86,22 +86,15 @@ public class VisionCameraFaceDetectorPlugin extends FrameProcessorPlugin {
 
   private Map processBoundingBox(Rect boundingBox) {
     Map<String, Object> bounds = new HashMap<>();
-    // Calculate offset (we need to center the overlay on the target)
-    Double offsetX = (boundingBox.exactCenterX() - ceil(boundingBox.width())) / 2.0f;
-    Double offsetY = (boundingBox.exactCenterY() - ceil(boundingBox.height())) / 2.0f;
-    Double x = boundingBox.right + offsetX;
-    Double y = boundingBox.top + offsetY;
 
-    bounds.put("x", (double) boundingBox.centerX() + (boundingBox.centerX() - x));
-    bounds.put("y", (double) boundingBox.centerY() + (y - boundingBox.centerY()));
-    bounds.put("top", (double) boundingBox.top);
-    bounds.put("left", (double) boundingBox.left);
     bounds.put("width", (double) boundingBox.width());
     bounds.put("height", (double) boundingBox.height());
-    bounds.put("boundingCenterX", (double) boundingBox.centerX());
-    bounds.put("boundingCenterY", (double) boundingBox.centerY());
-    bounds.put("boundingExactCenterX", (double) boundingBox.exactCenterX());
-    bounds.put("boundingExactCenterY", (double) boundingBox.exactCenterY());
+    bounds.put("top", (double) boundingBox.top);
+    bounds.put("left", (double) boundingBox.left);
+    bounds.put("right", (double) boundingBox.right);
+    bounds.put("bottom", (double) boundingBox.bottom);
+    bounds.put("centerX", (double) boundingBox.centerX());
+    bounds.put("centerY", (double) boundingBox.centerY());
 
     return bounds;
   }
@@ -211,8 +204,8 @@ public class VisionCameraFaceDetectorPlugin extends FrameProcessorPlugin {
         initFD(params);
       }
 
-      int orientation = (frame.getOrientation().toDegrees() - 90 + 360) % 360;
-      InputImage image = InputImage.fromMediaImage(mediaImage, orientation);
+      int frameOrientation = (frame.getOrientation().toDegrees() - 90 + 360) % 360;
+      InputImage image = InputImage.fromMediaImage(mediaImage, frameOrientation);
       Task<List<Face>> task = faceDetector.process(image);
       List<Map<String, Object>> faceList = new ArrayList<>();
       Map<String, Object> resultMap = new HashMap<>();
@@ -253,10 +246,10 @@ public class VisionCameraFaceDetectorPlugin extends FrameProcessorPlugin {
         if (String.valueOf(params.get("convertFrame")).equals("true")) {
           resultMap.put("frameData", BitmapUtils.convertYuvToRgba(mediaImage));
         }
-        return gson.toJson(resultMap);
       } catch (Exception e) {
-        Log.e(TAG, "Error processing face detection", e);
+        Log.e(TAG, "Error processing face detection: ", e);
       }
+      return gson.toJson(resultMap)
     }
 
     return null;
