@@ -9,7 +9,9 @@ type Point = {
 }
 
 export interface DetectionResult {
-  faces: Face[]
+  faces: {
+    [ index: string ]: Face
+  }
   frameData?: string
 }
 
@@ -135,6 +137,6 @@ export function detectFaces(
     throw new Error( 'Failed to load Frame Processor Plugin "detectFaces"!' )
   }
   // @ts-ignore
-  const result = plugin.call( frame, options ) as string
-  callback( JSON.parse( result ) )
+  const result = plugin.call( frame, options ) as DetectionResult
+  callback( result )
 }
