@@ -174,8 +174,10 @@ public class VisionCameraFaceDetector: FrameProcessorPlugin {
           (key as? String ?? "", value)
         })
       }
+
       return config
     }
+
     return nil
   }
 
@@ -192,6 +194,7 @@ public class VisionCameraFaceDetector: FrameProcessorPlugin {
     }
     let image = UIImage(cgImage: cgImage)
     let imageData = image.jpegData(compressionQuality: 100)
+
     return imageData?.base64EncodedString() ?? ""
   }
 
@@ -208,8 +211,8 @@ public class VisionCameraFaceDetector: FrameProcessorPlugin {
     var faceList: [Any] = []
         
     do {
-      let faces: [Face] =  try faceDetector.results(in: image)
-      if (!faces.isEmpty){
+      let faces: [Face] = try faceDetector.results(in: image)
+      if (!faces.isEmpty) {
         for face in faces {
           var map: [String: Any] = [:]
            
@@ -251,6 +254,7 @@ public class VisionCameraFaceDetector: FrameProcessorPlugin {
     } catch let error {
       print("Error processing face detection: \(error)")
     }
+
     return result
   }
 
