@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.ArrayList;
 import java.util.HashMap;
-import com.google.gson.Gson;
 
 import java.io.ByteArrayOutputStream;
 
@@ -209,7 +208,6 @@ public class VisionCameraFaceDetectorPlugin extends FrameProcessorPlugin {
       Task<List<Face>> task = faceDetector.process(image);
       List<Map<String, Object>> faceList = new ArrayList<>();
       Map<String, Object> resultMap = new HashMap<>();
-      Gson gson = new Gson();
 
       try {
         List<Face> faces = Tasks.await(task);
@@ -249,7 +247,8 @@ public class VisionCameraFaceDetectorPlugin extends FrameProcessorPlugin {
       } catch (Exception e) {
         Log.e(TAG, "Error processing face detection: ", e);
       }
-      return gson.toJson(resultMap)
+      
+      return resultMap;
     }
 
     return null;
