@@ -7,8 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		214AF74C2A0A098B000437BC /* VisionCameraFaceDetector.m in Sources */ = {isa = PBXBuildFile; fileRef = 214AF74B2A0A098B000437BC /* VisionCameraFaceDetector.m */; };
-		F4FF95D7245B92E800C19C63 /* VisionCameraFaceDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4FF95D6245B92E800C19C63 /* VisionCameraFaceDetector.swift */; };
+		F3D654022AE06AAB009F11D2 /* VisionCameraFaceDetector.m in Sources */ = {isa = PBXBuildFile; fileRef = F3D654002AE06A9C009F11D2 /* VisionCameraFaceDetector.m */; };
+		F3D654032AE06AAB009F11D2 /* VisionCameraFaceDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3D654012AE06A9C009F11D2 /* VisionCameraFaceDetector.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -25,9 +25,9 @@
 
 /* Begin PBXFileReference section */
 		134814201AA4EA6300B7C361 /* libVisionCameraFaceDetector.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libVisionCameraFaceDetector.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		214AF74B2A0A098B000437BC /* VisionCameraFaceDetector.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VisionCameraFaceDetector.m; sourceTree = "<group>"; };
-		F4FF95D5245B92E700C19C63 /* VisionCameraFaceDetector-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "VisionCameraFaceDetector-Bridging-Header.h"; sourceTree = "<group>"; };
-		F4FF95D6245B92E800C19C63 /* VisionCameraFaceDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisionCameraFaceDetector.swift; sourceTree = "<group>"; };
+		F3D653FF2AE06A9C009F11D2 /* VisionCameraFaceDetector-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "VisionCameraFaceDetector-Bridging-Header.h"; sourceTree = "<group>"; };
+		F3D654002AE06A9C009F11D2 /* VisionCameraFaceDetector.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VisionCameraFaceDetector.m; sourceTree = "<group>"; };
+		F3D654012AE06A9C009F11D2 /* VisionCameraFaceDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisionCameraFaceDetector.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -52,9 +52,9 @@
 		58B511D21A9E6C8500147676 = {
 			isa = PBXGroup;
 			children = (
-				214AF74B2A0A098B000437BC /* VisionCameraFaceDetector.m */,
-				F4FF95D6245B92E800C19C63 /* VisionCameraFaceDetector.swift */,
-				F4FF95D5245B92E700C19C63 /* VisionCameraFaceDetector-Bridging-Header.h */,
+				F3D653FF2AE06A9C009F11D2 /* VisionCameraFaceDetector-Bridging-Header.h */,
+				F3D654002AE06A9C009F11D2 /* VisionCameraFaceDetector.m */,
+				F3D654012AE06A9C009F11D2 /* VisionCameraFaceDetector.swift */,
 				134814211AA4EA7D00B7C361 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -116,8 +116,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				214AF74C2A0A098B000437BC /* VisionCameraFaceDetector.m in Sources */,
-				F4FF95D7245B92E800C19C63 /* VisionCameraFaceDetector.swift in Sources */,
+				F3D654022AE06AAB009F11D2 /* VisionCameraFaceDetector.m in Sources */,
+				F3D654032AE06AAB009F11D2 /* VisionCameraFaceDetector.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -167,7 +167,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -210,7 +210,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
