@@ -39,7 +39,7 @@ public class VisionCameraFaceDetector: FrameProcessorPlugin {
         
     let minFaceSizeParam = config?["minFaceSize"] as? Double
     if minFaceSizeParam != nil && minFaceSizeParam != minFaceSize {
-      options.minFaceSize = CGFloat(minFaceSizeParam)
+      options.minFaceSize = CGFloat(minFaceSizeParam!)
     }
 
     if config?["trackingEnabled"] as? String == "true" {
