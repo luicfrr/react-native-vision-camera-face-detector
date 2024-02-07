@@ -12,7 +12,12 @@ export interface DetectionResult {
   faces: {
     [ index: string ]: Face
   }
-  frameData?: string
+  frame: {
+    width: number
+    height: number
+    orientation: number
+    frameData?: string
+  }
 }
 
 export interface Face {
