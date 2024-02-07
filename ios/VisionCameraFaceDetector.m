@@ -13,7 +13,7 @@
 @end
 
 @implementation VisionCameraFaceDetector (FrameProcessorPluginLoader)
-+ (void)initialize{
++ (void) load {
   [FrameProcessorPluginRegistry addFrameProcessorPlugin:@"detectFaces"
     withInitializer:^FrameProcessorPlugin*(VisionCameraProxyHolder* proxy, NSDictionary* options) {
     return [[VisionCameraFaceDetector alloc] initWithProxy:proxy withOptions:options];
