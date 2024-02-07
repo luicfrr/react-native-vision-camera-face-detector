@@ -1,4 +1,3 @@
-#if VISION_CAMERA_ENABLE_FRAME_PROCESSORS
 import VisionCamera
 import Foundation
 import MLKitFaceDetection
@@ -11,71 +10,7 @@ import AVFoundation
 public class VisionCameraFaceDetector: FrameProcessorPlugin {
   var context = CIContext(options: nil)
   var faceDetector: FaceDetector! = nil;
-    
-  public override init(proxy: VisionCameraProxyHolder, options: [AnyHashable : Any]! = [:]) {
-    super.init(proxy: proxy, options: options)
-  }
-
-  public override func callback(_ frame: Frame, withArguments arguments: [AnyHashable: Any]?) -> Any {
-    let config = getConfig(withArguments: arguments)
-    if faceDetector == nil {
-      initFD(config: config)
-    }
-    
-    let image = VisionImage(buffer: frame.buffer)
-    image.orientation = .up
-    let photoWidth = MLImage(sampleBuffer: frame.buffer)?.width
-    var result: [String: Any] = [:]
-    var faceAttributes: [Any] = []
-        
-    do {
-      let faces: [Face] =  try faceDetector.results(in: image)
-      if (!faces.isEmpty){
-        for face in faces {
-          var map: [String: Any] = [:]
-           
-          if config?["landmarkMode"] as? String == "all" {
-            map["landmarks"] = processLandMarks(from: face)
-          }
-
-          if config?["classificationMode"] as? String == "all" {
-            map["leftEyeOpenProbability"] = face.leftEyeOpenProbability
-            map["rightEyeOpenProbability"] = face.rightEyeOpenProbability
-            map["smilingProbability"] = face.smilingProbability
-          }
-
-          if config?["contourMode"] as? String == "all" {
-            map["contours"] = processContours(from: face)
-          }
-
-          if config?["trackingEnabled"] as? String == "true" {
-            map["trackingId"] = face.trackingID
-          }
-
-          map["rollAngle"] = face.headEulerAngleZ  // Head is tilted sideways rotZ degrees
-          map["pitchAngle"] = face.headEulerAngleX  // Head is rotated to the uptoward rotX degrees
-          map["yawAngle"] = face.headEulerAngleY   // Head is rotated to the right rotY degrees
-          map["bounds"] = processBoundingBox(from: face, photoWidth: photoWidth)
-                   
-          faceAttributes.append(map)
-        }
-      }
-    } catch _ {
-      return []
-    }
-
-    if config?["convertFrame"] as? String == "true" {
-      result = [
-        "faces": faceAttributes,
-        "frameData": convertFrameToBase64(frame)
-      ]
-    } else {
-      result = ["faces": faceAttributes]
-    }
-    
-    return result
-  }
-    
+  
   func initFD(config: [String: Any]!) {
     let minFaceSize = 0.15
     let options = FaceDetectorOptions()
@@ -104,7 +39,7 @@ public class VisionCameraFaceDetector: FrameProcessorPlugin {
         
     let minFaceSizeParam = config?["minFaceSize"] as? Double
     if minFaceSizeParam != nil && minFaceSizeParam != minFaceSize {
-      options.minFaceSize = CGFloat(config?["minFaceSize"] as? Double)
+      options.minFaceSize = CGFloat(minFaceSizeParam)
     }
 
     if config?["trackingEnabled"] as? String == "true" {
@@ -114,11 +49,66 @@ public class VisionCameraFaceDetector: FrameProcessorPlugin {
     faceDetector = FaceDetector.faceDetector(options: options)
   }
 
-  class func newInstance() -> VisionCameraFaceDetector {
-    return VisionCameraFaceDetector()
+  func processBoundingBox(from face: Face) -> [String:Any] {
+    let boundingBox = face.frame
+    let x = boundingBox.origin.x
+    let y = boundingBox.origin.y
+    let width = boundingBox.width
+    let height = boundingBox.height
+
+    return [
+      "width": width,
+      "height": height,
+      "top": y,
+      "left": x,
+      "right": x + width,
+      "bottom": y + height,
+      "centerX": boundingBox.midX,
+      "centerY": boundingBox.midY
+    ]
+  }
+   
+  func processLandmarks(from face: Face) -> [String:[String: CGFloat?]] {
+    let faceLandmarkTypes = [
+      FaceLandmarkType.leftCheek,
+      FaceLandmarkType.leftEar,
+      FaceLandmarkType.leftEye,
+      FaceLandmarkType.mouthBottom,
+      FaceLandmarkType.mouthLeft,
+      FaceLandmarkType.mouthRight,
+      FaceLandmarkType.noseBase,
+      FaceLandmarkType.rightCheek,
+      FaceLandmarkType.rightEar,
+      FaceLandmarkType.rightEye
+    ]
+      
+    let faceLandmarksTypesStrings = [
+      "LEFT_CHEEK",
+      "LEFT_EAR",
+      "LEFT_EYE",
+      "MOUTH_BOTTOM",
+      "MOUTH_LEFT",
+      "MOUTH_RIGHT",
+      "NOSE_BASE",
+      "RIGHT_CHEEK",
+      "RIGHT_EAR",
+      "RIGHT_EYE"
+    ];
+      
+    var faceLandMarksTypesMap: [String: [String: CGFloat?]] = [:]
+    for i in 0..<faceLandmarkTypes.count {
+      let landmark = face.landmark(ofType: faceLandmarkTypes[i]);
+      let position = [
+        "x": landmark?.position.x,
+        "y": landmark?.position.y
+      ]
+      faceLandMarksTypesMap[faceLandmarksTypesStrings[i]] = position
+    }
+      
+    return faceLandMarksTypesMap
   }
     
-  func processContours(from face: Face) -> [String:[[String:CGFloat]]] {
+  func processFaceContours(from face: Face) -> [String:[[String:CGFloat]]] {
     let faceContoursTypes = [
       FaceContourType.face,
       FaceContourType.leftEyebrowTop,
@@ -177,59 +167,16 @@ public class VisionCameraFaceDetector: FrameProcessorPlugin {
     return faceContoursTypesMap
   }
     
-  func processLandMarks(from face: Face) -> [String:[String: CGFloat?]] {
-    let faceLandmarkTypes = [
-      FaceLandmarkType.leftCheek,
-      FaceLandmarkType.leftEar,
-      FaceLandmarkType.leftEye,
-      FaceLandmarkType.mouthBottom,
-      FaceLandmarkType.mouthLeft,
-      FaceLandmarkType.mouthRight,
-      FaceLandmarkType.noseBase,
-      FaceLandmarkType.rightCheek,
-      FaceLandmarkType.rightEar,
-      FaceLandmarkType.rightEye
-    ]
-      
-    let faceLandmarksTypesStrings = [
-      "LEFT_CHEEK",
-      "LEFT_EAR",
-      "LEFT_EYE",
-      "MOUTH_BOTTOM",
-      "MOUTH_LEFT",
-      "MOUTH_RIGHT",
-      "NOSE_BASE",
-      "RIGHT_CHEEK",
-      "RIGHT_EAR",
-      "RIGHT_EYE"
-    ];
-      
-    var faceLandMarksTypesMap: [String: [String: CGFloat?]] = [:]
-    for i in 0..<faceLandmarkTypes.count {
-      let landmark = face.landmark(ofType: faceLandmarkTypes[i]);
-      let position = [
-        "x": landmark?.position.x,
-        "y": landmark?.position.y
-      ]
-      faceLandMarksTypesMap[faceLandmarksTypesStrings[i]] = position
+  func getConfig(withArguments arguments: [AnyHashable: Any]!) -> [String:Any]! {
+    if arguments.count > 0 {
+      let config = arguments.map { dictionary in
+        Dictionary(uniqueKeysWithValues: dictionary.map { (key, value) in
+          (key as? String ?? "", value)
+        })
+      }
+      return config
     }
-      
-    return faceLandMarksTypesMap
-  }
-    
-  func processBoundingBox(from face: Face, photoWidth: CGFloat?) -> [String:Any] {
-    let frameRect = face.frame
-    // The implementation from this github repo seems to work better for the frameRect
-    // Github link -> https://github.com/a7medev/react-native-ml-kit/blob/main/face-detection/ios/FaceDetection.m
-    return [
-      "x":frameRect.origin.x,
-      "y": frameRect.origin.y,
-      "width": frameRect.size.width,
-      "height": frameRect.size.height,
-      "boundingCenterX": frameRect.midX,
-      "boundingCenterY": frameRect.midY,
-      "aspectRatio": frameRect.size.width / photoWidth!
-    ]
+    return nil
   }
 
   func convertFrameToBase64(_ frame: Frame) -> Any! {
@@ -247,17 +194,67 @@ public class VisionCameraFaceDetector: FrameProcessorPlugin {
     let imageData = image.jpegData(compressionQuality: 100)
     return imageData?.base64EncodedString() ?? ""
   }
-    
-  func getConfig(withArguments arguments: [AnyHashable: Any]!) -> [String:Any]! {
-    if arguments.count > 0 {
-      let config = arguments.map { dictionary in
-        Dictionary(uniqueKeysWithValues: dictionary.map { (key, value) in
-          (key as? String ?? "", value)
-        })
-      }
-      return config
+
+  public override func callback(_ frame: Frame, withArguments arguments: [AnyHashable: Any]?) -> Any? {
+    let config = getConfig(withArguments: arguments)
+    if faceDetector == nil {
+      initFD(config: config)
     }
-    return nil
+    
+    let image = VisionImage(buffer: frame.buffer)
+    image.orientation = .up
+    let photoWidth = MLImage(sampleBuffer: frame.buffer)?.width
+    var result: [String: Any] = [:]
+    var faceList: [Any] = []
+        
+    do {
+      let faces: [Face] =  try faceDetector.results(in: image)
+      if (!faces.isEmpty){
+        for face in faces {
+          var map: [String: Any] = [:]
+           
+          if config?["landmarkMode"] as? String == "all" {
+            map["landmarks"] = processLandmarks(from: face)
+          }
+
+          if config?["classificationMode"] as? String == "all" {
+            map["leftEyeOpenProbability"] = face.leftEyeOpenProbability
+            map["rightEyeOpenProbability"] = face.rightEyeOpenProbability
+            map["smilingProbability"] = face.smilingProbability
+          }
+
+          if config?["contourMode"] as? String == "all" {
+            map["contours"] = processFaceContours(from: face)
+          }
+
+          if config?["trackingEnabled"] as? String == "true" {
+            map["trackingId"] = face.trackingID
+          }
+
+          map["rollAngle"] = face.headEulerAngleZ
+          map["pitchAngle"] = face.headEulerAngleX
+          map["yawAngle"] = face.headEulerAngleY
+          map["bounds"] = processBoundingBox(from: face)
+                   
+          faceList.append(map)
+        }
+      }
+
+      if config?["convertFrame"] as? String == "true" {
+        result = [
+          "faces": faceList,
+          "frameData": convertFrameToBase64(frame)
+        ]
+      } else {
+        result = ["faces": faceList]
+      }
+    } catch let error {
+      print("Error processing face detection: \(error)")
+    }
+    return result
+  }
+
+  public override init(proxy: VisionCameraProxyHolder, options: [AnyHashable : Any]! = [:]) {
+    super.init(proxy: proxy, options: options)
   }
 }
-
