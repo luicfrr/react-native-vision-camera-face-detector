@@ -1,6 +1,7 @@
 import {
   VisionCameraProxy,
-  type Frame
+  type Frame,
+  type Orientation
 } from 'react-native-vision-camera'
 
 type Point = {
@@ -12,12 +13,7 @@ export interface DetectionResult {
   faces: {
     [ index: string ]: Face
   }
-  frame: {
-    width: number
-    height: number
-    orientation: number
-    frameData?: string
-  }
+  frame: FrameData
 }
 
 export interface Face {
@@ -32,6 +28,13 @@ export interface Face {
   landmarks: Landmarks
 }
 
+export interface FrameData {
+  width: number
+  height: number
+  orientation: Orientation
+  frameData?: string
+}
+
 export interface Bounds {
   width: number
   height: number
@@ -41,8 +44,6 @@ export interface Bounds {
   bottom: number
   centerX: number
   centerY: number
-  // exactCenterX: number
-  // exactCenterY: number
 }
 
 export interface Contours {

@@ -5,6 +5,7 @@ import MLKitVision
 import CoreML
 import UIKit
 import AVFoundation
+import SceneKit
 
 @objc(VisionCameraFaceDetector)
 public class VisionCameraFaceDetector: FrameProcessorPlugin {
@@ -198,15 +199,27 @@ public class VisionCameraFaceDetector: FrameProcessorPlugin {
     return imageData?.base64EncodedString() ?? ""
   }
 
+  func getOrientationDescription(orientation: UIImage.Orientation) -> String {
+    switch orientation {
+      case .left, .leftMirrored:
+        return "landscape-left"
+      case .right, .rightMirrored:
+        return "landscape-right"
+      case .down, .downMirrored:
+        return "portrait-upside-down"
+      default:
+        return "portrait"
+    }
+  }
+    
   public override func callback(_ frame: Frame, withArguments arguments: [AnyHashable: Any]?) -> Any? {
     let config = getConfig(withArguments: arguments)
     if faceDetector == nil {
       initFD(config: config)
     }
-    
+
     let image = VisionImage(buffer: frame.buffer)
-    image.orientation = .up
-    let photoWidth = MLImage(sampleBuffer: frame.buffer)?.width
+      image.orientation = frame.orientation
     var result: [String: Any] = [:]
     var faceList: [Any] = []
         
@@ -243,14 +256,18 @@ public class VisionCameraFaceDetector: FrameProcessorPlugin {
         }
       }
 
+      var frameMap: [String: Any] = [:]
+      frameMap["width"] = frame.width
+      frameMap["height"] = frame.height
+      frameMap["orientation"] = getOrientationDescription(orientation: frame.orientation)
       if config?["convertFrame"] as? String == "true" {
-        result = [
-          "faces": faceList,
-          "frameData": convertFrameToBase64(frame)
-        ]
-      } else {
-        result = ["faces": faceList]
+        frameMap["frameData"] = convertFrameToBase64(frame)
       }
+
+      result = [
+        "faces": faceList,
+        "frame": frameMap
+      ]
     } catch let error {
       print("Error processing face detection: \(error)")
     }

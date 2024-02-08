@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.camera.core.ImageProxy;
 
+import com.mrousavy.camera.types.Orientation;
 import com.mrousavy.camera.frameprocessor.Frame;
 import com.mrousavy.camera.frameprocessor.FrameProcessorPlugin;
 import com.mrousavy.camera.frameprocessor.VisionCameraProxy;
@@ -203,8 +204,9 @@ public class VisionCameraFaceDetectorPlugin extends FrameProcessorPlugin {
         initFD(params);
       }
 
-      int frameOrientation = (frame.getOrientation().toDegrees() - 90 + 360) % 360;
-      InputImage image = InputImage.fromMediaImage(mediaImage, frameOrientation);
+      Orientation orientation = frame.getOrientation();
+      int fixedOrientation = (orientation.toDegrees() - 90 + 360) % 360;
+      InputImage image = InputImage.fromMediaImage(mediaImage, fixedOrientation);
       Task<List<Face>> task = faceDetector.process(image);
       Map<String, Object> resultMap = new HashMap<>();
       List<Map<String, Object>> faceList = new ArrayList<>();
@@ -243,7 +245,7 @@ public class VisionCameraFaceDetectorPlugin extends FrameProcessorPlugin {
         Map<String, Object> frameMap = new HashMap<>();
         frameMap.put("width", mediaImage.getWidth());
         frameMap.put("height", mediaImage.getHeight());
-        frameMap.put("orientation", frameOrientation);
+        frameMap.put("orientation", orientation.getUnionValue());
         if (String.valueOf(params.get("convertFrame")).equals("true")) {
           frameMap.put("frameData", BitmapUtils.convertYuvToRgba(mediaImage));
         }
