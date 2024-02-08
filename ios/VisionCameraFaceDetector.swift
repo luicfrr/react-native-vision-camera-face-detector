@@ -219,7 +219,7 @@ public class VisionCameraFaceDetector: FrameProcessorPlugin {
     }
 
     let image = VisionImage(buffer: frame.buffer)
-      image.orientation = frame.orientation
+    image.orientation = frame.orientation
     var result: [String: Any] = [:]
     var faceList: [Any] = []
         
