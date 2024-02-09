@@ -100,12 +100,15 @@ export default function App() {
 This package was tested using the following:
 
 - `react-native`: `0.73.2` (new arch disabled)
-- `react-native-vision-camera`: `3.8.2`
+- `react-native-vision-camera`: `3.9.0-beta.2`
 - `react-native-worklets-core`: `0.3.0`
 - `react-native-reanimated`: `3.6.2`
 - `expo`: `50.0.4`
-- `Android min SDK version`: `26` (Android 8)
-- `IOS min version`: `13.4`
+
+Min Android/IOS versions:
+
+- `Android SDK`: `26` (Android 8)
+- `IOS`: `13.4`
 
 If you find any error while using this package you're wellcome to open a new issue or create a new PR.
 
