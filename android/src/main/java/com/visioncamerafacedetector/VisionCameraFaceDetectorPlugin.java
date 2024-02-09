@@ -14,6 +14,7 @@ import androidx.annotation.Nullable;
 import androidx.camera.core.ImageProxy;
 
 import com.mrousavy.camera.types.Orientation;
+import com.mrousavy.camera.core.FrameInvalidError;
 import com.mrousavy.camera.frameprocessor.Frame;
 import com.mrousavy.camera.frameprocessor.FrameProcessorPlugin;
 import com.mrousavy.camera.frameprocessor.VisionCameraProxy;
@@ -198,20 +199,28 @@ public class VisionCameraFaceDetectorPlugin extends FrameProcessorPlugin {
   @Override
   public Object callback(@NonNull Frame frame, @Nullable Map<String, Object> params) {
     Image mediaImage = frame.getImage();
+    Orientation orientation = null;
+    Map<String, Object> resultMap = new HashMap<>();
 
-    if (mediaImage != null) {
-      if(faceDetector == null) {
-        initFD(params);
-      }
+    try {
+      orientation = frame.getOrientation();
+    } catch (FrameInvalidError e) {
+      Log.e(TAG, "Error getting frame orientation: ", e);
+    }
 
-      Orientation orientation = frame.getOrientation();
-      int fixedOrientation = (orientation.toDegrees() - 90 + 360) % 360;
-      InputImage image = InputImage.fromMediaImage(mediaImage, fixedOrientation);
-      Task<List<Face>> task = faceDetector.process(image);
-      Map<String, Object> resultMap = new HashMap<>();
-      List<Map<String, Object>> faceList = new ArrayList<>();
-
+    if (
+      mediaImage != null &&
+      orientation != null
+    ) {
       try {
+        if(faceDetector == null) {
+          initFD(params);
+        }
+
+        int fixedOrientation = (orientation.toDegrees() - 90 + 360) % 360;
+        InputImage image = InputImage.fromMediaImage(mediaImage, fixedOrientation);
+        Task<List<Face>> task = faceDetector.process(image);
+        List<Map<String, Object>> faceList = new ArrayList<>();
         List<Face> faces = Tasks.await(task);
         for (Face face : faces) {
           Map<String, Object> map = new HashMap<>();
