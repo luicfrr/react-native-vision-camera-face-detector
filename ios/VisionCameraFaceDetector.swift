@@ -201,25 +201,26 @@ public class VisionCameraFaceDetector: FrameProcessorPlugin {
 
   func getOrientationDescription(orientation: UIImage.Orientation) -> String {
     switch orientation {
-      case .left, .leftMirrored:
-        return "landscape-left"
-      case .right, .rightMirrored:
-        return "landscape-right"
-      case .down, .downMirrored:
-        return "portrait-upside-down"
-      default:
+      case .right, .leftMirrored:
         return "portrait"
+      case .left, .rightMirrored:
+        return "portrait-upside-down"
+      case .up, .downMirrored:
+        return "landscape-left"
+      case .down, .upMirrored:
+        return "landscape-right"
     }
   }
     
   public override func callback(_ frame: Frame, withArguments arguments: [AnyHashable: Any]?) -> Any? {
     let config = getConfig(withArguments: arguments)
+    
     if faceDetector == nil {
       initFD(config: config)
     }
 
     let image = VisionImage(buffer: frame.buffer)
-    image.orientation = frame.orientation
+    image.orientation = .up
     var result: [String: Any] = [:]
     var faceList: [Any] = []
         
