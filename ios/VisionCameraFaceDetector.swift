@@ -35,7 +35,7 @@ public class VisionCameraFaceDetector: FrameProcessorPlugin {
     }
 
     if config?["classificationMode"] as? String == "all" {
-      options.contourMode = .all
+      options.classificationMode = .all
     }
         
     let minFaceSizeParam = config?["minFaceSize"] as? Double
