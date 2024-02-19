@@ -17,6 +17,8 @@ yarn add react-native-vision-camera-face-detector react-native-worklets-core
 
 You need to add `react-native-worklets-core` plugin to your `babel.config.js`. More details [here](https://react-native-vision-camera.com/docs/guides/frame-processors#react-native-worklets-core).
 
+OBS: If you're using `react-native-reanimated` in your app see [this](https://github.com/mrousavy/react-native-vision-camera/issues/1791#issuecomment-1892130378).
+
 ## 💡 Usage
 
 OBS: Face bounds are relative to image size not to device screen size so you need to scale it by multiplying desired bounds data by screen size divided by frame size: `bounds.XX * (deviceWidth|Height / frame.width|height)`.
