@@ -12,18 +12,14 @@
 ## 🧰 Installation
 
 ```bash
-yarn add react-native-vision-camera-face-detector 
+yarn add react-native-vision-camera-face-detector react-native-worklets-core
 ```
+
+You need to add `react-native-worklets-core` plugin to your `babel.config.js`. More details [here](https://react-native-vision-camera.com/docs/guides/frame-processors#react-native-worklets-core).
 
 ## 💡 Usage
 
-OBS 1: You need to add `react-native-worklets-core` plugin to your `babel.config.js`. More details [here](https://react-native-vision-camera.com/docs/guides/frame-processors#react-native-worklets-core).
-
-OBS 2: If you're using `react-native-reanimated` see [this](https://github.com/mrousavy/react-native-vision-camera/issues/1791#issuecomment-1892130378).
-
-OBS 3: Pixel format should be either `yuv` (recomended) or `rgb` (lower performance).
-
-OBS 4: Face bounds are relative to image size not to device screen size so you need to scale it.
+OBS: Face bounds are relative to image size not to device screen size so you need to scale it by multiplying desired bounds data by screen size divided by frame size: `bounds.XX * (deviceWidth|Height / frame.width|height)`.
 
 ```jsx
 import { 
@@ -80,7 +76,6 @@ export default function App() {
         style={StyleSheet.absoluteFill}
         device={device}
         frameProcessor={frameProcessor}
-        pixelFormat="yuv"
       /> : <Text>
         No Device
       </Text>}
@@ -99,11 +94,11 @@ export default function App() {
 
 This package was tested using the following:
 
-- `react-native`: `0.73.2` (new arch disabled)
-- `react-native-vision-camera`: `3.9.0-beta.2`
+- `react-native`: `0.73.4` (new arch disabled)
+- `react-native-vision-camera`: `3.9.0`
 - `react-native-worklets-core`: `0.3.0`
-- `react-native-reanimated`: `3.6.2`
-- `expo`: `50.0.4`
+- `react-native-reanimated`: `3.7.0`
+- `expo`: `50.0.7`
 
 Min Android/IOS versions:
 
