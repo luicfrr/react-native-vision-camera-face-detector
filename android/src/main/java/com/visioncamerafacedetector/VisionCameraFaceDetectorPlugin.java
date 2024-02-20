@@ -143,38 +143,38 @@ public class VisionCameraFaceDetectorPlugin extends FrameProcessorPlugin {
   private Map processFaceContours(Face face) {
     int[] faceContoursTypes = new int[] {
       FaceContour.FACE,
-      FaceContour.LEFT_EYEBROW_TOP,
-      FaceContour.LEFT_EYEBROW_BOTTOM,
-      FaceContour.RIGHT_EYEBROW_TOP,
-      FaceContour.RIGHT_EYEBROW_BOTTOM,
-      FaceContour.LEFT_EYE,
-      FaceContour.RIGHT_EYE,
-      FaceContour.UPPER_LIP_TOP,
-      FaceContour.UPPER_LIP_BOTTOM,
-      FaceContour.LOWER_LIP_TOP,
-      FaceContour.LOWER_LIP_BOTTOM,
-      FaceContour.NOSE_BRIDGE,
-      FaceContour.NOSE_BOTTOM,
       FaceContour.LEFT_CHEEK,
-      FaceContour.RIGHT_CHEEK
+      FaceContour.LEFT_EYE,
+      FaceContour.LEFT_EYEBROW_BOTTOM,
+      FaceContour.LEFT_EYEBROW_TOP,
+      FaceContour.LOWER_LIP_BOTTOM,
+      FaceContour.LOWER_LIP_TOP,
+      FaceContour.NOSE_BOTTOM,
+      FaceContour.NOSE_BRIDGE,
+      FaceContour.RIGHT_CHEEK,
+      FaceContour.RIGHT_EYE,
+      FaceContour.RIGHT_EYEBROW_BOTTOM,
+      FaceContour.RIGHT_EYEBROW_TOP,
+      FaceContour.UPPER_LIP_BOTTOM,
+      FaceContour.UPPER_LIP_TOP
     };
 
     String[] faceContoursTypesStrings = {
       "FACE",
-      "LEFT_EYEBROW_TOP",
-      "LEFT_EYEBROW_BOTTOM",
-      "RIGHT_EYEBROW_TOP",
-      "RIGHT_EYEBROW_BOTTOM",
-      "LEFT_EYE",
-      "RIGHT_EYE",
-      "UPPER_LIP_TOP",
-      "UPPER_LIP_BOTTOM",
-      "LOWER_LIP_TOP",
-      "LOWER_LIP_BOTTOM",
-      "NOSE_BRIDGE",
-      "NOSE_BOTTOM",
       "LEFT_CHEEK",
-      "RIGHT_CHEEK"
+      "LEFT_EYE",
+      "LEFT_EYEBROW_BOTTOM",
+      "LEFT_EYEBROW_TOP",
+      "LOWER_LIP_BOTTOM",
+      "LOWER_LIP_TOP",
+      "NOSE_BOTTOM",
+      "NOSE_BRIDGE",
+      "RIGHT_CHEEK",
+      "RIGHT_EYE",
+      "RIGHT_EYEBROW_BOTTOM",
+      "RIGHT_EYEBROW_TOP",
+      "UPPER_LIP_BOTTOM",
+      "UPPER_LIP_TOP"
     };
 
     Map<String, Object> faceContoursTypesMap = new HashMap<>();
