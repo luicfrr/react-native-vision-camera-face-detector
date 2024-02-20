@@ -130,11 +130,16 @@ public class VisionCameraFaceDetectorPlugin extends FrameProcessorPlugin {
     Map<String, Object> faceLandmarksTypesMap = new HashMap<>();
     for (int i = 0; i < faceLandmarksTypesStrings.length; i++) {
       FaceLandmark landmark = face.getLandmark(faceLandmarksTypes[i]);
+      String landmarkName = faceLandmarksTypesStrings[i];
 
-      if(landmark != null) {
-        PointF point = landmark.getPosition();
-        faceLandmarksTypesMap.put(faceLandmarksTypesStrings[i], point);
+      Log.d(TAG, "Getting '" + landmarkName + "' landmark");  
+      if(landmark == null) {
+        Log.d(TAG, "Landmark '" + landmarkName + "' is null - going next");
+        continue;
       }
+      
+      PointF point = landmark.getPosition();
+      faceLandmarksTypesMap.put(landmarkName, point);
     }
 
     return faceLandmarksTypesMap;
@@ -180,6 +185,14 @@ public class VisionCameraFaceDetectorPlugin extends FrameProcessorPlugin {
     Map<String, Object> faceContoursTypesMap = new HashMap<>();
     for (int i = 0; i < faceContoursTypesStrings.length; i++) {
       FaceContour contour = face.getContour(faceContoursTypes[i]);
+      String contourName = faceContoursTypesStrings[i];
+
+      Log.d(TAG, "Getting '" + contourName + "' contour");
+      if(contour == null) {
+        Log.d(TAG, "Face contour '" + contourName + "' is null - going next");
+        continue;
+      }
+
       List<PointF> points = contour.getPoints();
       List<Map<String, Double>> pointsArray = new ArrayList<>();
 
@@ -189,7 +202,7 @@ public class VisionCameraFaceDetectorPlugin extends FrameProcessorPlugin {
         currentPointsMap.put("y", (double) points.get(j).y);
         pointsArray.add(currentPointsMap);
       }
-      faceContoursTypesMap.put(faceContoursTypesStrings[contour.getFaceContourType() - 1], pointsArray);
+      faceContoursTypesMap.put(contourName, pointsArray);
     }
 
     return faceContoursTypesMap;
