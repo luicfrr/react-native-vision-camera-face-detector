@@ -139,7 +139,11 @@ public class VisionCameraFaceDetectorPlugin extends FrameProcessorPlugin {
       }
       
       PointF point = landmark.getPosition();
-      faceLandmarksTypesMap.put(landmarkName, point);
+      Map<String, Double> currentPointsMap = new HashMap<>();
+      currentPointsMap.put("x", (double) point.x);
+      currentPointsMap.put("y", (double) point.y);
+
+      faceLandmarksTypesMap.put(landmarkName, currentPointsMap);
     }
 
     return faceLandmarksTypesMap;
