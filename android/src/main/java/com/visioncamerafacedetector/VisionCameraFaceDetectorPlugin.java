@@ -198,15 +198,15 @@ public class VisionCameraFaceDetectorPlugin extends FrameProcessorPlugin {
       }
 
       List<PointF> points = contour.getPoints();
-      List<Map<String, Double>> pointsArray = new ArrayList<>();
-
+      Map<String, Map<String, Double>> pointsMap = new HashMap<>();
       for (int j = 0; j < points.size(); j++) {
         Map<String, Double> currentPointsMap = new HashMap<>();
         currentPointsMap.put("x", (double) points.get(j).x);
         currentPointsMap.put("y", (double) points.get(j).y);
-        pointsArray.add(currentPointsMap);
+        pointsMap.put(String.valueOf(j), currentPointsMap);
       }
-      faceContoursTypesMap.put(contourName, pointsArray);
+
+      faceContoursTypesMap.put(contourName, pointsMap);
     }
 
     return faceContoursTypesMap;
@@ -237,9 +237,10 @@ public class VisionCameraFaceDetectorPlugin extends FrameProcessorPlugin {
         int fixedOrientation = (orientation.toDegrees() - 90 + 360) % 360;
         InputImage image = InputImage.fromMediaImage(mediaImage, fixedOrientation);
         Task<List<Face>> task = faceDetector.process(image);
-        List<Map<String, Object>> faceList = new ArrayList<>();
         List<Face> faces = Tasks.await(task);
-        for (Face face : faces) {
+        Map<String, Object> facesMap = new HashMap<>();
+        for (int i = 0; i < faces.size(); i++) {
+          Face face = faces.get(i);
           Map<String, Object> map = new HashMap<>();
 
           if(String.valueOf(params.get("landmarkMode")).equals("all")){
@@ -247,9 +248,17 @@ public class VisionCameraFaceDetectorPlugin extends FrameProcessorPlugin {
           }
 
           if(String.valueOf(params.get("classificationMode")).equals("all")) {
-            map.put("leftEyeOpenProbability", (double) face.getLeftEyeOpenProbability());
-            map.put("rightEyeOpenProbability", (double) face.getRightEyeOpenProbability());
-            map.put("smilingProbability", (double) face.getSmilingProbability());
+            double leftEyeOpenProbability = face.getLeftEyeOpenProbability() != null ? 
+              (double) face.getLeftEyeOpenProbability() : -1;
+            map.put("leftEyeOpenProbability", leftEyeOpenProbability);
+
+            double rightEyeOpenProbability = face.getRightEyeOpenProbability() != null ? 
+              (double) face.getRightEyeOpenProbability() : -1;
+            map.put("rightEyeOpenProbability", rightEyeOpenProbability);
+        
+            double smilingProbability = face.getSmilingProbability() != null ? 
+              (double) face.getSmilingProbability() : -1;
+            map.put("smilingProbability", smilingProbability);
           }
 
           if(String.valueOf(params.get("contourMode")).equals("all")){
@@ -265,9 +274,9 @@ public class VisionCameraFaceDetectorPlugin extends FrameProcessorPlugin {
           map.put("yawAngle", (double) face.getHeadEulerAngleY());
           map.put("bounds", processBoundingBox(face.getBoundingBox()));
 
-          faceList.add(map);
+          facesMap.put(String.valueOf(i), map);
         }
-
+        
         Map<String, Object> frameMap = new HashMap<>();
         frameMap.put("width", mediaImage.getWidth());
         frameMap.put("height", mediaImage.getHeight());
@@ -276,7 +285,7 @@ public class VisionCameraFaceDetectorPlugin extends FrameProcessorPlugin {
           frameMap.put("frameData", BitmapUtils.convertYuvToRgba(mediaImage));
         }
 
-        resultMap.put("faces", faceList);
+        resultMap.put("faces", facesMap);
         resultMap.put("frame", frameMap);
       } catch (Exception e) {
         Log.e(TAG, "Error processing face detection: ", e);
