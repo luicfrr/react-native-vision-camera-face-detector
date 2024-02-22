@@ -135,13 +135,10 @@ OBS: Returned face bounds are relative to image size not to device screen size s
 
 ## 🔧 Troubleshooting
 
-Here is a list of common issues when trying to use this package and how you can try to fix them:
+Here is a common issue when trying to use this package and how you can try to fix it:
 
 `Regular javascript function cannot be shared. Try decorating the function with the 'worklet' keyword...`:
 - If you're using `react-native-reanimated` maybe you're missing [this](https://github.com/mrousavy/react-native-vision-camera/issues/1791#issuecomment-1892130378) step.
-
-`Fatal signal: SIGSEGV ` or `my app is crashing`:
-- Maybe this is not related to this plugin. See native logs (run your app with Android Studio or Xcode) and compare them with logs on [this issue](https://github.com/mrousavy/react-native-vision-camera/issues/2589). If they look the same then please try [this](https://github.com/mrousavy/react-native-vision-camera/issues/2589#issuecomment-1957808365) workaround.
 
 If you find other errors while using this package you're wellcome to open a new issue or create a PR with the fix.
 
