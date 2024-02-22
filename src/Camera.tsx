@@ -26,6 +26,7 @@ type WorkletType = (
 ) => Promise<void>
 
 type ComponentType = {
+  ref: React.MutableRefObject<VisionCamera | null>
   faceDetectionOptions?: FaceDetectionOptions
   faceDetectionCallback: CallbackType
 } & CameraProps
@@ -57,6 +58,7 @@ function useWorklet(
  * @returns 
  */
 export function Camera( {
+  ref,
   faceDetectionOptions,
   faceDetectionCallback,
   ...props
@@ -128,6 +130,7 @@ export function Camera( {
 
   return <VisionCamera
     { ...props }
+    ref={ ref }
     frameProcessor={ cameraFrameProcessor }
   />
 }
