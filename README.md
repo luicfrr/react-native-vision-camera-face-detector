@@ -47,7 +47,7 @@ export default function App() {
     })()
   }, [device])
 
-  const handleDetectionWorklet = Worklets.createRunInJsFn( (
+  const handleFacesDetection = Worklets.createRunInJsFn( (
     result: DetectionResult
   ) => { 
     console.log( 'detection result', result )
@@ -58,7 +58,7 @@ export default function App() {
       {!!device? <Camera
         style={StyleSheet.absoluteFill}
         device={device}
-        faceDetectionCallback={ handleFacesDetected }
+        faceDetectionCallback={ handleFacesDetection }
         faceDetectionOptions={ {
           // detection settings
         } }
@@ -102,7 +102,7 @@ export default function App() {
     })()
   }, [device])
 
-  const handleDetectionWorklet = Worklets.createRunInJsFn( (
+  const handleFacesDetection = Worklets.createRunInJsFn( (
     result: DetectionResult
   ) => { 
     console.log( 'detection result', result )
@@ -111,11 +111,11 @@ export default function App() {
     'worklet'
     detectFaces(
       frame,
-      handleDetectionWorklet, {
+      handleFacesDetection, {
         // detection settings
       }
     )
-  }, [handleDetectionWorklet])
+  }, [handleFacesDetection])
 
   return (
     <View style={{ flex: 1 }}>
