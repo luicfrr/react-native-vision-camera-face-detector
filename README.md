@@ -15,9 +15,7 @@
 yarn add react-native-vision-camera-face-detector react-native-worklets-core
 ```
 
-You need to add `react-native-worklets-core` plugin to your `babel.config.js`. More details [here](https://react-native-vision-camera.com/docs/guides/frame-processors#react-native-worklets-core).
-
-OBS: If you're using `react-native-reanimated` in your app see [this](https://github.com/mrousavy/react-native-vision-camera/issues/1791#issuecomment-1892130378).
+Then you need to add `react-native-worklets-core` plugin to `babel.config.js`. More details [here](https://react-native-vision-camera.com/docs/guides/frame-processors#react-native-worklets-core).
 
 ## 💡 Usage
 
@@ -85,6 +83,14 @@ export default function App() {
   )
 }
 ```
+
+## 🔧 Troubleshooting
+
+Here is a list of common issues when trying to use this package and how you can try to fix them:
+
+- `Regular javascript function cannot be shared. Try decorating the function with the 'worklet' keyword...`:
+
+  If you're using `react-native-reanimated` maybe you're missing [this](https://github.com/mrousavy/react-native-vision-camera/issues/1791#issuecomment-1892130378) step.
 
 ## 👷 Built With
 
