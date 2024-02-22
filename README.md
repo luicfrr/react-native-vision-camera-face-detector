@@ -12,15 +12,65 @@
 ## 🧰 Installation
 
 ```bash
-yarn add react-native-vision-camera-face-detector react-native-worklets-core
+yarn add react-native-vision-camera-face-detector
 ```
 
 Then you need to add `react-native-worklets-core` plugin to `babel.config.js`. More details [here](https://react-native-vision-camera.com/docs/guides/frame-processors#react-native-worklets-core).
 
 ## 💡 Usage
 
-OBS: Face bounds are relative to image size not to device screen size so you need to scale it by multiplying desired bounds data by screen size divided by frame size: `bounds.XX * (deviceWidth|Height / frame.width|height)`.
+Recommended way:
+```jsx
+import { 
+  StyleSheet, 
+  Text, 
+  View 
+} from 'react-native'
+import { 
+  useEffect, 
+  useState 
+} from 'react'
+import {useCameraDevice} from 'react-native-vision-camera'
+import {
+  Camera,
+  DetectionResult
+} from 'react-native-vision-camera-face-detector'
+import { Worklets } from 'react-native-worklets-core'
 
+export default function App() {
+  const device = useCameraDevice('front')
+
+  useEffect(() => {
+    (async () => {
+      const status = await Camera.requestCameraPermission()
+      console.log({ status })
+    })()
+  }, [device])
+
+  const handleDetectionWorklet = Worklets.createRunInJsFn( (
+    result: DetectionResult
+  ) => { 
+    console.log( 'detection result', result )
+  })
+
+  return (
+    <View style={{ flex: 1 }}>
+      {!!device? <Camera
+        style={StyleSheet.absoluteFill}
+        device={device}
+        faceDetectionOptions={ {
+          // detection settings
+        } }
+        faceDetectionCallback={ handleFacesDetected }
+      /> : <Text>
+        No Device
+      </Text>}
+    </View>
+  )
+}
+```
+
+Or default way:
 ```jsx
 import { 
   StyleSheet, 
@@ -84,6 +134,8 @@ export default function App() {
 }
 ```
 
+OBS: Returned face bounds are relative to image size not to device screen size so you need to scale it by multiplying desired bounds data by screen size divided by frame size: `bounds.XX * (deviceWidth|Height / frame.width|height)`.
+
 ## 🔧 Troubleshooting
 
 Here is a list of common issues when trying to use this package and how you can try to fix them:
@@ -109,7 +161,7 @@ This package was tested using the following:
 - `react-native`: `0.73.4` (new arch disabled)
 - `react-native-vision-camera`: `3.9.0`
 - `react-native-worklets-core`: `0.3.0`
-- `react-native-reanimated`: `3.7.0`
+- `react-native-reanimated`: `3.7.1`
 - `expo`: `50.0.7`
 
 Min Android/IOS versions:
