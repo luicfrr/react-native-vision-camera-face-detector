@@ -58,10 +58,10 @@ export default function App() {
       {!!device? <Camera
         style={StyleSheet.absoluteFill}
         device={device}
+        faceDetectionCallback={ handleFacesDetected }
         faceDetectionOptions={ {
           // detection settings
         } }
-        faceDetectionCallback={ handleFacesDetected }
       /> : <Text>
         No Device
       </Text>}
@@ -109,15 +109,12 @@ export default function App() {
   })
   const frameProcessor = useFrameProcessor((frame) => {
     'worklet'
-    runAsync(frame, () => {
-      'worklet'
-      detectFaces(
-        frame,
-        handleDetectionWorklet, {
-          // detection settings
-        }
-      )
-    })
+    detectFaces(
+      frame,
+      handleDetectionWorklet, {
+        // detection settings
+      }
+    )
   }, [handleDetectionWorklet])
 
   return (
