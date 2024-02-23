@@ -2,6 +2,8 @@
 
 `react-native-vision-camera-face-detector` is a React Native library that integrates with the Vision Camera module to provide face detection functionality. It allows you to easily detect faces in real-time using the front camera and visualize the detected faces on the screen.
 
+If you like this package please give it a ⭐ on [GitHub](https://github.com/nonam4/react-native-vision-camera-face-detector).
+
 ## 🏗️ Features
 
 - Real-time face detection using front camera
@@ -131,7 +133,9 @@ export default function App() {
 }
 ```
 
-OBS: Returned face bounds are relative to image size not to device screen size so you need to scale it by multiplying desired bounds data by screen size divided by frame size: `bounds.XX * (deviceWidth|Height / frame.width|height)`.
+OBS: Returned face bounds are relative to image size not to device screen size so you need to scale it by multiplying desired bounds data by screen size divided by frame size: `bounds.X * (deviceWidth|Height / frame.width|height)`.
+
+See example app for more details.
 
 ## 🔧 Troubleshooting
 
@@ -155,7 +159,7 @@ This package was tested using the following:
 - `react-native`: `0.73.4` (new arch disabled)
 - `react-native-vision-camera`: `3.9.0`
 - `react-native-worklets-core`: `0.3.0`
-- `react-native-reanimated`: `3.7.1`
+- `react-native-reanimated`: `3.6.2`
 - `expo`: `50.0.7`
 
 Min Android/IOS versions:
@@ -165,4 +169,4 @@ Min Android/IOS versions:
 
 ## 📚 Author
 
-- **Luiz Carlos Ferreira** - [nonam4](https://github.com/nonam4)
+Made with ❤️ by [nonam4](https://github.com/nonam4).

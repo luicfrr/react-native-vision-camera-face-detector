@@ -1,0 +1,26 @@
+{
+  "extends": "expo/tsconfig.base",
+  "compilerOptions": {
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "module": "commonjs",
+    "isolatedModules": true,
+    "typeRoots": [
+      "./node_modules/@types"
+    ],
+    "noUnusedLocals": true,
+    "noImplicitReturns": true,
+    "sourceMap": true,
+    "paths": {
+      "react-native-vision-camera-face-detector": [
+        "../src/index"
+      ]
+    },
+    "strictPropertyInitialization": false
+  },
+  "compileOnSave": true,
+  "include": [
+    "index.js",
+    "src"
+  ]
+}

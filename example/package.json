@@ -1,0 +1,45 @@
+{
+  "name": "face-detector-example",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "lint": "yarn test && eslint --quiet --fix --ext .js,.ts,.tsx,.jsx .",
+    "test": "tsc",
+    "prebuild": "npx expo prebuild",
+    "prebuild:clean": "npx expo prebuild --clean",
+    "android": "yarn prebuild && npx expo run:android -d",
+    "android:prod": "yarn prebuild && npx expo run:android -d --variant release",
+    "ios": "yarn prebuild && npx expo run:ios -d",
+    "ios:prod": "yarn prebuild && npx expo run:ios -d --configuration Release",
+    "start": "expo start --dev-client"
+  },
+  "main": "index.js",
+  "dependencies": {
+    "@react-native-community/hooks": "^3.0.0",
+    "@react-navigation/native": "^6.1.10",
+    "expo": "~50.0.7",
+    "expo-application": "~5.8.3",
+    "expo-build-properties": "~0.11.1",
+    "expo-dev-client": "~3.3.8",
+    "react": "18.2.0",
+    "react-native": "0.73.4",
+    "react-native-reanimated": "~3.6.2",
+    "react-native-safe-area-context": "4.8.2",
+    "react-native-vision-camera": "3.9.0-beta.5",
+    "react-native-worklets-core": "^0.3.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.23.9",
+    "@babel/preset-env": "^7.23.9",
+    "@babel/runtime": "^7.23.9",
+    "@react-native/metro-config": "^0.73.3",
+    "@types/react": "~18.2.57",
+    "babel-plugin-module-resolver": "^5.0.0",
+    "eslint": "^8.56.0",
+    "metro-react-native-babel-preset": "^0.77.0",
+    "typescript": "^5.3.3"
+  },
+  "resolutions": {
+    "@expo/config-plugins": "^7.8.4"
+  }
+}

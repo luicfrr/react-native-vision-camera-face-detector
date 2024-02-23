@@ -41,3 +41,9 @@ DerivedData
 *.ipa
 *.xcuserstate
 ios/.xcode.env.local
+
+# Example
+#
+example/android
+example/ios
+example/.expo
