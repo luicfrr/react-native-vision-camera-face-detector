@@ -7,12 +7,6 @@ module.exports = {
     [ 'react-native-reanimated/plugin', {
       processNestedWorklets: true
     } ],
-    [ 'react-native-worklets-core/plugin' ],
-    [ 'module-resolver', {
-      extensions: [ '.tsx', '.ts', '.js', '.json' ],
-      alias: {
-        [ pak.name ]: path.join( __dirname, '..', pak.source )
-      }
-    } ]
+    [ 'react-native-worklets-core/plugin' ]
   ]
 }
