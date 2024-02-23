@@ -8,8 +8,8 @@ import { detectFaces } from './FaceDetector'
 
 // types
 import type {
-  ReactElement,
-  DependencyList
+  DependencyList,
+  ForwardedRef
 } from 'react'
 import type {
   CameraProps,
@@ -26,7 +26,6 @@ type WorkletType = (
 ) => Promise<void>
 
 type ComponentType = {
-  ref: React.MutableRefObject<VisionCamera | null>
   faceDetectionOptions?: FaceDetectionOptions
   faceDetectionCallback: CallbackType
 } & CameraProps
@@ -57,12 +56,13 @@ function useWorklet(
  * @param {ComponentType} props Camera + face detection props 
  * @returns 
  */
-export function Camera( {
-  ref,
+export const Camera = React.forwardRef( ( {
   faceDetectionOptions,
   faceDetectionCallback,
   ...props
-}: ComponentType ): ReactElement {
+}: ComponentType,
+  ref: ForwardedRef<VisionCamera>
+) => {
   /** 
    * Is there an async task already running?
    */
@@ -133,4 +133,4 @@ export function Camera( {
     ref={ ref }
     frameProcessor={ cameraFrameProcessor }
   />
-}
+} )
