@@ -34,6 +34,7 @@
     "@babel/preset-env": "^7.23.9",
     "@babel/runtime": "^7.23.9",
     "@types/react": "~18.2.57",
+    "babel-plugin-module-resolver": "^5.0.0",
     "eslint": "^8.56.0",
     "metro-react-native-babel-preset": "^0.77.0",
     "typescript": "^5.3.3"

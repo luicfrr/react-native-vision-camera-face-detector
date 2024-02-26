@@ -1,12 +1,21 @@
-const path = require( 'path' )
-const pak = require( '../package.json' )
-
 module.exports = {
   presets: [ 'babel-preset-expo' ],
-  plugins: [
-    [ 'react-native-reanimated/plugin', {
-      processNestedWorklets: true
+  plugins: [ [
+    'module-resolver', {
+      alias: {
+        'react-native-vision-camera-face-detector': '../src/index'
+      },
+      root: [ './src' ],
+      'extensions': [
+        '.tsx',
+        '.ts',
+        '.js',
+        '.json'
+      ]
     } ],
-    [ 'react-native-worklets-core/plugin' ]
+  [ 'react-native-reanimated/plugin', {
+    processNestedWorklets: true
+  } ],
+  [ 'react-native-worklets-core/plugin' ]
   ]
 }
