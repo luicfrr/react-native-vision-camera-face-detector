@@ -141,8 +141,8 @@ See example app for more details.
 
 Here is a common issue when trying to use this package and how you can try to fix it:
 
-`Regular javascript function cannot be shared. Try decorating the function with the 'worklet' keyword...`:
-- If you're using `react-native-reanimated` maybe you're missing [this](https://github.com/mrousavy/react-native-vision-camera/issues/1791#issuecomment-1892130378) step.
+- `Regular javascript function cannot be shared. Try decorating the function with the 'worklet' keyword...`:
+  - If you're using `react-native-reanimated` maybe you're missing [this](https://github.com/mrousavy/react-native-vision-camera/issues/1791#issuecomment-1892130378) step.
 
 If you find other errors while using this package you're wellcome to open a new issue or create a PR with the fix.
 
