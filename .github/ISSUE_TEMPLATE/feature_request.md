@@ -7,6 +7,8 @@ assignees: ''
 
 ---
 
+<!--Please note that this is an open source project. I don't expect you to pay me to use it but take this into consideration before requiring an urgent fix and/or response-->
+
 **Is your feature request related to a problem? Please describe.**
 A clear and concise description of what the problem is. Ex. It would be nice if we have the option to [...]
 
