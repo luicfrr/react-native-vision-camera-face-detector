@@ -215,9 +215,15 @@ public class VisionCameraFaceDetectorPlugin extends FrameProcessorPlugin {
   @Nullable
   @Override
   public Object callback(@NonNull Frame frame, @Nullable Map<String, Object> params) {
-    Image mediaImage = frame.getImage();
+    Image mediaImage = null;
     Orientation orientation = null;
     Map<String, Object> resultMap = new HashMap<>();
+
+    try {
+       mediaImage = frame.getImage();
+    } catch (Error e) {
+      Log.e(TAG, "Error getting frame image: ", e);
+    }
 
     try {
       orientation = frame.getOrientation();
@@ -294,7 +300,7 @@ public class VisionCameraFaceDetectorPlugin extends FrameProcessorPlugin {
       return resultMap;
     }
 
-    return null;
+    return resultMap;
   }
 
   public VisionCameraFaceDetectorPlugin(@NonNull VisionCameraProxy proxy, @Nullable Map<String, Object> options) {
