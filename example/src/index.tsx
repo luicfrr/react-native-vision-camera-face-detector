@@ -1,4 +1,7 @@
-import { useEffect } from 'react'
+import {
+  useEffect,
+  useRef
+} from 'react'
 import {
   StyleSheet,
   Text,
@@ -6,6 +9,7 @@ import {
   Platform
 } from 'react-native'
 import {
+  Camera as VisionCamera,
   useCameraDevice,
   useCameraPermission,
 } from 'react-native-vision-camera'
@@ -70,9 +74,13 @@ function FaceDetection(): JSX.Element {
     appState === 'active'
   )
   const cameraDevice = useCameraDevice( 'front' )
-  /**
-   * face rectangle position
-   */
+  //
+  // vision camera ref
+  //
+  const camera = useRef<VisionCamera>( null )
+  //
+  // face rectangle position
+  //
   const aFaceW = useSharedValue( 0 )
   const aFaceH = useSharedValue( 0 )
   const aFaceX = useSharedValue( 0 )
@@ -99,8 +107,9 @@ function FaceDetection(): JSX.Element {
     faces,
     frame
   }: DetectionResult ) => {
-    // if no faces are detected
+    // if no faces are detected we do nothing
     if ( Object.keys( faces ).length <= 0 ) return
+
     const { bounds } = faces[ 0 ]
     const {
       faceW,
@@ -112,6 +121,11 @@ function FaceDetection(): JSX.Element {
     aFaceH.value = faceH
     aFaceX.value = faceX
     aFaceY.value = faceY
+
+    // only call camera methods if ref is defined
+    if ( camera.current ) {
+      // take photo, capture video, etc...
+    }
   } )
 
   useEffect( () => {
@@ -156,6 +170,7 @@ function FaceDetection(): JSX.Element {
 
     const faceW = bounds.width * scaleX
     const faceH = bounds.height * scaleY
+    const faceY = bounds.top * scaleY
     const faceX = ( () => {
       const xPos = bounds.left * scaleX
       if ( isIos ) return xPos
@@ -166,10 +181,8 @@ function FaceDetection(): JSX.Element {
     return {
       faceW,
       faceH,
-      // get horizontally face center
       faceX,
-      // get vertically face center
-      faceY: bounds.top * scaleY
+      faceY
     }
   }
 
@@ -187,6 +200,11 @@ function FaceDetection(): JSX.Element {
   return ( <>
     { hasPermission && cameraDevice ? <>
       <Camera
+        // ignore ts error as we are importing Vision 
+        // Camera types from two different sources.
+        // No need to use this on a real/final app.
+        // @ts-ignore
+        ref={ camera }
         style={ StyleSheet.absoluteFill }
         isActive={ isCameraActive }
         device={ cameraDevice }
