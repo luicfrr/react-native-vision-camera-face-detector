@@ -220,7 +220,7 @@ public class VisionCameraFaceDetectorPlugin extends FrameProcessorPlugin {
     Map<String, Object> resultMap = new HashMap<>();
 
     try {
-       mediaImage = frame.getImage();
+      mediaImage = frame.getImage();
     } catch (Error e) {
       Log.e(TAG, "Error getting frame image: ", e);
     }
@@ -242,6 +242,8 @@ public class VisionCameraFaceDetectorPlugin extends FrameProcessorPlugin {
 
         int fixedOrientation = (orientation.toDegrees() - 90 + 360) % 360;
         InputImage image = InputImage.fromMediaImage(mediaImage, fixedOrientation);
+        // make sure frame is still valid before processing image
+        frame.getIsValid();
         Task<List<Face>> task = faceDetector.process(image);
         List<Face> faces = Tasks.await(task);
         Map<String, Object> facesMap = new HashMap<>();
@@ -294,11 +296,9 @@ public class VisionCameraFaceDetectorPlugin extends FrameProcessorPlugin {
 
         resultMap.put("faces", facesMap);
         resultMap.put("frame", frameMap);
-      } catch (Exception e) {
+      } catch (Exception | FrameInvalidError e) {
         Log.e(TAG, "Error processing face detection: ", e);
       }
-      
-      return resultMap;
     }
 
     return resultMap;
