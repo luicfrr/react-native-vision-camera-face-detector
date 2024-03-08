@@ -284,6 +284,7 @@ public class VisionCameraFaceDetectorPlugin extends FrameProcessorPlugin {
         }
         
         Map<String, Object> frameMap = new HashMap<>();
+        frameMap.put("original", frame);
         frameMap.put("width", mediaImage.getWidth());
         frameMap.put("height", mediaImage.getHeight());
         frameMap.put("orientation", orientation.getUnionValue());

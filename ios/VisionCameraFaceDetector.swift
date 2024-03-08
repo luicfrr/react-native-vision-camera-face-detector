@@ -264,6 +264,7 @@ public class VisionCameraFaceDetector: FrameProcessorPlugin {
         }
 
         var frameMap: [String: Any] = [:]
+        frameMap["original"] = frame
         frameMap["width"] = frame.width
         frameMap["height"] = frame.height
         frameMap["orientation"] = getOrientationDescription(orientation: frame.orientation)

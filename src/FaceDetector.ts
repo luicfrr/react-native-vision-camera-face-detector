@@ -37,6 +37,7 @@ export interface FrameData {
   height: number
   orientation: Orientation
   frameData?: string
+  original: Frame
 }
 
 export interface Bounds {
