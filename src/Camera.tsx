@@ -132,5 +132,6 @@ export const Camera = React.forwardRef( ( {
     { ...props }
     ref={ ref }
     frameProcessor={ cameraFrameProcessor }
+    pixelFormat='yuv'
   />
 } )
