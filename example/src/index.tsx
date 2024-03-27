@@ -1,12 +1,15 @@
 import {
   useEffect,
-  useRef
+  useRef,
+  useState
 } from 'react'
 import {
   StyleSheet,
   Text,
   useWindowDimensions,
-  Platform
+  Platform,
+  Button,
+  View
 } from 'react-native'
 import {
   Camera as VisionCamera,
@@ -66,10 +69,19 @@ function FaceDetection(): JSX.Element {
     hasPermission,
     requestPermission
   } = useCameraPermission()
+  const [
+    cameraMounted,
+    setCameraMounted
+  ] = useState<boolean>( false )
+  const [
+    cameraPaused,
+    setCameraPaused
+  ] = useState<boolean>( false )
   const isIos = Platform.OS === 'ios'
   const isFocused = useIsFocused()
   const appState = useAppState()
   const isCameraActive = (
+    !cameraPaused &&
     isFocused &&
     appState === 'active'
   )
@@ -199,25 +211,53 @@ function FaceDetection(): JSX.Element {
 
   return ( <>
     { hasPermission && cameraDevice ? <>
-      <Camera
-        // ignore ts error as we are importing Vision 
-        // Camera types from two different sources.
-        // No need to use this on a real/final app.
-        // @ts-ignore
-        ref={ camera }
-        style={ StyleSheet.absoluteFill }
-        isActive={ isCameraActive }
-        device={ cameraDevice }
-        onError={ handleCameraMountError }
-        faceDetectionCallback={ handleFacesDetected }
-        faceDetectionOptions={ {
-          performanceMode: 'fast',
-          classificationMode: 'all'
+      { cameraMounted && <>
+        <Camera
+          // ignore ts error as we are importing Vision 
+          // Camera types from two different sources.
+          // No need to use this on a real/final app.
+          // @ts-ignore
+          ref={ camera }
+          style={ StyleSheet.absoluteFill }
+          isActive={ isCameraActive }
+          device={ cameraDevice }
+          onError={ handleCameraMountError }
+          faceDetectionCallback={ handleFacesDetected }
+          faceDetectionOptions={ {
+            performanceMode: 'fast',
+            classificationMode: 'all'
+          } }
+        />
+
+        <Animated.View
+          style={ animatedStyle }
+        />
+
+        { cameraPaused && <Text
+          style={ {
+            backgroundColor: 'rgb(0,0,255)',
+            color: 'white',
+            position: 'absolute',
+            bottom: 300,
+            left: 0,
+            right: 0
+          } }
+        >
+          Camera is PAUSED
+        </Text> }
+      </> }
+
+      { !cameraMounted && <Text
+        style={ {
+          backgroundColor: 'rgb(255,255,0)',
+          position: 'absolute',
+          bottom: 300,
+          left: 0,
+          right: 0
         } }
-      />
-      <Animated.View
-        style={ animatedStyle }
-      />
+      >
+        Camera is NOT mounted
+      </Text> }
     </> : <Text
       style={ {
         backgroundColor: 'rgb(255,0,0)',
@@ -226,6 +266,24 @@ function FaceDetection(): JSX.Element {
     >
       No camera device or permission
     </Text> }
+
+    <View
+      style={ {
+        position: 'absolute',
+        bottom: 0,
+        left: 0,
+        right: 0
+      } }
+    >
+      <Button
+        onPress={ () => setCameraPaused( ( current ) => !current ) }
+        title={ `${ cameraPaused ? 'Resume' : 'Pause' } Camera` }
+      />
+      <Button
+        onPress={ () => setCameraMounted( ( current ) => !current ) }
+        title={ `${ cameraMounted ? 'Unmount' : 'Mount' } Camera` }
+      />
+    </View>
   </> )
 }
 
