@@ -156,17 +156,17 @@ If you find other errors while using this package you're wellcome to open a new 
 
 This package was tested using the following:
 
-- `react-native`: `0.73.4` (new arch disabled)
-- `react-native-vision-camera`: `3.9.0`
-- `react-native-worklets-core`: `0.3.0`
-- `react-native-reanimated`: `3.6.2`
-- `expo`: `50.0.7`
+- `react-native`: `0.73.6` (new arch disabled)
+- `react-native-vision-camera`: `4.0.0-beta.11`
+- `react-native-worklets-core`: `0.4.0`
+- `react-native-reanimated`: `3.8.1`
+- `expo`: `50.0.14`
 
-Min Android/IOS versions:
+Min O.S version:
 
-- `Android SDK`: `26` (Android 8)
-- `IOS`: `13.4`
+- `Android`: `SDK 26` (Android 8)
+- `IOS`: `14`
 
 ## 📚 Author
 
-Made with ❤️ by [nonam4](https://github.com/nonam4).
+Made with ❤️ by [nonam4](https://github.com/nonam4)
