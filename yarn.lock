@@ -7546,10 +7546,10 @@ react-native-builder-bob@^0.23.2:
     which "^2.0.2"
     yargs "^17.5.1"
 
-react-native-vision-camera@^3.9.0-beta.5:
-  version "3.9.0"
-  resolved "https://registry.yarnpkg.com/react-native-vision-camera/-/react-native-vision-camera-3.9.0.tgz#6a96a6cbad53c2db84d671c388b250327681a553"
-  integrity sha512-q0HejFTS56s5DXWHZhlWLLZMKn/8OXALrqET+FySPIKskwYEdJ5rOV2aDlD6hlo67qCNFGUIMZWGFFc9L2os1g==
+react-native-vision-camera@4.0.0-beta.5:
+  version "4.0.0-beta.5"
+  resolved "https://registry.yarnpkg.com/react-native-vision-camera/-/react-native-vision-camera-4.0.0-beta.5.tgz#f13d7ae55b9a276e84f7449a3d12a6ee754ed414"
+  integrity sha512-MrlUiTSR6h2Jt/SjyQ6maxv8B/4Vla0ce2XMFMw8Fz269+EE2ug0VYoGOc4qSMixxtPPpslcmNh9P2VHJkb4Qg==
 
 react-native-worklets-core@^0.3.0:
   version "0.3.0"
