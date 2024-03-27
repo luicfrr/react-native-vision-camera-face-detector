@@ -1,33 +1,15 @@
 package com.visioncamerafacedetector;
 
-import static java.lang.Math.ceil;
-import android.annotation.SuppressLint;
 import android.graphics.PointF;
 import android.graphics.Rect;
-import android.graphics.Bitmap;
 import android.media.Image;
 import android.util.Log;
-import android.util.Base64;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.camera.core.ImageProxy;
 
-import com.mrousavy.camera.types.Orientation;
-import com.mrousavy.camera.core.FrameInvalidError;
-import com.mrousavy.camera.frameprocessor.Frame;
-import com.mrousavy.camera.frameprocessor.FrameProcessorPlugin;
-import com.mrousavy.camera.frameprocessor.VisionCameraProxy;
-
-import java.util.List;
-import java.util.Map;
-import java.util.ArrayList;
-import java.util.HashMap;
-
-import java.io.ByteArrayOutputStream;
-
-import com.google.android.gms.tasks.Tasks;
 import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.mlkit.vision.common.InputImage;
 import com.google.mlkit.vision.face.Face;
 import com.google.mlkit.vision.face.FaceContour;
@@ -35,6 +17,15 @@ import com.google.mlkit.vision.face.FaceDetection;
 import com.google.mlkit.vision.face.FaceDetector;
 import com.google.mlkit.vision.face.FaceDetectorOptions;
 import com.google.mlkit.vision.face.FaceLandmark;
+import com.mrousavy.camera.core.FrameInvalidError;
+import com.mrousavy.camera.frameprocessor.Frame;
+import com.mrousavy.camera.frameprocessor.FrameProcessorPlugin;
+import com.mrousavy.camera.frameprocessor.VisionCameraProxy;
+import com.mrousavy.camera.types.Orientation;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class VisionCameraFaceDetectorPlugin extends FrameProcessorPlugin {
   private static final String TAG = "FaceDetector";
@@ -215,90 +206,80 @@ public class VisionCameraFaceDetectorPlugin extends FrameProcessorPlugin {
   @Nullable
   @Override
   public Object callback(@NonNull Frame frame, @Nullable Map<String, Object> params) {
-    Image mediaImage = null;
-    Orientation orientation = null;
     Map<String, Object> resultMap = new HashMap<>();
 
     try {
-      mediaImage = frame.getImage();
-    } catch (Error e) {
-      Log.e(TAG, "Error getting frame image: ", e);
-    }
+      Image frameImage = frame.getImage();
+      Orientation orientation = frame.getOrientation();
 
-    try {
-      orientation = frame.getOrientation();
-    } catch (FrameInvalidError e) {
-      Log.e(TAG, "Error getting frame orientation: ", e);
-    }
-
-    if (
-      mediaImage != null &&
-      orientation != null
-    ) {
-      try {
-        if(faceDetector == null) {
-          initFD(params);
-        }
-
-        int fixedOrientation = (orientation.toDegrees() - 90 + 360) % 360;
-        InputImage image = InputImage.fromMediaImage(mediaImage, fixedOrientation);
-        // make sure frame is still valid before processing image
-        frame.getIsValid();
-        Task<List<Face>> task = faceDetector.process(image);
-        List<Face> faces = Tasks.await(task);
-        Map<String, Object> facesMap = new HashMap<>();
-        for (int i = 0; i < faces.size(); i++) {
-          Face face = faces.get(i);
-          Map<String, Object> map = new HashMap<>();
-
-          if(String.valueOf(params.get("landmarkMode")).equals("all")){
-            map.put("landmarks", processLandmarks(face));
-          }
-
-          if(String.valueOf(params.get("classificationMode")).equals("all")) {
-            double leftEyeOpenProbability = face.getLeftEyeOpenProbability() != null ? 
-              (double) face.getLeftEyeOpenProbability() : -1;
-            map.put("leftEyeOpenProbability", leftEyeOpenProbability);
-
-            double rightEyeOpenProbability = face.getRightEyeOpenProbability() != null ? 
-              (double) face.getRightEyeOpenProbability() : -1;
-            map.put("rightEyeOpenProbability", rightEyeOpenProbability);
-        
-            double smilingProbability = face.getSmilingProbability() != null ? 
-              (double) face.getSmilingProbability() : -1;
-            map.put("smilingProbability", smilingProbability);
-          }
-
-          if(String.valueOf(params.get("contourMode")).equals("all")){
-            map.put("contours", processFaceContours(face));
-          }
-
-          if (String.valueOf(params.get("trackingEnabled")).equals("true")) {
-            map.put("trackingId", face.getTrackingId());
-          }
-
-          map.put("rollAngle", (double) face.getHeadEulerAngleZ());
-          map.put("pitchAngle", (double) face.getHeadEulerAngleX());
-          map.put("yawAngle", (double) face.getHeadEulerAngleY());
-          map.put("bounds", processBoundingBox(face.getBoundingBox()));
-
-          facesMap.put(String.valueOf(i), map);
-        }
-        
-        Map<String, Object> frameMap = new HashMap<>();
-        frameMap.put("original", frame);
-        frameMap.put("width", mediaImage.getWidth());
-        frameMap.put("height", mediaImage.getHeight());
-        frameMap.put("orientation", orientation.getUnionValue());
-        if (String.valueOf(params.get("convertFrame")).equals("true")) {
-          frameMap.put("frameData", BitmapUtils.convertYuvToRgba(mediaImage));
-        }
-
-        resultMap.put("faces", facesMap);
-        resultMap.put("frame", frameMap);
-      } catch (Exception | FrameInvalidError e) {
-        Log.e(TAG, "Error processing face detection: ", e);
+      if (
+        frameImage == null &&
+        orientation == null
+      ) {
+        Log.i(TAG, "image or orientation is null");
+        return resultMap;
       }
+
+      if(faceDetector == null) {
+        initFD(params);
+      }
+
+      int fixedOrientation = (orientation.toDegrees() - 90 + 360) % 360;
+      InputImage image = InputImage.fromMediaImage(frameImage, fixedOrientation);
+      Task<List<Face>> task = faceDetector.process(image);
+      List<Face> faces = Tasks.await(task);
+      Map<String, Object> facesMap = new HashMap<>();
+      for (int i = 0; i < faces.size(); i++) {
+        Face face = faces.get(i);
+        Map<String, Object> map = new HashMap<>();
+
+        if(String.valueOf(params.get("landmarkMode")).equals("all")){
+          map.put("landmarks", processLandmarks(face));
+        }
+
+        if(String.valueOf(params.get("classificationMode")).equals("all")) {
+          double leftEyeOpenProbability = face.getLeftEyeOpenProbability() != null ? 
+            (double) face.getLeftEyeOpenProbability() : -1;
+          map.put("leftEyeOpenProbability", leftEyeOpenProbability);
+
+          double rightEyeOpenProbability = face.getRightEyeOpenProbability() != null ? 
+            (double) face.getRightEyeOpenProbability() : -1;
+          map.put("rightEyeOpenProbability", rightEyeOpenProbability);
+      
+          double smilingProbability = face.getSmilingProbability() != null ? 
+            (double) face.getSmilingProbability() : -1;
+          map.put("smilingProbability", smilingProbability);
+        }
+
+        if(String.valueOf(params.get("contourMode")).equals("all")){
+          map.put("contours", processFaceContours(face));
+        }
+
+        if (String.valueOf(params.get("trackingEnabled")).equals("true")) {
+          map.put("trackingId", face.getTrackingId());
+        }
+
+        map.put("rollAngle", (double) face.getHeadEulerAngleZ());
+        map.put("pitchAngle", (double) face.getHeadEulerAngleX());
+        map.put("yawAngle", (double) face.getHeadEulerAngleY());
+        map.put("bounds", processBoundingBox(face.getBoundingBox()));
+
+        facesMap.put(String.valueOf(i), map);
+      }
+      
+      Map<String, Object> frameMap = new HashMap<>();
+      frameMap.put("original", frame);
+      frameMap.put("width", frameImage.getWidth());
+      frameMap.put("height", frameImage.getHeight());
+      frameMap.put("orientation", orientation.getUnionValue());
+      if (String.valueOf(params.get("convertFrame")).equals("true")) {
+        frameMap.put("frameData", BitmapUtils.convertYuvToRgba(frameImage));
+      }
+
+      resultMap.put("faces", facesMap);
+      resultMap.put("frame", frameMap);
+    } catch (Exception e) {
+      Log.e(TAG, "Error processing face detection: ", e);
     }
 
     return resultMap;

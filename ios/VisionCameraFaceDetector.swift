@@ -213,72 +213,68 @@ public class VisionCameraFaceDetector: FrameProcessorPlugin {
   }
 
   public override func callback(_ frame: Frame, withArguments arguments: [AnyHashable: Any]?) -> Any? {
-    var image: VisionImage! = nil; 
     var result: [String: Any] = [:]
 
     do {
-      image = VisionImage(buffer: frame.buffer)
-      image.orientation = .up
-    } catch let error {
-      print("Error getting frame image: \(error)")
-    }
-
-    if image != nil {
-      do {
-        let config = getConfig(withArguments: arguments)
-        if faceDetector == nil {
-          initFD(config: config)
-        }
-
-        var faceList: [Any] = []
-        let faces: [Face] = try faceDetector.results(in: image)
-        if (!faces.isEmpty) {
-          for face in faces {
-            var map: [String: Any] = [:]
-
-            if config?["landmarkMode"] as? String == "all" {
-              map["landmarks"] = processLandmarks(from: face)
-            }
-
-            if config?["classificationMode"] as? String == "all" {
-              map["leftEyeOpenProbability"] = face.leftEyeOpenProbability
-              map["rightEyeOpenProbability"] = face.rightEyeOpenProbability
-              map["smilingProbability"] = face.smilingProbability
-            }
-
-            if config?["contourMode"] as? String == "all" {
-              map["contours"] = processFaceContours(from: face)
-            }
-
-            if config?["trackingEnabled"] as? Bool == true {
-              map["trackingId"] = face.trackingID
-            }
-
-            map["rollAngle"] = face.headEulerAngleZ
-            map["pitchAngle"] = face.headEulerAngleX
-            map["yawAngle"] = face.headEulerAngleY
-            map["bounds"] = processBoundingBox(from: face)
-
-            faceList.append(map)
-          }
-        }
-
-        var frameMap: [String: Any] = [:]
-        frameMap["original"] = frame
-        frameMap["width"] = frame.width
-        frameMap["height"] = frame.height
-        frameMap["orientation"] = getOrientationDescription(orientation: frame.orientation)
-        if config?["convertFrame"] as? Bool == true {
-          frameMap["frameData"] = convertFrameToBase64(frame)
-        }
-
-        result = [
-          "faces": faceList,
-          "frame": frameMap
-        ]
-      } catch let error {
-        print("Error processing face detection: \(error)")
+      var image = VisionImage(buffer: frame.buffer)
+      if image == nil {
+        print("image is null: \(error)")
+        return result
       }
+
+      image.orientation = .up
+
+      let config = getConfig(withArguments: arguments)
+      if faceDetector == nil {
+        initFD(config: config)
+      }
+
+      var faceList: [Any] = []
+      let faces: [Face] = try faceDetector.results(in: image)
+      for face in faces {
+        var map: [String: Any] = [:]
+
+        if config?["landmarkMode"] as? String == "all" {
+          map["landmarks"] = processLandmarks(from: face)
+        }
+
+        if config?["classificationMode"] as? String == "all" {
+          map["leftEyeOpenProbability"] = face.leftEyeOpenProbability
+          map["rightEyeOpenProbability"] = face.rightEyeOpenProbability
+          map["smilingProbability"] = face.smilingProbability
+        }
+
+        if config?["contourMode"] as? String == "all" {
+          map["contours"] = processFaceContours(from: face)
+        }
+
+        if config?["trackingEnabled"] as? Bool == true {
+          map["trackingId"] = face.trackingID
+        }
+
+        map["rollAngle"] = face.headEulerAngleZ
+        map["pitchAngle"] = face.headEulerAngleX
+        map["yawAngle"] = face.headEulerAngleY
+        map["bounds"] = processBoundingBox(from: face)
+
+        faceList.append(map)
+      }
+
+      var frameMap: [String: Any] = [:]
+      frameMap["original"] = frame
+      frameMap["width"] = frame.width
+      frameMap["height"] = frame.height
+      frameMap["orientation"] = getOrientationDescription(orientation: frame.orientation)
+      if config?["convertFrame"] as? Bool == true {
+        frameMap["frameData"] = convertFrameToBase64(frame)
+      }
+
+      result = [
+        "faces": faceList,
+        "frame": frameMap
+      ]
+    } catch let error {
+      print("Error processing face detection: \(error)")
     }
 
     return result
