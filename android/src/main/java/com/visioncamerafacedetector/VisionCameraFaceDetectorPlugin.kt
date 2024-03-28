@@ -82,15 +82,14 @@ class VisionCameraFaceDetectorPlugin(
     scaleY: Double
   ): Map<String, Any> {
     val bounds: MutableMap<String, Any> = HashMap()
+    val width = boundingBox.width().toDouble() * scaleX
 
-    bounds["width"] = boundingBox.width().toDouble() * scaleX
+    bounds["width"] = width
     bounds["height"] = boundingBox.height().toDouble() * scaleY
-    bounds["top"] = boundingBox.top.toDouble() * scaleY
-    bounds["left"] = boundingBox.left.toDouble() * scaleX
-    bounds["right"] = boundingBox.right.toDouble() * scaleX
-    bounds["bottom"] = boundingBox.bottom.toDouble() * scaleY
-    bounds["centerX"] = boundingBox.centerX().toDouble() * scaleX
-    bounds["centerY"] = boundingBox.centerY().toDouble() * scaleY
+    bounds["x"] = windowWidth - (width + (
+      boundingBox.left.toDouble() * scaleX
+    ))
+    bounds["y"] = boundingBox.top.toDouble() * scaleY
 
     return bounds
   }
@@ -296,12 +295,8 @@ class VisionCameraFaceDetectorPlugin(
 
       val frameMap: MutableMap<String, Any> = HashMap()
       frameMap["original"] = frame
-      frameMap["width"] = frameImage.width
-      frameMap["height"] = frameImage.height
-      frameMap["orientation"] = orientation.unionValue
-
       if (params?.get("convertFrame").toString() == "true") {
-        frameMap["frameData"] = BitmapUtils.convertYuvToRgba(frameImage)
+        frameMap["converted"] = BitmapUtils.convertYuvToRgba(frameImage)
       }
 
       resultMap["faces"] = facesList

@@ -6,8 +6,6 @@ import {
 import {
   StyleSheet,
   Text,
-  useWindowDimensions,
-  Platform,
   Button,
   View
 } from 'react-native'
@@ -21,10 +19,8 @@ import { useAppState } from '@react-native-community/hooks'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 import { NavigationContainer } from '@react-navigation/native'
 import {
-  Bounds,
   Camera,
-  DetectionResult,
-  FrameData
+  DetectionResult
 } from 'react-native-vision-camera-face-detector'
 import Animated, {
   useAnimatedStyle,
@@ -32,13 +28,6 @@ import Animated, {
   withTiming
 } from 'react-native-reanimated'
 import { Worklets } from 'react-native-worklets-core'
-
-type FacePosType = {
-  faceW: number
-  faceH: number
-  faceX: number
-  faceY: number
-}
 
 /**
  * Entry point component
@@ -62,10 +51,6 @@ function Index(): JSX.Element {
  */
 function FaceDetection(): JSX.Element {
   const {
-    width: windowWidth,
-    height: windowHeight
-  } = useWindowDimensions()
-  const {
     hasPermission,
     requestPermission
   } = useCameraPermission()
@@ -77,7 +62,6 @@ function FaceDetection(): JSX.Element {
     cameraPaused,
     setCameraPaused
   ] = useState<boolean>( false )
-  const isIos = Platform.OS === 'ios'
   const isFocused = useIsFocused()
   const appState = useAppState()
   const isCameraActive = (
@@ -124,15 +108,15 @@ function FaceDetection(): JSX.Element {
 
     const { bounds } = faces[ 0 ]
     const {
-      faceW,
-      faceH,
-      faceX,
-      faceY
-    } = calcFacePosition( bounds, frame )
-    aFaceW.value = faceW
-    aFaceH.value = faceH
-    aFaceX.value = faceX
-    aFaceY.value = faceY
+      width,
+      height,
+      x,
+      y
+    } = bounds
+    aFaceW.value = width
+    aFaceH.value = height
+    aFaceX.value = x
+    aFaceY.value = y
 
     // only call camera methods if ref is defined
     if ( camera.current ) {
@@ -145,58 +129,58 @@ function FaceDetection(): JSX.Element {
     requestPermission()
   }, [] )
 
-  /**
-   * Calculate face position in screen
-   *
-   * @param {Bounds} bounds Face detection bounds
-   * @param {FrameData} frame Current frame data
-   * @return {FacePosType} Face position
-   */
-  function calcFacePosition(
-    bounds: Bounds,
-    frame: FrameData
-  ): FacePosType {
-    const orientation = ( () => {
-      switch ( frame.orientation ) {
-        case 'portrait': return 0
-        case 'landscape-left': return 90
-        case 'portrait-upside-down': return 180
-        case 'landscape-right': return 270
-      }
-    } )()
-    const degrees = ( orientation - 90 + 360 ) % 360
-    let scaleX = 0
-    let scaleY = 0
+  // /**
+  //  * Calculate face position in screen
+  //  *
+  //  * @param {Bounds} bounds Face detection bounds
+  //  * @param {FrameData} frame Current frame data
+  //  * @return {FacePosType} Face position
+  //  */
+  // function calcFacePosition(
+  //   bounds: Bounds,
+  //   frame: FrameData
+  // ): FacePosType {
+  //   const orientation = ( () => {
+  //     switch ( frame.orientation ) {
+  //       case 'portrait': return 0
+  //       case 'landscape-left': return 90
+  //       case 'portrait-upside-down': return 180
+  //       case 'landscape-right': return 270
+  //     }
+  //   } )()
+  //   const degrees = ( orientation - 90 + 360 ) % 360
+  //   let scaleX = 0
+  //   let scaleY = 0
 
-    if ( !isIos && (
-      degrees === 90 ||
-      degrees === 270
-    ) ) {
-      // frame sizes are inverted due to vision camera orientation bug
-      scaleX = windowWidth / frame.height
-      scaleY = windowHeight / frame.width
-    } else {
-      scaleX = windowWidth / frame.width
-      scaleY = windowHeight / frame.height
-    }
+  //   if ( !isIos && (
+  //     degrees === 90 ||
+  //     degrees === 270
+  //   ) ) {
+  //     // frame sizes are inverted due to vision camera orientation bug
+  //     scaleX = windowWidth / frame.height
+  //     scaleY = windowHeight / frame.width
+  //   } else {
+  //     scaleX = windowWidth / frame.width
+  //     scaleY = windowHeight / frame.height
+  //   }
 
-    const faceW = bounds.width * scaleX
-    const faceH = bounds.height * scaleY
-    const faceY = bounds.top * scaleY
-    const faceX = ( () => {
-      const xPos = bounds.left * scaleX
-      if ( isIos ) return xPos
-      // invert X position on android
-      return windowWidth - ( xPos + faceW )
-    } )()
+  //   const faceW = bounds.width * scaleX
+  //   const faceH = bounds.height * scaleY
+  //   const faceY = bounds.top * scaleY
+  //   const faceX = ( () => {
+  //     const xPos = bounds.left * scaleX
+  //     if ( isIos ) return xPos
+  //     // invert X position on android
+  //     return windowWidth - ( xPos + faceW )
+  //   } )()
 
-    return {
-      faceW,
-      faceH,
-      faceX,
-      faceY
-    }
-  }
+  //   return {
+  //     faceW,
+  //     faceH,
+  //     faceX,
+  //     faceY
+  //   }
+  // }
 
   /**
    * Hanldes camera mount error event
