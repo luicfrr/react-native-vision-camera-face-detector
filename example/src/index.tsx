@@ -103,8 +103,7 @@ function FaceDetection(): JSX.Element {
   } ) )
 
   const handleFacesDetected = Worklets.createRunInJsFn( ( {
-    faces,
-    frame
+    faces
   }: DetectionResult ) => {
     console.log( 'faces', faces )
     // if no faces are detected we do nothing
