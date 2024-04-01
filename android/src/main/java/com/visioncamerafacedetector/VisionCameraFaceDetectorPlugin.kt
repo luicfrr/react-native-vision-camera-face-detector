@@ -233,7 +233,7 @@ class VisionCameraFaceDetectorPlugin(
         frameImage == null &&
         orientation == null
       ) {
-        Log.i(TAG, "image or orientation is null")
+        Log.i(TAG, "Image or orientation is null")
         return resultMap
       }
 
@@ -298,13 +298,21 @@ class VisionCameraFaceDetectorPlugin(
       }
 
       val frameMap: MutableMap<String, Any> = HashMap()
-      frameMap["original"] = frame
-      if (params?.get("convertFrame").toString() == "true") {
+      val returnOriginal = params?.get("returnOriginal").toString() == "true"
+      val convertFrame = params?.get("convertFrame").toString() == "true"
+
+      if (returnOriginal) {
+        frameMap["original"] = frame
+      }
+
+      if (convertFrame) {
         frameMap["converted"] = BitmapUtils.convertYuvToRgba(frameImage)
       }
 
       resultMap["faces"] = facesList
-      resultMap["frame"] = frameMap
+      if(returnOriginal || convertFrame) {
+        resultMap["frame"] = frameMap
+      }
     } catch (e: Exception) {
       Log.e(TAG, "Error processing face detection: ", e)
     } catch (e: FrameInvalidError) {

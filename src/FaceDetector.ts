@@ -33,7 +33,7 @@ export interface Face {
 
 export interface FrameData {
   converted?: string
-  original: Frame
+  original?: Frame
 }
 
 export interface Bounds {
@@ -127,6 +127,15 @@ export interface FaceDetectionOptions {
    * @default false
    */
   convertFrame?: boolean
+
+  /**
+   * Should return original frame data?
+   * 
+   * WARNING: On my tests this freeze frame processor pipeline on IOS.
+   * 
+   * @default false
+   */
+  returnOriginal?: boolean
 }
 
 const plugin = VisionCameraProxy.initFrameProcessorPlugin( 'detectFaces' )

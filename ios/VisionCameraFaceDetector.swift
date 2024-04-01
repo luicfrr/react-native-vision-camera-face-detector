@@ -11,8 +11,8 @@ import SceneKit
 public class VisionCameraFaceDetector: FrameProcessorPlugin {
   var context = CIContext(options: nil)
   var faceDetector: FaceDetector! = nil;
-  let screenSize: CGRect = UIScreen.main.bounds
-
+  let screenBounds = UIScreen.main.bounds
+  
   func initFD(config: [String: Any]!) {
     let minFaceSize = 0.15
     let options = FaceDetectorOptions()
@@ -101,8 +101,8 @@ public class VisionCameraFaceDetector: FrameProcessorPlugin {
     for i in 0..<faceLandmarkTypes.count {
       let landmark = face.landmark(ofType: faceLandmarkTypes[i]);
       let position = [
-        "x": landmark?.position.x * scaleX,
-        "y": landmark?.position.y * scaleY
+        "x": landmark?.position.x ?? 0.0 * scaleX,
+        "y": landmark?.position.y ?? 0.0 * scaleY
       ]
       faceLandMarksTypesMap[faceLandmarksTypesStrings[i]] = position
     }
@@ -204,34 +204,15 @@ public class VisionCameraFaceDetector: FrameProcessorPlugin {
     return imageData?.base64EncodedString() ?? ""
   }
 
-  func getOrientationDescription(orientation: UIImage.Orientation) -> String {
-    switch orientation {
-      case .right, .leftMirrored:
-        return "portrait"
-      case .left, .rightMirrored:
-        return "portrait-upside-down"
-      case .up, .downMirrored:
-        return "landscape-left"
-      case .down, .upMirrored:
-        return "landscape-right"
-    }
-  }
-
   public override func callback(_ frame: Frame, withArguments arguments: [AnyHashable: Any]?) -> Any? {
     var result: [String: Any] = [:]
 
     do {
-      var image = VisionImage(buffer: frame.buffer)
-      if image == nil {
-        print("image is null: \(error)")
-        return result
-      }
-
+      let image = VisionImage(buffer: frame.buffer)
       image.orientation = .up
 
-      let scaleX = screenSize.width / image.width
-      let scaleY = screenSize.height / image.height
-
+      let scaleX = screenBounds.size.width / CGFloat(frame.width)
+      let scaleY = screenBounds.size.height / CGFloat(frame.height)
       let config = getConfig(withArguments: arguments)
       if faceDetector == nil {
         initFD(config: config)
@@ -281,14 +262,22 @@ public class VisionCameraFaceDetector: FrameProcessorPlugin {
       }
 
       var frameMap: [String: Any] = [:]
-      frameMap["original"] = frame
-      if config?["convertFrame"] as? Bool == true {
+      let returnOriginal = config?["returnOriginal"] as? Bool == true
+      let convertFrame = config?["convertFrame"] as? Bool == true
+
+      if returnOriginal {
+        frameMap["original"] = frame
+      }
+
+      if  convertFrame {
         frameMap["converted"] = convertFrameToBase64(frame)
       }
 
-      result = [
+      result = returnOriginal || convertFrame ? [
         "faces": faceList,
         "frame": frameMap
+      ] : [
+        "faces": faceList
       ]
     } catch let error {
       print("Error processing face detection: \(error)")
