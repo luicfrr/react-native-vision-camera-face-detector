@@ -84,7 +84,10 @@ function FaceDetection(): JSX.Element {
   const animatedStyle = useAnimatedStyle( () => ( {
     position: 'absolute',
     borderWidth: 4,
-    borderColor: 'rgb(0,255,0)',
+    borderLeftColor: 'rgb(0,255,0)',
+    borderRightColor: 'rgb(0,255,0)',
+    borderBottomColor: 'rgb(0,255,0)',
+    borderTopColor: 'rgb(255,0,0)',
     width: withTiming( aFaceW.value, {
       duration: 100
     } ),
@@ -103,6 +106,7 @@ function FaceDetection(): JSX.Element {
     faces,
     frame
   }: DetectionResult ) => {
+    console.log( 'faces', faces )
     // if no faces are detected we do nothing
     if ( Object.keys( faces ).length <= 0 ) return
 
