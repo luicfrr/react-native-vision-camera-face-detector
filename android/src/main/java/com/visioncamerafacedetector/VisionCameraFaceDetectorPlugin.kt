@@ -59,6 +59,7 @@ class VisionCameraFaceDetectorPlugin(
     ) {
       minFaceSize = minFaceSizeParam.toFloat()
     }
+
     if (params?.get("trackingEnabled").toString() == "true") {
       enableTracking = true
     }
@@ -69,9 +70,11 @@ class VisionCameraFaceDetectorPlugin(
       .setContourMode(contourModeValue)
       .setClassificationMode(classificationModeValue)
       .setMinFaceSize(minFaceSize)
+
     if (enableTracking) {
       optionsBuilder.enableTracking()
     }
+
     val options = optionsBuilder.build()
     faceDetector = FaceDetection.getClient(options)
   }
@@ -226,7 +229,8 @@ class VisionCameraFaceDetectorPlugin(
       val frameImage = frame.image
       val orientation = frame.orientation
 
-      if (frameImage == null &&
+      if (
+        frameImage == null &&
         orientation == null
       ) {
         Log.i(TAG, "image or orientation is null")
