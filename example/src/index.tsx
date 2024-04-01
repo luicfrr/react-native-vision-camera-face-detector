@@ -133,59 +133,6 @@ function FaceDetection(): JSX.Element {
     requestPermission()
   }, [] )
 
-  // /**
-  //  * Calculate face position in screen
-  //  *
-  //  * @param {Bounds} bounds Face detection bounds
-  //  * @param {FrameData} frame Current frame data
-  //  * @return {FacePosType} Face position
-  //  */
-  // function calcFacePosition(
-  //   bounds: Bounds,
-  //   frame: FrameData
-  // ): FacePosType {
-  //   const orientation = ( () => {
-  //     switch ( frame.orientation ) {
-  //       case 'portrait': return 0
-  //       case 'landscape-left': return 90
-  //       case 'portrait-upside-down': return 180
-  //       case 'landscape-right': return 270
-  //     }
-  //   } )()
-  //   const degrees = ( orientation - 90 + 360 ) % 360
-  //   let scaleX = 0
-  //   let scaleY = 0
-
-  //   if ( !isIos && (
-  //     degrees === 90 ||
-  //     degrees === 270
-  //   ) ) {
-  //     // frame sizes are inverted due to vision camera orientation bug
-  //     scaleX = windowWidth / frame.height
-  //     scaleY = windowHeight / frame.width
-  //   } else {
-  //     scaleX = windowWidth / frame.width
-  //     scaleY = windowHeight / frame.height
-  //   }
-
-  //   const faceW = bounds.width * scaleX
-  //   const faceH = bounds.height * scaleY
-  //   const faceY = bounds.top * scaleY
-  //   const faceX = ( () => {
-  //     const xPos = bounds.left * scaleX
-  //     if ( isIos ) return xPos
-  //     // invert X position on android
-  //     return windowWidth - ( xPos + faceW )
-  //   } )()
-
-  //   return {
-  //     faceW,
-  //     faceH,
-  //     faceX,
-  //     faceY
-  //   }
-  // }
-
   /**
    * Hanldes camera mount error event
    *
