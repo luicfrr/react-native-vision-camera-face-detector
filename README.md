@@ -133,7 +133,7 @@ export default function App() {
 }
 ```
 
-OBS: Returned face bounds are relative to image size not to device screen size so you need to scale it by multiplying desired bounds data by screen size divided by frame size: `bounds.X * (deviceWidth|Height / frame.width|height)`.
+OBS: Returned face bounds, landmarks and contours are now natively downscaled to screen size. No extra function needed.
 
 See example app for more details.
 
