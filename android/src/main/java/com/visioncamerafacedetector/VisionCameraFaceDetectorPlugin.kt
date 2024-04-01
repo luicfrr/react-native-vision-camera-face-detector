@@ -241,7 +241,7 @@ class VisionCameraFaceDetectorPlugin(
         initFD(params)
       }
 
-      val rotation = orientation!!.toSurfaceRotation()
+      val rotation = orientation!!.toDegrees()
       val image = InputImage.fromMediaImage(frameImage!!, rotation)
       val scaleX: Double
       val scaleY: Double
