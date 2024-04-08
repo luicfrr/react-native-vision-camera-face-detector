@@ -150,7 +150,7 @@ export function detectFaces(
   frame: Frame,
   callback: CallbackType,
   options?: FaceDetectionOptions
-) {
+): DetectionResult {
   'worklet'
   if ( !plugin ) {
     throw new Error( 'Failed to load Frame Processor Plugin "detectFaces"!' )
@@ -158,4 +158,5 @@ export function detectFaces(
   // @ts-ignore
   const result: DetectionResult = plugin.call( frame, options )
   callback( result )
+  return result
 }
