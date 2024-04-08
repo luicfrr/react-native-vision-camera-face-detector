@@ -3,6 +3,15 @@ import {
   type Frame
 } from 'react-native-vision-camera'
 
+type DetectFacesType = {
+  /** Current frame */
+  frame: Frame
+  /** Optional callback */
+  callback?: CallbackType
+  /** Detection options */
+  options?: FaceDetectionOptions
+}
+
 type Point = {
   x: number
   y: number
@@ -142,21 +151,19 @@ const plugin = VisionCameraProxy.initFrameProcessorPlugin( 'detectFaces' )
 /**
  * Detect faces on frame
  * 
- * @param {Frame} frame Current frame
- * @param {function} callback Face detection callback
- * @param {FaceDetectionOptions | undefined} options Detection options
+ * @param {DetectFacesType} props Detect faces prop
  */
-export function detectFaces(
-  frame: Frame,
-  callback: CallbackType,
-  options?: FaceDetectionOptions
-): DetectionResult {
+export function detectFaces( {
+  frame,
+  callback,
+  options
+}: DetectFacesType ): DetectionResult {
   'worklet'
   if ( !plugin ) {
     throw new Error( 'Failed to load Frame Processor Plugin "detectFaces"!' )
   }
   // @ts-ignore
   const result: DetectionResult = plugin.call( frame, options )
-  callback( result )
+  callback?.( result )
   return result
 }
