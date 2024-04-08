@@ -88,11 +88,11 @@ export const Camera = React.forwardRef( ( {
   ) => {
     'worklet'
     try {
-      detectFaces(
+      detectFaces( {
         frame,
-        faceDetectionCallback,
-        faceDetectionOptions
-      )
+        callback: faceDetectionCallback,
+        options: faceDetectionOptions
+      } )
     } catch ( error: any ) {
       logOnJs( 'Execution error:', error )
     } finally {
