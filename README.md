@@ -111,12 +111,13 @@ export default function App() {
   })
   const frameProcessor = useFrameProcessor((frame) => {
     'worklet'
-    detectFaces(
+    const result = detectFaces( {
       frame,
-      handleFacesDetection, {
+      options: {
         // detection settings
       }
-    )
+    })
+    handleFacesDetection(result)
   }, [handleFacesDetection])
 
   return (
