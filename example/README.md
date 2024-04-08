@@ -7,6 +7,8 @@ npm instal
 yarn
 ```
 
+Before running example app you need to delete everything inside `/node_modules/react-native-vision-camera-face-detector/node_modules` except `.bin` folder.
+
 Then run the app in development mode:
 ```bash
 npm run android
