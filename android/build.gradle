@@ -1,9 +1,12 @@
+def safeExtGet(prop, fallback) {
+    rootProject.ext.has(prop) ? rootProject.ext.get(prop) : fallback
+}
+def kotlinVersion = safeExtGet("VisionCameraFaceDetector_kotlinVersion", "1.8.10")
+
 apply plugin: "com.android.library"
 apply plugin: "kotlin-android"
 
 buildscript {
-    def kotlinVersion = safeExtGet("kotlinVersion", "1.8.10")
-
     if (project == rootProject) {
         repositories {
             google()
@@ -17,13 +20,9 @@ buildscript {
     }
 }
 
-def safeExtGet(prop, fallback) {
-    rootProject.ext.has(prop) ? rootProject.ext.get(prop) : fallback
-}
-
 android {
     buildToolsVersion = safeExtGet("VisionCameraFaceDetector_buildToolsVersion", "34.0.0")
-    ndkVersion safeExtGet("ndkVersion", "25.1.8937393")
+    ndkVersion safeExtGet("VisionCameraFaceDetector_ndkVersion", "25.1.8937393")
     defaultConfig {
         minSdkVersion safeExtGet("VisionCameraFaceDetector_minSdkVersion", 26)
         compileSdkVersion safeExtGet("VisionCameraFaceDetector_compileSdkVersion", 34)
