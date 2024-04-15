@@ -20,7 +20,8 @@ import { SafeAreaProvider } from 'react-native-safe-area-context'
 import { NavigationContainer } from '@react-navigation/native'
 import {
   Camera,
-  DetectionResult
+  DetectionResult,
+  FaceDetectionOptions
 } from 'react-native-vision-camera-face-detector'
 import Animated, {
   useAnimatedStyle,
@@ -62,6 +63,10 @@ function FaceDetection(): JSX.Element {
     cameraPaused,
     setCameraPaused
   ] = useState<boolean>( false )
+  const faceDetectionOptions = useRef<FaceDetectionOptions>( {
+    performanceMode: 'fast',
+    classificationMode: 'all'
+  } ).current
   const isFocused = useIsFocused()
   const appState = useAppState()
   const isCameraActive = (
@@ -157,10 +162,7 @@ function FaceDetection(): JSX.Element {
           device={ cameraDevice }
           onError={ handleCameraMountError }
           faceDetectionCallback={ handleFacesDetected }
-          faceDetectionOptions={ {
-            performanceMode: 'fast',
-            classificationMode: 'all'
-          } }
+          faceDetectionOptions={ faceDetectionOptions }
         />
 
         <Animated.View

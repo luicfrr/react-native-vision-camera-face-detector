@@ -9,46 +9,86 @@ import SceneKit
 
 @objc(VisionCameraFaceDetector)
 public class VisionCameraFaceDetector: FrameProcessorPlugin {
-  var context = CIContext(options: nil)
-  var faceDetector: FaceDetector! = nil;
-  let screenBounds = UIScreen.main.bounds
-  
-  func initFD(config: [String: Any]!) {
+  // device display data  
+  private let screenBounds = UIScreen.main.bounds
+
+  // detection props
+  private var context = CIContext(options: nil)
+  private var faceDetector: FaceDetector! = nil
+  private var runLandmarks = false
+  private var runClassifications = false
+  private var runContours = false
+  private var trackingEnabled = false
+  private var returnOriginal = false
+  private var convertFrame = false
+
+  public override init(
+    proxy: VisionCameraProxyHolder, 
+    options: [AnyHashable : Any]! = [:]
+  ) {
+    super.init(proxy: proxy, options: options)
+
+    let config = getConfig(withArguments: options)
+    // initializes faceDetector on creation
     let minFaceSize = 0.15
-    let options = FaceDetectorOptions()
-        options.performanceMode = .fast
-        options.landmarkMode = .none
-        options.contourMode = .none
-        options.classificationMode = .none
-        options.minFaceSize = minFaceSize
-        options.isTrackingEnabled = false
+    let optionsBuilder = FaceDetectorOptions()
+        optionsBuilder.performanceMode = .fast
+        optionsBuilder.landmarkMode = .none
+        optionsBuilder.contourMode = .none
+        optionsBuilder.classificationMode = .none
+        optionsBuilder.minFaceSize = minFaceSize
+        optionsBuilder.isTrackingEnabled = false
 
     if config?["performanceMode"] as? String == "accurate" {
-      options.performanceMode = .accurate
+      optionsBuilder.performanceMode = .accurate
     }
 
     if config?["landmarkMode"] as? String == "all" {
-      options.landmarkMode = .all
-    }
-
-    if config?["contourMode"] as? String == "all" {
-      options.contourMode = .all
+      runLandmarks = true
+      optionsBuilder.landmarkMode = .all
     }
 
     if config?["classificationMode"] as? String == "all" {
-      options.classificationMode = .all
+      runClassifications = true
+      optionsBuilder.classificationMode = .all
+    }
+
+    if config?["contourMode"] as? String == "all" {
+      runContours = true
+      optionsBuilder.contourMode = .all
     }
 
     let minFaceSizeParam = config?["minFaceSize"] as? Double
     if minFaceSizeParam != nil && minFaceSizeParam != minFaceSize {
-      options.minFaceSize = CGFloat(minFaceSizeParam!)
+      optionsBuilder.minFaceSize = CGFloat(minFaceSizeParam!)
     }
 
     if config?["trackingEnabled"] as? Bool == true {
-      options.isTrackingEnabled = true
+      trackingEnabled = true
+      optionsBuilder.isTrackingEnabled = true
     }
 
-    faceDetector = FaceDetector.faceDetector(options: options)
+    faceDetector = FaceDetector.faceDetector(options: optionsBuilder)
+
+    // also check about returing frame settings
+    returnOriginal = config?["returnOriginal"] as? Bool == true
+    convertFrame = config?["convertFrame"] as? Bool == true
+  }
+
+  func getConfig(
+    withArguments arguments: [AnyHashable: Any]!
+  ) -> [String:Any]! {
+    if arguments.count > 0 {
+      let config = arguments.map { dictionary in
+        Dictionary(uniqueKeysWithValues: dictionary.map { (key, value) in
+          (key as? String ?? "", value)
+        })
+      }
+
+      return config
+    }
+
+    return nil
   }
 
   func processBoundingBox(
@@ -173,21 +213,9 @@ public class VisionCameraFaceDetector: FrameProcessorPlugin {
     return faceContoursTypesMap
   }
 
-  func getConfig(withArguments arguments: [AnyHashable: Any]!) -> [String:Any]! {
-    if arguments.count > 0 {
-      let config = arguments.map { dictionary in
-        Dictionary(uniqueKeysWithValues: dictionary.map { (key, value) in
-          (key as? String ?? "", value)
-        })
-      }
-
-      return config
-    }
-
-    return nil
-  }
-
-  func convertFrameToBase64(_ frame: Frame) -> Any! {
+  func convertFrameToBase64(
+    _ frame: Frame
+  ) -> Any! {
     guard let imageBuffer = CMSampleBufferGetImageBuffer(frame.buffer) else {
       print("Failed to get CVPixelBuffer!")
       return nil
@@ -204,7 +232,10 @@ public class VisionCameraFaceDetector: FrameProcessorPlugin {
     return imageData?.base64EncodedString() ?? ""
   }
 
-  public override func callback(_ frame: Frame, withArguments arguments: [AnyHashable: Any]?) -> Any? {
+  public override func callback(
+    _ frame: Frame, 
+    withArguments arguments: [AnyHashable: Any]?
+  ) -> Any? {
     var result: [String: Any] = [:]
 
     do {
@@ -213,17 +244,12 @@ public class VisionCameraFaceDetector: FrameProcessorPlugin {
 
       let scaleX = screenBounds.size.width / CGFloat(frame.width)
       let scaleY = screenBounds.size.height / CGFloat(frame.height)
-      let config = getConfig(withArguments: arguments)
-      if faceDetector == nil {
-        initFD(config: config)
-      }
-
       var faceList: [Any] = []
-      let faces: [Face] = try faceDetector.results(in: image)
+      let faces: [Face] = try faceDetector!.results(in: image)
       for face in faces {
         var map: [String: Any] = [:]
 
-        if config?["landmarkMode"] as? String == "all" {
+        if runLandmarks {
           map["landmarks"] = processLandmarks(
             from: face,
             scaleX: scaleX,
@@ -231,13 +257,13 @@ public class VisionCameraFaceDetector: FrameProcessorPlugin {
           )
         }
 
-        if config?["classificationMode"] as? String == "all" {
+        if runClassifications {
           map["leftEyeOpenProbability"] = face.leftEyeOpenProbability
           map["rightEyeOpenProbability"] = face.rightEyeOpenProbability
           map["smilingProbability"] = face.smilingProbability
         }
 
-        if config?["contourMode"] as? String == "all" {
+        if runContours {
           map["contours"] = processFaceContours(
             from: face,
             scaleX: scaleX,
@@ -245,7 +271,7 @@ public class VisionCameraFaceDetector: FrameProcessorPlugin {
           )
         }
 
-        if config?["trackingEnabled"] as? Bool == true {
+        if trackingEnabled {
           map["trackingId"] = face.trackingID
         }
 
@@ -262,9 +288,6 @@ public class VisionCameraFaceDetector: FrameProcessorPlugin {
       }
 
       var frameMap: [String: Any] = [:]
-      let returnOriginal = config?["returnOriginal"] as? Bool == true
-      let convertFrame = config?["convertFrame"] as? Bool == true
-
       if returnOriginal {
         frameMap["original"] = frame
       }
@@ -284,9 +307,5 @@ public class VisionCameraFaceDetector: FrameProcessorPlugin {
     }
 
     return result
-  }
-
-  public override init(proxy: VisionCameraProxyHolder, options: [AnyHashable : Any]! = [:]) {
-    super.init(proxy: proxy, options: options)
   }
 }

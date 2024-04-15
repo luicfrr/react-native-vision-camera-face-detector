@@ -21,47 +21,53 @@ class VisionCameraFaceDetectorPlugin(
   proxy: VisionCameraProxy,
   options: Map<String, Any>?
 ) : FrameProcessorPlugin() {
-  private var faceDetector: FaceDetector? = null
-
   // device display data
   private val density = Resources.getSystem().displayMetrics.density.toInt()
   private val windowWidth = Resources.getSystem().displayMetrics.widthPixels / density
   private val windowHeight = Resources.getSystem().displayMetrics.heightPixels / density
 
-  private fun initFD(params: Map<String, Any>?) {
+  // detection props
+  private var faceDetector: FaceDetector? = null
+  private var runLandmarks = false
+  private var runClassifications = false
+  private var runContours = false
+  private var trackingEnabled = false
+  private var returnOriginal = false
+  private var convertFrame = false
+
+  init {
+    // initializes faceDetector on creation
     var performanceModeValue = FaceDetectorOptions.PERFORMANCE_MODE_FAST
     var landmarkModeValue = FaceDetectorOptions.LANDMARK_MODE_NONE
     var classificationModeValue = FaceDetectorOptions.CLASSIFICATION_MODE_NONE
     var contourModeValue = FaceDetectorOptions.CONTOUR_MODE_NONE
     var minFaceSize = 0.15f
-    var enableTracking = false
 
-    if (params?.get("performanceMode").toString() == "accurate") {
+    if (options?.get("performanceMode").toString() == "accurate") {
       performanceModeValue = FaceDetectorOptions.PERFORMANCE_MODE_ACCURATE
     }
 
-    if (params?.get("landmarkMode").toString() == "all") {
+    if (options?.get("landmarkMode").toString() == "all") {
+      runLandmarks = true
       landmarkModeValue = FaceDetectorOptions.LANDMARK_MODE_ALL
     }
 
-    if (params?.get("classificationMode").toString() == "all") {
+    if (options?.get("classificationMode").toString() == "all") {
+      runClassifications = true
       classificationModeValue = FaceDetectorOptions.CLASSIFICATION_MODE_ALL
     }
 
-    if (params?.get("contourMode").toString() == "all") {
+    if (options?.get("contourMode").toString() == "all") {
+      runContours = true
       contourModeValue = FaceDetectorOptions.CONTOUR_MODE_ALL
     }
 
-    val minFaceSizeParam = params?.get("minFaceSize").toString()
+    val minFaceSizeParam = options?.get("minFaceSize").toString()
     if (
       minFaceSizeParam != "null" &&
       minFaceSizeParam != minFaceSize.toString()
     ) {
       minFaceSize = minFaceSizeParam.toFloat()
-    }
-
-    if (params?.get("trackingEnabled").toString() == "true") {
-      enableTracking = true
     }
 
     val optionsBuilder = FaceDetectorOptions.Builder()
@@ -71,12 +77,18 @@ class VisionCameraFaceDetectorPlugin(
       .setClassificationMode(classificationModeValue)
       .setMinFaceSize(minFaceSize)
 
-    if (enableTracking) {
+    if (options?.get("trackingEnabled").toString() == "true") {
+      trackingEnabled = true
       optionsBuilder.enableTracking()
     }
 
-    val options = optionsBuilder.build()
-    faceDetector = FaceDetection.getClient(options)
+    faceDetector = FaceDetection.getClient(
+      optionsBuilder.build()
+    )
+
+    // also check about returing frame settings
+    returnOriginal = options?.get("returnOriginal").toString() == "true"
+    convertFrame = options?.get("convertFrame").toString() == "true"
   }
 
   private fun processBoundingBox(
@@ -237,10 +249,6 @@ class VisionCameraFaceDetectorPlugin(
         return resultMap
       }
 
-      if (faceDetector == null) {
-        initFD(params)
-      }
-
       val rotation = orientation!!.toDegrees()
       val image = InputImage.fromMediaImage(frameImage!!, rotation)
       val scaleX: Double
@@ -260,7 +268,7 @@ class VisionCameraFaceDetectorPlugin(
       faces.forEach{face ->
         val map: MutableMap<String, Any?> = HashMap()
 
-        if (params?.get("landmarkMode").toString() == "all") {
+        if (runLandmarks) {
           map["landmarks"] = processLandmarks(
             face,
             scaleX,
@@ -268,13 +276,13 @@ class VisionCameraFaceDetectorPlugin(
           )
         }
 
-        if (params?.get("classificationMode").toString() == "all") {
+        if (runClassifications) {
           map["leftEyeOpenProbability"] = face.leftEyeOpenProbability?.toDouble() ?: -1
           map["rightEyeOpenProbability"] = face.rightEyeOpenProbability?.toDouble() ?: -1
           map["smilingProbability"] = face.smilingProbability?.toDouble() ?: -1
         }
 
-        if (params?.get("contourMode").toString() == "all") {
+        if (runContours) {
           map["contours"] = processFaceContours(
             face,
             scaleX,
@@ -282,7 +290,7 @@ class VisionCameraFaceDetectorPlugin(
           )
         }
 
-        if (params?.get("trackingEnabled").toString() == "true") {
+        if (trackingEnabled) {
           map["trackingId"] = face.trackingId
         }
 
@@ -298,9 +306,6 @@ class VisionCameraFaceDetectorPlugin(
       }
 
       val frameMap: MutableMap<String, Any> = HashMap()
-      val returnOriginal = params?.get("returnOriginal").toString() == "true"
-      val convertFrame = params?.get("convertFrame").toString() == "true"
-
       if (returnOriginal) {
         frameMap["original"] = frame
       }
