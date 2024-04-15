@@ -94,7 +94,7 @@ import {
   useFrameProcessor
 } from 'react-native-vision-camera'
 import { 
-  useFrameProcessor,
+  useFaceDetector,
   DetectionResult,
   FaceDetectionOptions
 } from 'react-native-vision-camera-face-detector'
@@ -106,7 +106,7 @@ export default function App() {
   } ).current
 
   const device = useCameraDevice('front')
-  const { detectFaces } = useFrameProcessor( faceDetectionOptions )
+  const { detectFaces } = useFaceDetector( faceDetectionOptions )
 
   useEffect(() => {
     (async () => {
