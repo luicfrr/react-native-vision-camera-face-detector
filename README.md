@@ -30,16 +30,22 @@ import {
 } from 'react-native'
 import { 
   useEffect, 
-  useState 
+  useState,
+  useRef
 } from 'react'
 import {useCameraDevice} from 'react-native-vision-camera'
 import {
   Camera,
-  DetectionResult
+  DetectionResult,
+  FaceDetectionOptions
 } from 'react-native-vision-camera-face-detector'
 import { Worklets } from 'react-native-worklets-core'
 
 export default function App() {
+  const faceDetectionOptions = useRef<FaceDetectionOptions>( {
+    // detection options
+  } ).current
+
   const device = useCameraDevice('front')
 
   useEffect(() => {
@@ -61,9 +67,7 @@ export default function App() {
         style={StyleSheet.absoluteFill}
         device={device}
         faceDetectionCallback={ handleFacesDetection }
-        faceDetectionOptions={ {
-          // detection settings
-        } }
+        faceDetectionOptions={ faceDetectionOptions }
       /> : <Text>
         No Device
       </Text>}
@@ -81,7 +85,8 @@ import {
 } from 'react-native'
 import { 
   useEffect, 
-  useState 
+  useState,
+  useRef
 } from 'react'
 import {
   Camera,
@@ -89,13 +94,19 @@ import {
   useFrameProcessor
 } from 'react-native-vision-camera'
 import { 
-  detectFaces,
-  DetectionResult 
+  useFrameProcessor,
+  DetectionResult,
+  FaceDetectionOptions
 } from 'react-native-vision-camera-face-detector'
 import { Worklets } from 'react-native-worklets-core'
 
 export default function App() {
+  const faceDetectionOptions = useRef<FaceDetectionOptions>( {
+    // detection options
+  } ).current
+
   const device = useCameraDevice('front')
+  const { detectFaces } = useFrameProcessor( faceDetectionOptions )
 
   useEffect(() => {
     (async () => {
@@ -112,12 +123,16 @@ export default function App() {
   const frameProcessor = useFrameProcessor((frame) => {
     'worklet'
     const result = detectFaces( {
-      frame,
-      options: {
-        // detection settings
-      }
+      frame
     })
+    // do something with frame ...
     handleFacesDetection(result)
+
+    // or
+    detectFaces( {
+      frame,
+      callback: handleFacesDetection
+    } )
   }, [handleFacesDetection])
 
   return (

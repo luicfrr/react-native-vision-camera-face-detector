@@ -1,15 +1,23 @@
+import { useMemo } from 'react'
 import {
   VisionCameraProxy,
   type Frame
 } from 'react-native-vision-camera'
+
+type FaceDetectorPlugin = {
+  /**
+   * Detect faces on frame
+   * 
+   * @param {DetectFacesType} props Detect faces prop
+   */
+  detectFaces: ( props: DetectFacesType ) => DetectionResult
+}
 
 type DetectFacesType = {
   /** Current frame */
   frame: Frame
   /** Optional callback */
   callback?: CallbackType
-  /** Detection options */
-  options?: FaceDetectionOptions
 }
 
 type Point = {
@@ -145,23 +153,48 @@ export interface FaceDetectionOptions {
   returnOriginal?: boolean
 }
 
-const plugin = VisionCameraProxy.initFrameProcessorPlugin( 'detectFaces' )
 /**
- * Detect faces on frame
+ * Create a new instance of face detector plugin
  * 
- * @param {DetectFacesType} props Detect faces prop
+ * @param {FaceDetectionOptions | undefined} options Detection options
+ * @returns {FaceDetectorPlugin} Plugin instance
  */
-export function detectFaces( {
-  frame,
-  callback,
-  options
-}: DetectFacesType ): DetectionResult {
-  'worklet'
+function createFaceDetectorPlugin(
+  options?: FaceDetectionOptions
+): FaceDetectorPlugin {
+  const plugin = VisionCameraProxy.initFrameProcessorPlugin( 'detectFaces', {
+    ...options
+  } )
+
   if ( !plugin ) {
     throw new Error( 'Failed to load Frame Processor Plugin "detectFaces"!' )
   }
-  // @ts-ignore
-  const result: DetectionResult = plugin.call( frame, options )
-  callback?.( result )
-  return result
+
+  return {
+    detectFaces: ( {
+      frame,
+      callback
+    }: DetectFacesType ): DetectionResult => {
+      'worklet'
+      // @ts-ignore
+      const result: DetectionResult = plugin.call( frame )
+      callback?.( result )
+      return result
+    }
+  }
+}
+
+/**
+ * Use an instance of face detector plugin.
+ * 
+ * @param {FaceDetectionOptions | undefined} options Detection options
+ * @returns {FaceDetectorPlugin} Memoized plugin instance that will be 
+ * destroyed once the component using `useFaceDetector()` unmounts.
+ */
+export function useFaceDetector(
+  options?: FaceDetectionOptions
+): FaceDetectorPlugin {
+  return useMemo( () => (
+    createFaceDetectorPlugin( options )
+  ), [ options ] )
 }

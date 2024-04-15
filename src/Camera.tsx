@@ -4,7 +4,7 @@ import {
   useFrameProcessor
 } from 'react-native-vision-camera'
 import { useSharedValue } from 'react-native-worklets-core'
-import { detectFaces } from './FaceDetector'
+import { useFaceDetector } from './FaceDetector'
 
 // types
 import type {
@@ -63,6 +63,7 @@ export const Camera = React.forwardRef( ( {
 }: ComponentType,
   ref: ForwardedRef<VisionCamera>
 ) => {
+  const { detectFaces } = useFaceDetector( faceDetectionOptions )
   /** 
    * Is there an async task already running?
    */
@@ -90,8 +91,7 @@ export const Camera = React.forwardRef( ( {
     try {
       detectFaces( {
         frame,
-        callback: faceDetectionCallback,
-        options: faceDetectionOptions
+        callback: faceDetectionCallback
       } )
     } catch ( error: any ) {
       logOnJs( 'Execution error:', error )
