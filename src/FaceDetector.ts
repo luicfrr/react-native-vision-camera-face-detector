@@ -22,9 +22,7 @@ export type CallbackType = (
 ) => void | Promise<void>
 
 export interface DetectionResult {
-  faces: {
-    [ index: string ]: Face
-  }
+  faces: Face[]
   frame: FrameData
 }
 
