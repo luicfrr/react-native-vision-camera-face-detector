@@ -32,8 +32,6 @@ class VisionCameraFaceDetectorPlugin(
   private var runClassifications = false
   private var runContours = false
   private var trackingEnabled = false
-  private var returnOriginal = false
-  private var convertFrame = false
 
   init {
     // initializes faceDetector on creation
@@ -85,10 +83,6 @@ class VisionCameraFaceDetectorPlugin(
     faceDetector = FaceDetection.getClient(
       optionsBuilder.build()
     )
-
-    // also check about returing frame settings
-    returnOriginal = options?.get("returnOriginal").toString() == "true"
-    convertFrame = options?.get("convertFrame").toString() == "true"
   }
 
   private fun processBoundingBox(
@@ -234,8 +228,8 @@ class VisionCameraFaceDetectorPlugin(
   override fun callback(
     frame: Frame,
     params: Map<String, Any>?
-  ): Map<String, Any> {
-    val resultMap: MutableMap<String, Any> = HashMap()
+  ): ArrayList<Map<String, Any>> {
+    val facesList = ArrayList<Map<String, Any>>()
 
     try {
       val frameImage = frame.image
@@ -304,26 +298,12 @@ class VisionCameraFaceDetectorPlugin(
         )
         facesList.add(map)
       }
-
-      val frameMap: MutableMap<String, Any> = HashMap()
-      if (returnOriginal) {
-        frameMap["original"] = frame
-      }
-
-      if (convertFrame) {
-        frameMap["converted"] = BitmapUtils.convertYuvToRgba(frameImage)
-      }
-
-      resultMap["faces"] = facesList
-      if(returnOriginal || convertFrame) {
-        resultMap["frame"] = frameMap
-      }
     } catch (e: Exception) {
       Log.e(TAG, "Error processing face detection: ", e)
     } catch (e: FrameInvalidError) {
       Log.e(TAG, "Frame invalid error: ", e)
     }
 
-    return resultMap
+    return facesList
   }
 }

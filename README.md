@@ -9,7 +9,6 @@ If you like this package please give it a ⭐ on [GitHub](https://github.com/non
 - Real-time face detection using front camera
 - Integration with Vision Camera library
 - Adjustable face visualization with customizable styles
-- Base64 frame convertion
 
 ## 🧰 Installation
 

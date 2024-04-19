@@ -31,7 +31,7 @@ export type CallbackType = (
 
 export interface DetectionResult {
   faces: Face[]
-  frame: FrameData
+  frame: Frame
 }
 
 export interface Face {
@@ -44,11 +44,6 @@ export interface Face {
   smilingProbability: number
   contours: Contours
   landmarks: Landmarks
-}
-
-export interface FrameData {
-  converted?: string
-  original?: Frame
 }
 
 export interface Bounds {
@@ -133,24 +128,6 @@ export interface FaceDetectionOptions {
    * @default false
    */
   trackingEnabled?: boolean
-
-  /**
-   * Should return converted frame as base64?
-   * 
-   * Note that no frame data will be returned if disabled.
-   * 
-   * @default false
-   */
-  convertFrame?: boolean
-
-  /**
-   * Should return original frame data?
-   * 
-   * WARNING: On my tests this freeze frame processor pipeline on IOS.
-   * 
-   * @default false
-   */
-  returnOriginal?: boolean
 }
 
 /**
@@ -177,7 +154,11 @@ function createFaceDetectorPlugin(
     }: DetectFacesType ): DetectionResult => {
       'worklet'
       // @ts-ignore
-      const result: DetectionResult = plugin.call( frame )
+      const faces: Face[] = plugin.call( frame )
+      const result: DetectionResult = {
+        faces,
+        frame
+      }
       callback?.( result )
       return result
     }
