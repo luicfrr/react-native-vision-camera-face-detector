@@ -214,7 +214,7 @@ public class VisionCameraFaceDetector: FrameProcessorPlugin {
   public override func callback(
     _ frame: Frame, 
     withArguments arguments: [AnyHashable: Any]?
-  ) -> [String: Any] {
+  ) -> Any? {
     var result: [String: Any] = [:]
 
     do {
