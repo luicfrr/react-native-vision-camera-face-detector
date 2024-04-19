@@ -1,6 +1,5 @@
 package com.visioncamerafacedetector
 
-import android.content.res.Resources
 import android.graphics.Rect
 import android.util.Log
 import com.google.android.gms.tasks.Tasks
@@ -22,9 +21,10 @@ class VisionCameraFaceDetectorPlugin(
   options: Map<String, Any>?
 ) : FrameProcessorPlugin() {
   // device display data
-  private val density = Resources.getSystem().displayMetrics.density.toInt()
-  private val windowWidth = Resources.getSystem().displayMetrics.widthPixels / density
-  private val windowHeight = Resources.getSystem().displayMetrics.heightPixels / density
+  private val displayMetrics = proxy.context.resources.displayMetrics
+  private val density = displayMetrics.density
+  private val windowWidth = (displayMetrics.widthPixels).toDouble() / density
+  private val windowHeight = (displayMetrics.heightPixels).toDouble() / density
 
   // detection props
   private var faceDetector: FaceDetector? = null
@@ -87,17 +87,17 @@ class VisionCameraFaceDetectorPlugin(
 
   private fun processBoundingBox(
     boundingBox: Rect,
+    sourceWidth: Double,
     scaleX: Double,
     scaleY: Double
   ): Map<String, Any> {
     val bounds: MutableMap<String, Any> = HashMap()
     val width = boundingBox.width().toDouble() * scaleX
+    val x = boundingBox.left.toDouble() * scaleX
 
     bounds["width"] = width
     bounds["height"] = boundingBox.height().toDouble() * scaleY
-    bounds["x"] = windowWidth - (width + (
-      boundingBox.left.toDouble() * scaleX
-    ))
+    bounds["x"] = (-x + sourceWidth * scaleX) - width
     bounds["y"] = boundingBox.top.toDouble() * scaleY
 
     return bounds
@@ -240,27 +240,29 @@ class VisionCameraFaceDetectorPlugin(
         orientation == null
       ) {
         Log.i(TAG, "Image or orientation is null")
-        return resultMap
+        return facesList
       }
 
       val rotation = orientation!!.toDegrees()
       val image = InputImage.fromMediaImage(frameImage!!, rotation)
-      val scaleX: Double
-      val scaleY: Double
+
+      val sourceWidth: Double
+      val sourceHeight: Double
       if (rotation == 270 || rotation == 90) {
-        scaleX = windowWidth.toDouble() / image.height
-        scaleY = windowHeight.toDouble() / image.width
+        sourceWidth = image.height.toDouble()
+        sourceHeight = image.width.toDouble()
       } else {
-        scaleX = windowWidth.toDouble() / image.width
-        scaleY = windowHeight.toDouble() / image.height
+        sourceWidth = image.width.toDouble()
+        sourceHeight = image.height.toDouble()
       }
 
+      val scaleX = windowWidth / sourceWidth 
+      val scaleY = windowHeight / sourceHeight
       val task = faceDetector!!.process(image)
       val faces = Tasks.await(task)
-      val facesList = ArrayList<Map<String, Any?>>()
 
       faces.forEach{face ->
-        val map: MutableMap<String, Any?> = HashMap()
+        val map: MutableMap<String, Any> = HashMap()
 
         if (runLandmarks) {
           map["landmarks"] = processLandmarks(
@@ -285,7 +287,7 @@ class VisionCameraFaceDetectorPlugin(
         }
 
         if (trackingEnabled) {
-          map["trackingId"] = face.trackingId
+          map["trackingId"] = face.trackingId ?: -1
         }
 
         map["rollAngle"] = face.headEulerAngleZ.toDouble()
@@ -293,6 +295,7 @@ class VisionCameraFaceDetectorPlugin(
         map["yawAngle"] = face.headEulerAngleY.toDouble()
         map["bounds"] = processBoundingBox(
           face.boundingBox,
+          sourceWidth,
           scaleX,
           scaleY
         )
