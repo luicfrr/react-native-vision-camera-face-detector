@@ -221,8 +221,15 @@ public class VisionCameraFaceDetector: FrameProcessorPlugin {
       let image = VisionImage(buffer: frame.buffer)
       image.orientation = .up
 
-      let scaleX = if autoScale {screenBounds.size.width / CGFloat(frame.width)} else {1.0}
-      let scaleY = if autoScale {screenBounds.size.height / CGFloat(frame.height)} else {1.0}
+      var scaleX:CGFloat
+      var scaleY:CGFloat
+      if autoScale {
+        scaleX = screenBounds.size.width / CGFloat(frame.width)
+        scaleY = screenBounds.size.height / CGFloat(frame.height)
+      } else {
+        scaleX = CGFloat(1)
+        scaleY = CGFloat(1)
+      }
 
       var facesList: [Any] = []
       let faces: [Face] = try faceDetector!.results(in: image)
