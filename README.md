@@ -39,7 +39,6 @@ import {
   DetectionResult,
   FaceDetectionOptions
 } from 'react-native-vision-camera-face-detector'
-import { Worklets } from 'react-native-worklets-core'
 
 export default function App() {
   const faceDetectionOptions = useRef<FaceDetectionOptions>( {
@@ -55,9 +54,9 @@ export default function App() {
     })()
   }, [device])
 
-  const handleFacesDetection = Worklets.createRunInJsFn( (
+  function handleFacesDetection( (
     result: DetectionResult
-  ) => { 
+  ) { 
     console.log( 'detection result', result )
   })
 
@@ -122,17 +121,9 @@ export default function App() {
   })
   const frameProcessor = useFrameProcessor((frame) => {
     'worklet'
-    const result = detectFaces( {
-      frame
-    })
+    const result = detectFaces(frame)
     // do something with frame ...
     handleFacesDetection(result)
-
-    // or
-    detectFaces( {
-      frame,
-      callback: handleFacesDetection
-    } )
   }, [handleFacesDetection])
 
   return (
