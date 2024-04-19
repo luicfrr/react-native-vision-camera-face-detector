@@ -17,13 +17,17 @@ import type {
   FrameInternal
 } from 'react-native-vision-camera'
 import type {
-  CallbackType,
+  DetectionResult,
   FaceDetectionOptions
 } from './FaceDetector'
 
 type WorkletType = (
   frame: FrameInternal
 ) => Promise<void>
+
+type CallbackType = (
+  result: DetectionResult
+) => void | Promise<void>
 
 type ComponentType = {
   faceDetectionOptions?: FaceDetectionOptions
@@ -82,6 +86,10 @@ export const Camera = React.forwardRef( ( {
     }
   } )
   /**
+   * Runs on detection callback on js thread
+   */
+  const runOnJs = Worklets.createRunInJsFn( faceDetectionCallback )
+  /**
    * Async context that will handle face detection
    */
   const runOnAsyncContext = useWorklet( (
@@ -89,9 +97,10 @@ export const Camera = React.forwardRef( ( {
   ) => {
     'worklet'
     try {
-      detectFaces( {
-        frame,
-        callback: faceDetectionCallback
+      const result = detectFaces( frame )
+      frame.incrementRefCount()
+      runOnJs( result ).finally( () => {
+        frame.decrementRefCount()
       } )
     } catch ( error: any ) {
       logOnJs( 'Execution error:', error )

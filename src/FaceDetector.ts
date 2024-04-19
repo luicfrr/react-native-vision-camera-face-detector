@@ -8,26 +8,15 @@ type FaceDetectorPlugin = {
   /**
    * Detect faces on frame
    * 
-   * @param {DetectFacesType} props Detect faces prop
+   * @param {Frame} frame Frame to detect faces
    */
-  detectFaces: ( props: DetectFacesType ) => DetectionResult
-}
-
-type DetectFacesType = {
-  /** Current frame */
-  frame: Frame
-  /** Optional callback */
-  callback?: CallbackType
+  detectFaces: ( frame: Frame ) => DetectionResult
 }
 
 type Point = {
   x: number
   y: number
 }
-
-export type CallbackType = (
-  result: DetectionResult
-) => void | Promise<void>
 
 export interface DetectionResult {
   faces: Face[]
@@ -157,15 +146,12 @@ function createFaceDetectorPlugin(
   }
 
   return {
-    detectFaces: ( {
-      frame,
-      callback
-    }: DetectFacesType ): DetectionResult => {
+    detectFaces: (
+      frame: Frame
+    ): DetectionResult => {
       'worklet'
       // @ts-ignore
-      const result: DetectionResult = plugin.call( frame )
-      callback?.( result )
-      return result
+      return plugin.call( frame ) as DetectionResult
     }
   }
 }

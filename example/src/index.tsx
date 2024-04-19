@@ -29,7 +29,6 @@ import Animated, {
   useSharedValue,
   withTiming
 } from 'react-native-reanimated'
-import { Worklets } from 'react-native-worklets-core'
 
 /**
  * Entry point component
@@ -113,11 +112,33 @@ function FaceDetection(): JSX.Element {
     } )
   } ) )
 
-  const handleFacesDetected = Worklets.createRunInJsFn( ( {
+  useEffect( () => {
+    if ( hasPermission ) return
+    requestPermission()
+  }, [] )
+
+  /**
+   * Hanldes camera mount error event
+   *
+   * @param {any} error Error event
+   */
+  function handleCameraMountError(
+    error: any
+  ) {
+    console.error( 'camera mount error', error )
+  }
+
+  /**
+   * Handle detection result
+   * 
+   * @param {DetectionResult} result Detection result 
+   * @returns {void}
+   */
+  function handleFacesDetected( {
     faces,
     frame
-  }: DetectionResult ) => {
-    console.log( 'faces', faces, 'frame', frame )
+  }: DetectionResult ): void {
+    console.log( 'faces', faces.length, 'frame', frame.toString() )
     // if no faces are detected we do nothing
     if ( Object.keys( faces ).length <= 0 ) return
 
@@ -137,22 +158,6 @@ function FaceDetection(): JSX.Element {
     if ( camera.current ) {
       // take photo, capture video, etc...
     }
-  } )
-
-  useEffect( () => {
-    if ( hasPermission ) return
-    requestPermission()
-  }, [] )
-
-  /**
-   * Hanldes camera mount error event
-   *
-   * @param {any} error Error event
-   */
-  function handleCameraMountError(
-    error: any
-  ) {
-    console.error( 'camera mount error', error )
   }
 
   return ( <>
