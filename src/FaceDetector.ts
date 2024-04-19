@@ -163,11 +163,7 @@ function createFaceDetectorPlugin(
     }: DetectFacesType ): DetectionResult => {
       'worklet'
       // @ts-ignore
-      const faces: Face[] = plugin.call( frame )
-      const result: DetectionResult = {
-        faces,
-        frame
-      }
+      const result: DetectionResult = plugin.call( frame )
       callback?.( result )
       return result
     }

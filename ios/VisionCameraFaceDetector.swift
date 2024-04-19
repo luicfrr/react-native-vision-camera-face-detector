@@ -214,8 +214,8 @@ public class VisionCameraFaceDetector: FrameProcessorPlugin {
   public override func callback(
     _ frame: Frame, 
     withArguments arguments: [AnyHashable: Any]?
-  ) -> Any? {
-    var facesList: [Any] = []
+  ) -> [String: Any] {
+    var result: [String: Any] = [:]
 
     do {
       let image = VisionImage(buffer: frame.buffer)
@@ -223,6 +223,8 @@ public class VisionCameraFaceDetector: FrameProcessorPlugin {
 
       let scaleX = if autoScale {screenBounds.size.width / CGFloat(frame.width)} else {1.0}
       let scaleY = if autoScale {screenBounds.size.height / CGFloat(frame.height)} else {1.0}
+
+      var facesList: [Any] = []
       let faces: [Face] = try faceDetector!.results(in: image)
       for face in faces {
         var map: [String: Any] = [:]
@@ -264,10 +266,15 @@ public class VisionCameraFaceDetector: FrameProcessorPlugin {
 
         facesList.append(map)
       }
+
+      result = [
+        "faces": faceList,
+        "frame": frame
+      ]
     } catch let error {
       print("Error processing face detection: \(error)")
     }
 
-    return facesList
+    return result
   }
 }
