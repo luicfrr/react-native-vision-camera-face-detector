@@ -268,7 +268,7 @@ public class VisionCameraFaceDetector: FrameProcessorPlugin {
       }
 
       result = [
-        "faces": faceList,
+        "faces": facesList,
         "frame": frame
       ]
     } catch let error {
