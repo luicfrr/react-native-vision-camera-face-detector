@@ -7,8 +7,7 @@ import {
   StyleSheet,
   Text,
   Button,
-  View,
-  Platform
+  View
 } from 'react-native'
 import {
   Camera as VisionCamera,
@@ -51,7 +50,6 @@ function Index(): JSX.Element {
  * @return {JSX.Element} Component
  */
 function FaceDetection(): JSX.Element {
-  const isIos = Platform.OS === 'ios'
   const {
     hasPermission,
     requestPermission
@@ -161,86 +159,94 @@ function FaceDetection(): JSX.Element {
   }
 
   return ( <>
-    { hasPermission && cameraDevice ? <>
-      { cameraMounted && <>
-        <Camera
-          // ignore ts error as we are importing Vision 
-          // Camera types from two different sources.
-          // No need to use this on a real/final app.
-          // @ts-ignore
-          ref={ camera }
-          style={ StyleSheet.absoluteFill }
-          isActive={ isCameraActive }
-          device={ cameraDevice }
-          onError={ handleCameraMountError }
-          faceDetectionCallback={ handleFacesDetected }
-          faceDetectionOptions={ {
-            ...faceDetectionOptions,
-            autoScale
-          } }
-        />
+    <View
+      style={ [
+        StyleSheet.absoluteFill, {
+          alignItems: 'center',
+          justifyContent: 'center'
+        }
+      ] }
+    >
+      { hasPermission && cameraDevice ? <>
+        { cameraMounted && <>
+          <Camera
+            // ignore ts error as we are importing Vision 
+            // Camera types from two different sources.
+            // No need to use this on a real/final app.
+            // @ts-ignore
+            ref={ camera }
+            style={ StyleSheet.absoluteFill }
+            isActive={ isCameraActive }
+            device={ cameraDevice }
+            onError={ handleCameraMountError }
+            faceDetectionCallback={ handleFacesDetected }
+            faceDetectionOptions={ {
+              ...faceDetectionOptions,
+              autoScale
+            } }
+          />
 
-        <Animated.View
-          style={ animatedStyle }
-        />
+          <Animated.View
+            style={ animatedStyle }
+          />
 
-        { cameraPaused && <Text
+          { cameraPaused && <Text
+            style={ {
+              width: '100%',
+              backgroundColor: 'rgb(0,0,255)',
+              textAlign: 'center',
+              color: 'white'
+            } }
+          >
+            Camera is PAUSED
+          </Text> }
+        </> }
+
+        { !cameraMounted && <Text
           style={ {
-            backgroundColor: 'rgb(0,0,255)',
-            color: 'white',
-            position: 'absolute',
-            bottom: 300,
-            left: 0,
-            right: 0
+            width: '100%',
+            backgroundColor: 'rgb(255,255,0)',
+            textAlign: 'center'
           } }
         >
-          Camera is PAUSED
+          Camera is NOT mounted
         </Text> }
-      </> }
-
-      { !cameraMounted && <Text
+      </> : <Text
         style={ {
-          backgroundColor: 'rgb(255,255,0)',
-          position: 'absolute',
-          bottom: 300,
-          left: 0,
-          right: 0
+          width: '100%',
+          backgroundColor: 'rgb(255,0,0)',
+          textAlign: 'center',
+          color: 'white'
         } }
       >
-        Camera is NOT mounted
+        No camera device or permission
       </Text> }
-    </> : <Text
-      style={ {
-        backgroundColor: 'rgb(255,0,0)',
-        color: 'white'
-      } }
-    >
-      No camera device or permission
-    </Text> }
+    </View>
 
     <View
       style={ {
         position: 'absolute',
-        bottom: isIos ? 20 : 0,
+        bottom: 20,
         left: 0,
         right: 0,
         display: 'flex',
-        gap: 20
+        flexDirection: 'row',
+        justifyContent: 'space-between'
       } }
     >
       <Button
+        onPress={ () => setAutoScale( ( current ) => !current ) }
+        title={ `${ autoScale ? 'Disable' : 'Enable' } scale` }
+      />
+
+      <Button
         onPress={ () => setCameraPaused( ( current ) => !current ) }
-        title={ `${ cameraPaused ? 'Resume' : 'Pause' } Camera` }
+        title={ `${ cameraPaused ? 'Resume' : 'Pause' } Cam` }
       />
 
       <Button
         onPress={ () => setCameraMounted( ( current ) => !current ) }
-        title={ `${ cameraMounted ? 'Unmount' : 'Mount' } Camera` }
-      />
-
-      <Button
-        onPress={ () => setAutoScale( ( current ) => !current ) }
-        title={ `${ autoScale ? 'Disable' : 'Enable' } autoScale` }
+        title={ `${ cameraMounted ? 'Unmount' : 'Mount' } Cam` }
       />
     </View>
   </> )
