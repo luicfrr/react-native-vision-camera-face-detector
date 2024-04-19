@@ -14,6 +14,7 @@ public class VisionCameraFaceDetector: FrameProcessorPlugin {
 
   // detection props
   private var context = CIContext(options: nil)
+  private var autoScale = false
   private var faceDetector: FaceDetector! = nil
   private var runLandmarks = false
   private var runClassifications = false
@@ -25,8 +26,11 @@ public class VisionCameraFaceDetector: FrameProcessorPlugin {
     options: [AnyHashable : Any]! = [:]
   ) {
     super.init(proxy: proxy, options: options)
-
     let config = getConfig(withArguments: options)
+
+    // handle auto scaling
+    autoScale = config?["autoScale"] as? Bool == true
+
     // initializes faceDetector on creation
     let minFaceSize = 0.15
     let optionsBuilder = FaceDetectorOptions()
@@ -217,8 +221,8 @@ public class VisionCameraFaceDetector: FrameProcessorPlugin {
       let image = VisionImage(buffer: frame.buffer)
       image.orientation = .up
 
-      let scaleX = screenBounds.size.width / CGFloat(frame.width)
-      let scaleY = screenBounds.size.height / CGFloat(frame.height)
+      let scaleX = if autoScale {screenBounds.size.width / CGFloat(frame.width)} else {1.0}
+      let scaleY = if autoScale {screenBounds.size.height / CGFloat(frame.height)} else {1.0}
       let faces: [Face] = try faceDetector!.results(in: image)
       for face in faces {
         var map: [String: Any] = [:]

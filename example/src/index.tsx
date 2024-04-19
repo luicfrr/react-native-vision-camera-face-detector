@@ -7,7 +7,8 @@ import {
   StyleSheet,
   Text,
   Button,
-  View
+  View,
+  Platform
 } from 'react-native'
 import {
   Camera as VisionCamera,
@@ -51,6 +52,7 @@ function Index(): JSX.Element {
  * @return {JSX.Element} Component
  */
 function FaceDetection(): JSX.Element {
+  const isIos = Platform.OS === 'ios'
   const {
     hasPermission,
     requestPermission
@@ -63,6 +65,10 @@ function FaceDetection(): JSX.Element {
     cameraPaused,
     setCameraPaused
   ] = useState<boolean>( false )
+  const [
+    autoScale,
+    setAutoScale
+  ] = useState<boolean>( true )
   const faceDetectionOptions = useRef<FaceDetectionOptions>( {
     performanceMode: 'fast',
     classificationMode: 'all'
@@ -108,9 +114,10 @@ function FaceDetection(): JSX.Element {
   } ) )
 
   const handleFacesDetected = Worklets.createRunInJsFn( ( {
-    faces
+    faces,
+    frame
   }: DetectionResult ) => {
-    console.log( 'faces', faces )
+    console.log( 'faces', faces, 'frame', frame )
     // if no faces are detected we do nothing
     if ( Object.keys( faces ).length <= 0 ) return
 
@@ -162,7 +169,10 @@ function FaceDetection(): JSX.Element {
           device={ cameraDevice }
           onError={ handleCameraMountError }
           faceDetectionCallback={ handleFacesDetected }
-          faceDetectionOptions={ faceDetectionOptions }
+          faceDetectionOptions={ {
+            ...faceDetectionOptions,
+            autoScale
+          } }
         />
 
         <Animated.View
@@ -206,18 +216,26 @@ function FaceDetection(): JSX.Element {
     <View
       style={ {
         position: 'absolute',
-        bottom: 0,
+        bottom: isIos ? 20 : 0,
         left: 0,
-        right: 0
+        right: 0,
+        display: 'flex',
+        gap: 20
       } }
     >
       <Button
         onPress={ () => setCameraPaused( ( current ) => !current ) }
         title={ `${ cameraPaused ? 'Resume' : 'Pause' } Camera` }
       />
+
       <Button
         onPress={ () => setCameraMounted( ( current ) => !current ) }
         title={ `${ cameraMounted ? 'Unmount' : 'Mount' } Camera` }
+      />
+
+      <Button
+        onPress={ () => setAutoScale( ( current ) => !current ) }
+        title={ `${ autoScale ? 'Disable' : 'Enable' } autoScale` }
       />
     </View>
   </> )

@@ -27,6 +27,7 @@ class VisionCameraFaceDetectorPlugin(
   private val windowHeight = (displayMetrics.heightPixels).toDouble() / density
 
   // detection props
+  private var autoScale = false
   private var faceDetector: FaceDetector? = null
   private var runLandmarks = false
   private var runClassifications = false
@@ -34,6 +35,9 @@ class VisionCameraFaceDetectorPlugin(
   private var trackingEnabled = false
 
   init {
+    // handle auto scaling
+    autoScale = options?.get("autoScale").toString() == "true"
+
     // initializes faceDetector on creation
     var performanceModeValue = FaceDetectorOptions.PERFORMANCE_MODE_FAST
     var landmarkModeValue = FaceDetectorOptions.LANDMARK_MODE_NONE
@@ -256,8 +260,8 @@ class VisionCameraFaceDetectorPlugin(
         sourceHeight = image.height.toDouble()
       }
 
-      val scaleX = windowWidth / sourceWidth 
-      val scaleY = windowHeight / sourceHeight
+      val scaleX = if(autoScale) windowWidth / sourceWidth else 1.0
+      val scaleY = if(autoScale) windowHeight / sourceHeight else 1.0
       val task = faceDetector!!.process(image)
       val faces = Tasks.await(task)
 

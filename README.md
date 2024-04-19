@@ -9,6 +9,7 @@ If you like this package please give it a ⭐ on [GitHub](https://github.com/non
 - Real-time face detection using front camera
 - Integration with Vision Camera library
 - Adjustable face visualization with customizable styles
+- Optional native side auto scaling for face bounds, contour and landmarks
 
 ## 🧰 Installation
 
@@ -148,9 +149,7 @@ export default function App() {
 }
 ```
 
-OBS: Returned face bounds, landmarks and contours are now natively downscaled to screen size. No extra function needed.
-
-See example app for more details.
+OBS: If you want to use `Skia Frame Processor` you should **DISABLE** auto scaling. See [this](https://github.com/nonam4/react-native-vision-camera-face-detector/issues/30#issuecomment-2058805546) for more details.
 
 ## 🔧 Troubleshooting
 

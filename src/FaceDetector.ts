@@ -128,6 +128,15 @@ export interface FaceDetectionOptions {
    * @default false
    */
   trackingEnabled?: boolean
+
+  /**
+   * Should auto scale face bounds, contour and landmarks on native side? 
+   * This option should be disabled if you want to draw on frame using `Skia Frame Processor`.
+   * See [this](https://github.com/nonam4/react-native-vision-camera-face-detector/issues/30#issuecomment-2058805546) comment for more details. 
+   * 
+   * @default false
+   */
+  autoScale?: boolean
 }
 
 /**
