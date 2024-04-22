@@ -218,7 +218,7 @@ public class VisionCameraFaceDetector: FrameProcessorPlugin {
 
     do {
       let image = VisionImage(buffer: frame.buffer)
-      image.orientation = .up
+      image.orientation = frame.orientation
 
       var scaleX:CGFloat
       var scaleY:CGFloat
