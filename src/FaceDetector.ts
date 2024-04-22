@@ -18,11 +18,6 @@ type Point = {
   y: number
 }
 
-export interface DetectionResult {
-  faces: Face[]
-  frame: Frame
-}
-
 export interface Face {
   pitchAngle: number
   rollAngle: number
