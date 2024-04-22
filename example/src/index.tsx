@@ -10,6 +10,7 @@ import {
   View
 } from 'react-native'
 import {
+  Frame,
   Camera as VisionCamera,
   useCameraDevice,
   useCameraPermission,
@@ -20,7 +21,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context'
 import { NavigationContainer } from '@react-navigation/native'
 import {
   Camera,
-  DetectionResult,
+  Face,
   FaceDetectionOptions
 } from 'react-native-vision-camera-face-detector'
 import Animated, {
@@ -129,14 +130,17 @@ function FaceDetection(): JSX.Element {
   /**
    * Handle detection result
    * 
-   * @param {DetectionResult} result Detection result 
+   * @param {Face[]} faces Detection result 
    * @returns {void}
    */
-  function handleFacesDetected( {
-    faces,
-    frame
-  }: DetectionResult ): void {
-    console.log( 'faces', faces.length, 'frame', frame.toString() )
+  function handleFacesDetected(
+    faces: Face[],
+    frame: Frame
+  ): void {
+    console.log(
+      'faces', faces.length,
+      'frame', frame.toString()
+    )
     // if no faces are detected we do nothing
     if ( Object.keys( faces ).length <= 0 ) return
 

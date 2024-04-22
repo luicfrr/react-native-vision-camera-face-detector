@@ -232,8 +232,8 @@ class VisionCameraFaceDetectorPlugin(
   override fun callback(
     frame: Frame,
     params: Map<String, Any>?
-  ): MutableMap<String, Any> {
-    val resultMap: MutableMap<String, Any> = HashMap()
+  ): Any {
+    val result = ArrayList<Map<String, Any>>()
     
     try {
       val rotation = frame.orientation.toDegrees()
@@ -252,7 +252,6 @@ class VisionCameraFaceDetectorPlugin(
       val scaleX = if(autoScale) windowWidth / sourceWidth else 1.0
       val scaleY = if(autoScale) windowHeight / sourceHeight else 1.0
 
-      val facesList = ArrayList<Map<String, Any>>()
       val task = faceDetector!!.process(image)
       val faces = Tasks.await(task)
       faces.forEach{face ->
@@ -293,17 +292,14 @@ class VisionCameraFaceDetectorPlugin(
           scaleX,
           scaleY
         )
-        facesList.add(map)
+        result.add(map)
       }
-
-      resultMap["faces"] = facesList
-      resultMap["frame"] = frame
     } catch (e: Exception) {
       Log.e(TAG, "Error processing face detection: ", e)
     } catch (e: FrameInvalidError) {
       Log.e(TAG, "Frame invalid error: ", e)
     }
 
-    return resultMap
+    return result
   }
 }

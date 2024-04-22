@@ -10,7 +10,7 @@ type FaceDetectorPlugin = {
    * 
    * @param {Frame} frame Frame to detect faces
    */
-  detectFaces: ( frame: Frame ) => DetectionResult
+  detectFaces: ( frame: Frame ) => Face[]
 }
 
 type Point = {
@@ -148,10 +148,10 @@ function createFaceDetectorPlugin(
   return {
     detectFaces: (
       frame: Frame
-    ): DetectionResult => {
+    ): Face[] => {
       'worklet'
       // @ts-ignore
-      return plugin.call( frame ) as DetectionResult
+      return plugin.call( frame ) as Face[]
     }
   }
 }

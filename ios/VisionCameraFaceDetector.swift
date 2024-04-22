@@ -13,7 +13,6 @@ public class VisionCameraFaceDetector: FrameProcessorPlugin {
   private let screenBounds = UIScreen.main.bounds
 
   // detection props
-  private var context = CIContext(options: nil)
   private var autoScale = false
   private var faceDetector: FaceDetector! = nil
   private var runLandmarks = false
@@ -214,8 +213,8 @@ public class VisionCameraFaceDetector: FrameProcessorPlugin {
   public override func callback(
     _ frame: Frame, 
     withArguments arguments: [AnyHashable: Any]?
-  ) -> Any? {
-    var result: [String: Any] = [:]
+  ) -> Any {
+    var result: [Any] = []
 
     do {
       let image = VisionImage(buffer: frame.buffer)
@@ -231,7 +230,6 @@ public class VisionCameraFaceDetector: FrameProcessorPlugin {
         scaleY = CGFloat(1)
       }
 
-      var facesList: [Any] = []
       let faces: [Face] = try faceDetector!.results(in: image)
       for face in faces {
         var map: [String: Any] = [:]
@@ -271,13 +269,8 @@ public class VisionCameraFaceDetector: FrameProcessorPlugin {
           scaleY: scaleY
         )
 
-        facesList.append(map)
+        result.append(map)
       }
-
-      result = [
-        "faces": facesList,
-        "frame": frame
-      ]
     } catch let error {
       print("Error processing face detection: \(error)")
     }
