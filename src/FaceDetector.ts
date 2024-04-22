@@ -100,7 +100,7 @@ export interface FaceDetectionOptions {
   /**
    * Sets the smallest desired face size, expressed as the ratio of the width of the head to width of the image.
    *
-   * @default 0.1
+   * @default 0.15
    */
   minFaceSize?: number
 
