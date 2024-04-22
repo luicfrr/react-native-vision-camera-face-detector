@@ -11,6 +11,7 @@ import com.google.mlkit.vision.face.FaceDetector
 import com.google.mlkit.vision.face.FaceDetectorOptions
 import com.google.mlkit.vision.face.FaceLandmark
 import com.mrousavy.camera.core.FrameInvalidError
+import com.mrousavy.camera.core.types.Orientation
 import com.mrousavy.camera.frameprocessors.Frame
 import com.mrousavy.camera.frameprocessors.FrameProcessorPlugin
 import com.mrousavy.camera.frameprocessors.VisionCameraProxy
@@ -229,6 +230,17 @@ class VisionCameraFaceDetectorPlugin(
     return faceContoursTypesMap
   }
 
+  private fun getFrameRotation(
+    orientation: Orientation
+  ): Int {
+    return when (orientation) {
+      Orientation.PORTRAIT -> 0
+      Orientation.LANDSCAPE_LEFT -> 90
+      Orientation.PORTRAIT_UPSIDE_DOWN -> 180
+      Orientation.LANDSCAPE_RIGHT -> 270
+    }
+  }
+
   override fun callback(
     frame: Frame,
     params: Map<String, Any>?
@@ -236,9 +248,9 @@ class VisionCameraFaceDetectorPlugin(
     val result = ArrayList<Map<String, Any>>()
     
     try {
-      val rotation = frame.orientation.toSurfaceRotation()
+      val rotation = getFrameRotation(frame.orientation)
       val image = InputImage.fromMediaImage(frame.image, rotation)
-      
+
       val sourceWidth: Double
       val sourceHeight: Double
       if (rotation == 270 || rotation == 90) {
