@@ -10,6 +10,7 @@ import {
   View
 } from 'react-native'
 import {
+  Frame,
   Camera as VisionCamera,
   useCameraDevice,
   useCameraPermission,
@@ -20,7 +21,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context'
 import { NavigationContainer } from '@react-navigation/native'
 import {
   Camera,
-  DetectionResult,
+  Face,
   FaceDetectionOptions
 } from 'react-native-vision-camera-face-detector'
 import Animated, {
@@ -28,7 +29,6 @@ import Animated, {
   useSharedValue,
   withTiming
 } from 'react-native-reanimated'
-import { Worklets } from 'react-native-worklets-core'
 
 /**
  * Entry point component
@@ -63,6 +63,10 @@ function FaceDetection(): JSX.Element {
     cameraPaused,
     setCameraPaused
   ] = useState<boolean>( false )
+  const [
+    autoScale,
+    setAutoScale
+  ] = useState<boolean>( true )
   const faceDetectionOptions = useRef<FaceDetectionOptions>( {
     performanceMode: 'fast',
     classificationMode: 'all'
@@ -107,10 +111,36 @@ function FaceDetection(): JSX.Element {
     } )
   } ) )
 
-  const handleFacesDetected = Worklets.createRunInJsFn( ( {
-    faces
-  }: DetectionResult ) => {
-    console.log( 'faces', faces )
+  useEffect( () => {
+    if ( hasPermission ) return
+    requestPermission()
+  }, [] )
+
+  /**
+   * Hanldes camera mount error event
+   *
+   * @param {any} error Error event
+   */
+  function handleCameraMountError(
+    error: any
+  ) {
+    console.error( 'camera mount error', error )
+  }
+
+  /**
+   * Handle detection result
+   * 
+   * @param {Face[]} faces Detection result 
+   * @returns {void}
+   */
+  function handleFacesDetected(
+    faces: Face[],
+    frame: Frame
+  ): void {
+    console.log(
+      'faces', faces.length,
+      'frame', frame.toString()
+    )
     // if no faces are detected we do nothing
     if ( Object.keys( faces ).length <= 0 ) return
 
@@ -130,94 +160,97 @@ function FaceDetection(): JSX.Element {
     if ( camera.current ) {
       // take photo, capture video, etc...
     }
-  } )
-
-  useEffect( () => {
-    if ( hasPermission ) return
-    requestPermission()
-  }, [] )
-
-  /**
-   * Hanldes camera mount error event
-   *
-   * @param {any} error Error event
-   */
-  function handleCameraMountError(
-    error: any
-  ) {
-    console.error( 'camera mount error', error )
   }
 
   return ( <>
-    { hasPermission && cameraDevice ? <>
-      { cameraMounted && <>
-        <Camera
-          // ignore ts error as we are importing Vision 
-          // Camera types from two different sources.
-          // No need to use this on a real/final app.
-          // @ts-ignore
-          ref={ camera }
-          style={ StyleSheet.absoluteFill }
-          isActive={ isCameraActive }
-          device={ cameraDevice }
-          onError={ handleCameraMountError }
-          faceDetectionCallback={ handleFacesDetected }
-          faceDetectionOptions={ faceDetectionOptions }
-        />
+    <View
+      style={ [
+        StyleSheet.absoluteFill, {
+          alignItems: 'center',
+          justifyContent: 'center'
+        }
+      ] }
+    >
+      { hasPermission && cameraDevice ? <>
+        { cameraMounted && <>
+          <Camera
+            // ignore ts error as we are importing Vision 
+            // Camera types from two different sources.
+            // No need to use this on a real/final app.
+            // @ts-ignore
+            ref={ camera }
+            style={ StyleSheet.absoluteFill }
+            isActive={ isCameraActive }
+            device={ cameraDevice }
+            onError={ handleCameraMountError }
+            faceDetectionCallback={ handleFacesDetected }
+            faceDetectionOptions={ {
+              ...faceDetectionOptions,
+              autoScale
+            } }
+          />
 
-        <Animated.View
-          style={ animatedStyle }
-        />
+          <Animated.View
+            style={ animatedStyle }
+          />
 
-        { cameraPaused && <Text
+          { cameraPaused && <Text
+            style={ {
+              width: '100%',
+              backgroundColor: 'rgb(0,0,255)',
+              textAlign: 'center',
+              color: 'white'
+            } }
+          >
+            Camera is PAUSED
+          </Text> }
+        </> }
+
+        { !cameraMounted && <Text
           style={ {
-            backgroundColor: 'rgb(0,0,255)',
-            color: 'white',
-            position: 'absolute',
-            bottom: 300,
-            left: 0,
-            right: 0
+            width: '100%',
+            backgroundColor: 'rgb(255,255,0)',
+            textAlign: 'center'
           } }
         >
-          Camera is PAUSED
+          Camera is NOT mounted
         </Text> }
-      </> }
-
-      { !cameraMounted && <Text
+      </> : <Text
         style={ {
-          backgroundColor: 'rgb(255,255,0)',
-          position: 'absolute',
-          bottom: 300,
-          left: 0,
-          right: 0
+          width: '100%',
+          backgroundColor: 'rgb(255,0,0)',
+          textAlign: 'center',
+          color: 'white'
         } }
       >
-        Camera is NOT mounted
+        No camera device or permission
       </Text> }
-    </> : <Text
-      style={ {
-        backgroundColor: 'rgb(255,0,0)',
-        color: 'white'
-      } }
-    >
-      No camera device or permission
-    </Text> }
+    </View>
 
     <View
       style={ {
         position: 'absolute',
-        bottom: 0,
+        bottom: 20,
         left: 0,
-        right: 0
+        right: 0,
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'space-between'
       } }
     >
       <Button
-        onPress={ () => setCameraPaused( ( current ) => !current ) }
-        title={ `${ cameraPaused ? 'Resume' : 'Pause' } Camera` }
+        onPress={ () => setAutoScale( ( current ) => !current ) }
+        title={ `${ autoScale ? 'Disable' : 'Enable' } scale` }
       />
+
+      <Button
+        onPress={ () => setCameraPaused( ( current ) => !current ) }
+        title={ `${ cameraPaused ? 'Resume' : 'Pause' } Cam` }
+      />
+
       <Button
         onPress={ () => setCameraMounted( ( current ) => !current ) }
-        title={ `${ cameraMounted ? 'Unmount' : 'Mount' } Camera` }
+        title={ `${ cameraMounted ? 'Unmount' : 'Mount' } Cam` }
       />
     </View>
   </> )

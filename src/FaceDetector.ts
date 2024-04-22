@@ -8,30 +8,14 @@ type FaceDetectorPlugin = {
   /**
    * Detect faces on frame
    * 
-   * @param {DetectFacesType} props Detect faces prop
+   * @param {Frame} frame Frame to detect faces
    */
-  detectFaces: ( props: DetectFacesType ) => DetectionResult
-}
-
-type DetectFacesType = {
-  /** Current frame */
-  frame: Frame
-  /** Optional callback */
-  callback?: CallbackType
+  detectFaces: ( frame: Frame ) => Face[]
 }
 
 type Point = {
   x: number
   y: number
-}
-
-export type CallbackType = (
-  result: DetectionResult
-) => void | Promise<void>
-
-export interface DetectionResult {
-  faces: Face[]
-  frame: FrameData
 }
 
 export interface Face {
@@ -44,11 +28,6 @@ export interface Face {
   smilingProbability: number
   contours: Contours
   landmarks: Landmarks
-}
-
-export interface FrameData {
-  converted?: string
-  original?: Frame
 }
 
 export interface Bounds {
@@ -121,7 +100,7 @@ export interface FaceDetectionOptions {
   /**
    * Sets the smallest desired face size, expressed as the ratio of the width of the head to width of the image.
    *
-   * @default 0.1
+   * @default 0.15
    */
   minFaceSize?: number
 
@@ -135,22 +114,13 @@ export interface FaceDetectionOptions {
   trackingEnabled?: boolean
 
   /**
-   * Should return converted frame as base64?
-   * 
-   * Note that no frame data will be returned if disabled.
-   * 
-   * @default false
-   */
-  convertFrame?: boolean
-
-  /**
-   * Should return original frame data?
-   * 
-   * WARNING: On my tests this freeze frame processor pipeline on IOS.
+   * Should auto scale face bounds, contour and landmarks on native side? 
+   * This option should be disabled if you want to draw on frame using `Skia Frame Processor`.
+   * See [this](https://github.com/nonam4/react-native-vision-camera-face-detector/issues/30#issuecomment-2058805546) and [this](https://github.com/nonam4/react-native-vision-camera-face-detector/issues/35) for more details. 
    * 
    * @default false
    */
-  returnOriginal?: boolean
+  autoScale?: boolean
 }
 
 /**
@@ -171,15 +141,12 @@ function createFaceDetectorPlugin(
   }
 
   return {
-    detectFaces: ( {
-      frame,
-      callback
-    }: DetectFacesType ): DetectionResult => {
+    detectFaces: (
+      frame: Frame
+    ): Face[] => {
       'worklet'
       // @ts-ignore
-      const result: DetectionResult = plugin.call( frame )
-      callback?.( result )
-      return result
+      return plugin.call( frame ) as Face[]
     }
   }
 }

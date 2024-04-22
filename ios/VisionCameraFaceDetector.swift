@@ -13,22 +13,23 @@ public class VisionCameraFaceDetector: FrameProcessorPlugin {
   private let screenBounds = UIScreen.main.bounds
 
   // detection props
-  private var context = CIContext(options: nil)
+  private var autoScale = false
   private var faceDetector: FaceDetector! = nil
   private var runLandmarks = false
   private var runClassifications = false
   private var runContours = false
   private var trackingEnabled = false
-  private var returnOriginal = false
-  private var convertFrame = false
 
   public override init(
     proxy: VisionCameraProxyHolder, 
     options: [AnyHashable : Any]! = [:]
   ) {
     super.init(proxy: proxy, options: options)
-
     let config = getConfig(withArguments: options)
+
+    // handle auto scaling
+    autoScale = config?["autoScale"] as? Bool == true
+
     // initializes faceDetector on creation
     let minFaceSize = 0.15
     let optionsBuilder = FaceDetectorOptions()
@@ -69,10 +70,6 @@ public class VisionCameraFaceDetector: FrameProcessorPlugin {
     }
 
     faceDetector = FaceDetector.faceDetector(options: optionsBuilder)
-
-    // also check about returing frame settings
-    returnOriginal = config?["returnOriginal"] as? Bool == true
-    convertFrame = config?["convertFrame"] as? Bool == true
   }
 
   func getConfig(
@@ -213,38 +210,26 @@ public class VisionCameraFaceDetector: FrameProcessorPlugin {
     return faceContoursTypesMap
   }
 
-  func convertFrameToBase64(
-    _ frame: Frame
-  ) -> Any! {
-    guard let imageBuffer = CMSampleBufferGetImageBuffer(frame.buffer) else {
-      print("Failed to get CVPixelBuffer!")
-      return nil
-    }
-    let ciImage = CIImage(cvPixelBuffer: imageBuffer)
-
-    guard let cgImage = context.createCGImage(ciImage, from: ciImage.extent) else {
-      print("Failed to create CGImage!")
-      return nil
-    }
-    let image = UIImage(cgImage: cgImage)
-    let imageData = image.jpegData(compressionQuality: 100)
-
-    return imageData?.base64EncodedString() ?? ""
-  }
-
   public override func callback(
     _ frame: Frame, 
     withArguments arguments: [AnyHashable: Any]?
-  ) -> Any? {
-    var result: [String: Any] = [:]
+  ) -> Any {
+    var result: [Any] = []
 
     do {
       let image = VisionImage(buffer: frame.buffer)
-      image.orientation = .up
+      image.orientation = frame.orientation
 
-      let scaleX = screenBounds.size.width / CGFloat(frame.width)
-      let scaleY = screenBounds.size.height / CGFloat(frame.height)
-      var faceList: [Any] = []
+      var scaleX:CGFloat
+      var scaleY:CGFloat
+      if autoScale {
+        scaleX = screenBounds.size.width / CGFloat(frame.width)
+        scaleY = screenBounds.size.height / CGFloat(frame.height)
+      } else {
+        scaleX = CGFloat(1)
+        scaleY = CGFloat(1)
+      }
+
       let faces: [Face] = try faceDetector!.results(in: image)
       for face in faces {
         var map: [String: Any] = [:]
@@ -284,24 +269,8 @@ public class VisionCameraFaceDetector: FrameProcessorPlugin {
           scaleY: scaleY
         )
 
-        faceList.append(map)
+        result.append(map)
       }
-
-      var frameMap: [String: Any] = [:]
-      if returnOriginal {
-        frameMap["original"] = frame
-      }
-
-      if  convertFrame {
-        frameMap["converted"] = convertFrameToBase64(frame)
-      }
-
-      result = returnOriginal || convertFrame ? [
-        "faces": faceList,
-        "frame": frameMap
-      ] : [
-        "faces": faceList
-      ]
     } catch let error {
       print("Error processing face detection: \(error)")
     }

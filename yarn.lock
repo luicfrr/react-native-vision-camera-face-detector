@@ -7412,15 +7412,15 @@ react-native-builder-bob@^0.23.2:
     which "^2.0.2"
     yargs "^17.5.1"
 
-react-native-vision-camera@4.0.0-beta.11:
-  version "4.0.0-beta.11"
-  resolved "https://registry.npmjs.org/react-native-vision-camera/-/react-native-vision-camera-4.0.0-beta.11.tgz"
-  integrity sha512-cKg/nwT0q0H1ivEVG+PQt/QxhFgf/dd7SiMm7bCzlSCmt0T2tXyIdLsuY312iKBB2qasQZOYtzRsoQjipHQkDw==
+react-native-vision-camera@4.0.1:
+  version "4.0.1"
+  resolved "https://registry.yarnpkg.com/react-native-vision-camera/-/react-native-vision-camera-4.0.1.tgz#045c8ff9c236d3bf7e1dba24172a4c11b19bbd37"
+  integrity sha512-TuXLw/ak+LPaJOCuUaYG1g2EmTAEEeIVAhSbCsqEHlklMjkO0oRBGcPC6HpKw3++jkcKRBVVyY48HbB002UZfg==
 
-react-native-worklets-core@^0.4.0:
-  version "0.4.0"
-  resolved "https://registry.npmjs.org/react-native-worklets-core/-/react-native-worklets-core-0.4.0.tgz"
-  integrity sha512-0rYCwxnG6L85mih+3xe1r2RhhwKqjgVN9jikVh0iMPKDf9L4OZMJnl6Kh4zjXiW9rkyI5lBghfM4XIcLMfeU6w==
+react-native-worklets-core@^1.1.1:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/react-native-worklets-core/-/react-native-worklets-core-1.1.1.tgz#c0a454c3be6d1ceab09ff925424ab371f5b048d3"
+  integrity sha512-mcZl5dDRJo+VI23HS6fPExr8YOW2fpxk+EtY1FIt81SyKt5FBHl97sSmdEjAOLKOb9myW6IiG5DWL8WQJ0iCWg==
   dependencies:
     string-hash-64 "^1.0.3"
 

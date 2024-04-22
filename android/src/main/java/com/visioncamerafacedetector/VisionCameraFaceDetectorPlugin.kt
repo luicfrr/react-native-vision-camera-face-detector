@@ -1,6 +1,5 @@
 package com.visioncamerafacedetector
 
-import android.content.res.Resources
 import android.graphics.Rect
 import android.util.Log
 import com.google.android.gms.tasks.Tasks
@@ -12,9 +11,10 @@ import com.google.mlkit.vision.face.FaceDetector
 import com.google.mlkit.vision.face.FaceDetectorOptions
 import com.google.mlkit.vision.face.FaceLandmark
 import com.mrousavy.camera.core.FrameInvalidError
-import com.mrousavy.camera.frameprocessor.Frame
-import com.mrousavy.camera.frameprocessor.FrameProcessorPlugin
-import com.mrousavy.camera.frameprocessor.VisionCameraProxy
+import com.mrousavy.camera.core.types.Orientation
+import com.mrousavy.camera.frameprocessors.Frame
+import com.mrousavy.camera.frameprocessors.FrameProcessorPlugin
+import com.mrousavy.camera.frameprocessors.VisionCameraProxy
 
 private const val TAG = "FaceDetector"
 class VisionCameraFaceDetectorPlugin(
@@ -22,20 +22,23 @@ class VisionCameraFaceDetectorPlugin(
   options: Map<String, Any>?
 ) : FrameProcessorPlugin() {
   // device display data
-  private val density = Resources.getSystem().displayMetrics.density.toInt()
-  private val windowWidth = Resources.getSystem().displayMetrics.widthPixels / density
-  private val windowHeight = Resources.getSystem().displayMetrics.heightPixels / density
+  private val displayMetrics = proxy.context.resources.displayMetrics
+  private val density = displayMetrics.density
+  private val windowWidth = (displayMetrics.widthPixels).toDouble() / density
+  private val windowHeight = (displayMetrics.heightPixels).toDouble() / density
 
   // detection props
+  private var autoScale = false
   private var faceDetector: FaceDetector? = null
   private var runLandmarks = false
   private var runClassifications = false
   private var runContours = false
   private var trackingEnabled = false
-  private var returnOriginal = false
-  private var convertFrame = false
 
   init {
+    // handle auto scaling
+    autoScale = options?.get("autoScale").toString() == "true"
+
     // initializes faceDetector on creation
     var performanceModeValue = FaceDetectorOptions.PERFORMANCE_MODE_FAST
     var landmarkModeValue = FaceDetectorOptions.LANDMARK_MODE_NONE
@@ -85,25 +88,21 @@ class VisionCameraFaceDetectorPlugin(
     faceDetector = FaceDetection.getClient(
       optionsBuilder.build()
     )
-
-    // also check about returing frame settings
-    returnOriginal = options?.get("returnOriginal").toString() == "true"
-    convertFrame = options?.get("convertFrame").toString() == "true"
   }
 
   private fun processBoundingBox(
     boundingBox: Rect,
+    sourceWidth: Double,
     scaleX: Double,
     scaleY: Double
   ): Map<String, Any> {
     val bounds: MutableMap<String, Any> = HashMap()
     val width = boundingBox.width().toDouble() * scaleX
+    val x = boundingBox.left.toDouble() * scaleX
 
     bounds["width"] = width
     bounds["height"] = boundingBox.height().toDouble() * scaleY
-    bounds["x"] = windowWidth - (width + (
-      boundingBox.left.toDouble() * scaleX
-    ))
+    bounds["x"] = (-x + sourceWidth * scaleX) - width
     bounds["y"] = boundingBox.top.toDouble() * scaleY
 
     return bounds
@@ -231,42 +230,44 @@ class VisionCameraFaceDetectorPlugin(
     return faceContoursTypesMap
   }
 
+  private fun getFrameRotation(
+    orientation: Orientation
+  ): Int {
+    return when (orientation) {
+      Orientation.PORTRAIT -> 0
+      Orientation.LANDSCAPE_LEFT -> 90
+      Orientation.PORTRAIT_UPSIDE_DOWN -> 180
+      Orientation.LANDSCAPE_RIGHT -> 270
+    }
+  }
+
   override fun callback(
     frame: Frame,
     params: Map<String, Any>?
-  ): Map<String, Any> {
-    val resultMap: MutableMap<String, Any> = HashMap()
-
+  ): Any {
+    val result = ArrayList<Map<String, Any>>()
+    
     try {
-      val frameImage = frame.image
-      val orientation = frame.orientation
+      val rotation = getFrameRotation(frame.orientation)
+      val image = InputImage.fromMediaImage(frame.image, rotation)
 
-      if (
-        frameImage == null &&
-        orientation == null
-      ) {
-        Log.i(TAG, "Image or orientation is null")
-        return resultMap
-      }
-
-      val rotation = orientation!!.toDegrees()
-      val image = InputImage.fromMediaImage(frameImage!!, rotation)
-      val scaleX: Double
-      val scaleY: Double
+      val sourceWidth: Double
+      val sourceHeight: Double
       if (rotation == 270 || rotation == 90) {
-        scaleX = windowWidth.toDouble() / image.height
-        scaleY = windowHeight.toDouble() / image.width
+        sourceWidth = image.height.toDouble()
+        sourceHeight = image.width.toDouble()
       } else {
-        scaleX = windowWidth.toDouble() / image.width
-        scaleY = windowHeight.toDouble() / image.height
+        sourceWidth = image.width.toDouble()
+        sourceHeight = image.height.toDouble()
       }
+
+      val scaleX = if(autoScale) windowWidth / sourceWidth else 1.0
+      val scaleY = if(autoScale) windowHeight / sourceHeight else 1.0
 
       val task = faceDetector!!.process(image)
       val faces = Tasks.await(task)
-      val facesList = ArrayList<Map<String, Any?>>()
-
       faces.forEach{face ->
-        val map: MutableMap<String, Any?> = HashMap()
+        val map: MutableMap<String, Any> = HashMap()
 
         if (runLandmarks) {
           map["landmarks"] = processLandmarks(
@@ -291,7 +292,7 @@ class VisionCameraFaceDetectorPlugin(
         }
 
         if (trackingEnabled) {
-          map["trackingId"] = face.trackingId
+          map["trackingId"] = face.trackingId ?: -1
         }
 
         map["rollAngle"] = face.headEulerAngleZ.toDouble()
@@ -299,24 +300,11 @@ class VisionCameraFaceDetectorPlugin(
         map["yawAngle"] = face.headEulerAngleY.toDouble()
         map["bounds"] = processBoundingBox(
           face.boundingBox,
+          sourceWidth,
           scaleX,
           scaleY
         )
-        facesList.add(map)
-      }
-
-      val frameMap: MutableMap<String, Any> = HashMap()
-      if (returnOriginal) {
-        frameMap["original"] = frame
-      }
-
-      if (convertFrame) {
-        frameMap["converted"] = BitmapUtils.convertYuvToRgba(frameImage)
-      }
-
-      resultMap["faces"] = facesList
-      if(returnOriginal || convertFrame) {
-        resultMap["frame"] = frameMap
+        result.add(map)
       }
     } catch (e: Exception) {
       Log.e(TAG, "Error processing face detection: ", e)
@@ -324,6 +312,6 @@ class VisionCameraFaceDetectorPlugin(
       Log.e(TAG, "Frame invalid error: ", e)
     }
 
-    return resultMap
+    return result
   }
 }
