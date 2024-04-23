@@ -4,7 +4,7 @@ import {
   runAsync,
   useFrameProcessor
 } from 'react-native-vision-camera'
-import { Worklets } from 'react-native-worklets-core'
+import { useRunInJS } from 'react-native-worklets-core'
 import { useFaceDetector } from './FaceDetector'
 
 // types
@@ -47,7 +47,9 @@ export const Camera = React.forwardRef( ( {
   /**
    * Runs on detection callback on js thread
    */
-  const runOnJs = Worklets.createRunOnJS( faceDetectionCallback )
+  const runOnJs = useRunInJS( faceDetectionCallback, [
+    faceDetectionCallback
+  ] )
 
   /**
    * Camera frame processor
