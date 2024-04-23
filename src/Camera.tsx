@@ -68,6 +68,7 @@ export const Camera = React.forwardRef( ( {
         faces,
         frame
       ).finally( () => {
+        'worklet'
         // finally decrement frame count so it can be dropped
         internal.decrementRefCount()
       } )
