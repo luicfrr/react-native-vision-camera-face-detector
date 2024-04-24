@@ -126,7 +126,6 @@ export const Camera = React.forwardRef( ( {
     'worklet'
     try {
       const faces = detectFaces( frame )
-
       // increment frame count so we can use frame on 
       // js side without frame processor getting stuck
       frame.incrementRefCount()
@@ -164,8 +163,8 @@ export const Camera = React.forwardRef( ( {
   }
 
   /**
- * Camera frame processor
- */
+   * Camera frame processor
+   */
   const cameraFrameProcessor = useFrameProcessor( ( frame ) => {
     'worklet'
     runAsync( frame )
