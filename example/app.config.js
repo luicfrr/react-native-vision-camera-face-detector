@@ -30,7 +30,7 @@ export default {
     },
     plugins: [
       [ 'react-native-vision-camera', {
-        "cameraPermissionText": '$(PRODUCT_NAME)  precisa acessar sua câmera para realizar seu reconhecimento facial.'
+        "cameraPermissionText": '$(PRODUCT_NAME) needs to access your device\'s camera.'
       } ],
       [ 'expo-build-properties', {
         'android': {
