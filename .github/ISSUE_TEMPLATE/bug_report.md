@@ -1,35 +1,56 @@
 ---
 name: Bug report
 about: Create a report to help us improve
-title: "[BUG]"
+title: "[BUG \U0001F41B] Replace your title here"
 labels: bug
 assignees: ''
 
 ---
 
-<!--Please note that this is an open source project. I don't expect you to pay me to use it but take this into consideration before requiring an urgent fix and/or response-->
+<!-- Issues without any log, screenshot, dependencies versions, etc... will be ignored and closed without any response. Please help me to help you 😉 -->
 
-**Describe the bug**
-A clear and concise description of what the bug is.
+<!-- Before opening issues make sure you have searched for an already closed issue with the same problem than yours. Also read releases notes as they have usefull information about versions. -->
 
-**To Reproduce**
-Steps to reproduce the behavior:
-1. Go to '...'
-2. Click on '....'
-3. Scroll down to '....'
-4. See error
+<!-- Please note that this is an open source project. I don't expect you to pay me to use it but take this into consideration before requiring an urgent fix and/or response -->
 
-**Expected behavior**
-A clear and concise description of what you expected to happen.
+**Describe the bug:**
+<!-- A clear and concise description of what the bug is -->
+
+**Minimum reproducible example:**
+<!-- 
+Steps to reproduce the behavior. E.g: 
+```
+  ... your minimum reproducible code here...
+```
+1. Go to ...
+2. Click on ...
+3. Run script ...
+-->
+
+**Expected behavior:**
+<!-- A clear and concise description of what you expected to happen -->
+
+**I have tryed:**
+<!-- I have tryed replacing this line .... with ... Also tried installing X.X.X version of ... -->
 
 **Logs and Screenshots**
-If applicable, add logs and/or screenshots to help explain your problem.
+<!-- Add logs and/or screenshots to help explain your problem. E.g:
+```
+  ... your logs here ...
+```
+ -->
 
-**Smartphone (please complete the following information):**
- - Device: [e.g. iPhone6]
- - OS: [e.g. iOS8.1]
- - Vision Camera version [e.g. 1.0.0]
- - Face detector version [e.g. 1.0.0]
+**Device:**
+ - Device: <!-- E.g: Samsung galaxy XX or Iphone XX -->
+ - OS: <!-- E.g: Android/IOS XX -->
 
-**Additional context**
-Add any other context about the problem here.
+**`package.json` file:**
+<!-- 
+{
+   "dependencies": {
+     "react-native-vision-camera": "X.X.X",
+     "react-native-vision-camera-face-detector": "X.X.X",
+     "react-native-worklets-core": "X.X.X"
+  }
+}
+-->

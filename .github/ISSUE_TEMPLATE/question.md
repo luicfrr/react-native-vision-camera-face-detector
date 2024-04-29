@@ -1,16 +1,14 @@
 ---
 name: Question
 about: Questions about package usage
-title: "[QUESTION]"
+title: "[QUESTION \U0001F914] Replace your title here"
 labels: question
 assignees: ''
 
 ---
 
-<!--Please note that this is an open source project. I don't expect you to pay me to use it but take this into consideration before requiring an urgent fix and/or response-->
+<!-- Before opening issues make sure you have searched for an already closed issue that solves your problem/doubt. Also check releases notes as they have usefull information about versions -->
 
-**What is your doubt?**
-A clear and concise description of what you want to achieve? Ex. How can I do [...]?
+<!-- If you want to ask how to use or how to do something with this package use `discussions` tab instead. -->
 
-**Additional context**
-Add any other context, log or screenshots about your question here.
+<!-- Please note that this is an open source project. I don't expect you to pay me to use it but take this into consideration before requiring an urgent fix and/or response -->
