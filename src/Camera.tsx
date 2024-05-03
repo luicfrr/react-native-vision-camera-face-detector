@@ -53,8 +53,8 @@ function useWorklet(
   dependencyList: DependencyList
 ): UseWorkletType {
   const worklet = React.useMemo( () => {
-    const context: any = 'VisionCamera.async'
-    return Worklets.createRunInContextFn( func, context )
+    const context = Worklets.defaultContext
+    return context.createRunAsync( func )
   }, dependencyList )
 
   return worklet
@@ -73,7 +73,7 @@ function useRunInJS(
   dependencyList: DependencyList
 ): UseRunInJSType {
   return React.useMemo( () => (
-    Worklets.createRunInJsFn( func )
+    Worklets.createRunOnJS( func )
   ), dependencyList )
 }
 
@@ -99,7 +99,7 @@ export const Camera = React.forwardRef( ( {
   /** 
    * Throws logs/errors back on js thread
    */
-  const logOnJs = Worklets.createRunInJsFn( (
+  const logOnJs = Worklets.createRunOnJS( (
     log: string,
     error?: Error
   ) => {
