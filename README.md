@@ -83,7 +83,72 @@ export default function App() {
 }
 ```
 
-OBS: If you want to use `Skia Frame Processor` you should **DISABLE** auto scaling. See [this](https://github.com/nonam4/react-native-vision-camera-face-detector/issues/30#issuecomment-2058805546) and [this](https://github.com/nonam4/react-native-vision-camera-face-detector/issues/35) for more details.
+Or use it following [vision-camera docs](https://react-native-vision-camera.com/docs/guides/frame-processors-interacting):
+```jsx
+import { 
+  StyleSheet, 
+  Text, 
+  View 
+} from 'react-native'
+import { 
+  useEffect, 
+  useState,
+  useRef
+} from 'react'
+import {
+  Camera,
+  useCameraDevice,
+  useFrameProcessor
+} from 'react-native-vision-camera'
+import { 
+  Face,
+  useFaceDetector,
+  FaceDetectionOptions
+} from 'react-native-vision-camera-face-detector'
+import { Worklets } from 'react-native-worklets-core'
+
+export default function App() {
+  const faceDetectionOptions = useRef<FaceDetectionOptions>( {
+    // detection options
+  } ).current
+
+  const device = useCameraDevice('front')
+  const { detectFaces } = useFaceDetector( faceDetectionOptions )
+
+  useEffect(() => {
+    (async () => {
+      const status = await Camera.requestCameraPermission()
+      console.log({ status })
+    })()
+  }, [device])
+
+  const handleDetectedFaces= Worklets.createRunOnJS( (
+    faces: Face[]
+  ) => { 
+    console.log( 'faces detected', faces )
+  })
+
+  const frameProcessor = useFrameProcessor((frame) => {
+    'worklet'
+    const faces = detectFaces(frame)
+    // ... chain frame processors
+    // ... do something with frame
+    handleDetectedFaces(faces)
+  }, [handleDetectedFaces])
+
+  return (
+    <View style={{ flex: 1 }}>
+      {!!device? <Camera
+        style={StyleSheet.absoluteFill}
+        device={device}
+        frameProcessor={frameProcessor}
+      /> : <Text>
+        No Device
+      </Text>}
+    </View>
+  )
+}
+``` 
 
 ## Face Detection Options
 
@@ -95,7 +160,7 @@ OBS: If you want to use `Skia Frame Processor` you should **DISABLE** auto scali
 | `classificationMode` | Whether or not to classify faces into categories such as 'smiling', and 'eyes open'. | `none` |
 | `minFaceSize` | Sets the smallest desired face size, expressed as the ratio of the width of the head to width of the image. | `0.15` |
 | `trackingEnabled` | Whether or not to assign faces an ID, which can be used to track faces across images. Note that when contour detection is enabled, only one face is detected, so face tracking doesn't produce useful results. For this reason, and to improve detection speed, don't enable both contour detection and face tracking. | `false` |
-| `autoScale` | Should auto scale face bounds, contour and landmarks on native side? If this option is disabled all detection results will be relative to frame coordinates, not to screen/preview. This option should be **DISABLED** if you want to draw on frame using `Skia Frame Processor`. | `false` |
+| `autoScale` | Should auto scale face bounds, contour and landmarks on native side? If this option is disabled all detection results will be relative to frame coordinates, not to screen/preview. You shouldn't use this option if you want to draw on screen using `Skia Frame Processor`. See [this](https://github.com/nonam4/react-native-vision-camera-face-detector/issues/30#issuecomment-2058805546) and [this](https://github.com/nonam4/react-native-vision-camera-face-detector/issues/35) for more details. | `false` |
 
 ## 🔧 Troubleshooting
 
