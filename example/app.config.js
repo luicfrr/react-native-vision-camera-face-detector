@@ -19,6 +19,12 @@ export default {
     ios: {
       bundleIdentifier: 'com.facedetector.example',
       buildNumber: '1',
+      privacyManifests: {
+        NSPrivacyAccessedAPITypes: [ {
+          NSPrivacyAccessedAPIType: "NSPrivacyAccessedAPICategoryUserDefaults",
+          NSPrivacyAccessedAPITypeReasons: [ "CA92.1" ]
+        } ]
+      }
     },
     android: {
       package: 'com.facedetector.example',
