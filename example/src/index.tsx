@@ -174,10 +174,6 @@ function FaceDetection(): JSX.Element {
       { hasPermission && cameraDevice ? <>
         { cameraMounted && <>
           <Camera
-            // ignore ts error as we are importing Vision 
-            // Camera types from two different sources.
-            // No need to use this on a real/final app.
-            // @ts-ignore
             ref={ camera }
             style={ StyleSheet.absoluteFill }
             isActive={ isCameraActive }
