@@ -36,14 +36,14 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/nonam4/react-native-vision-camera-face-detector"
+    "url": "https://github.com/luicfrr/react-native-vision-camera-face-detector"
   },
-  "author": "nonam4",
+  "author": "luicfrr",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/nonam4/react-native-vision-camera-face-detector"
+    "url": "https://github.com/luicfrr/react-native-vision-camera-face-detector"
   },
-  "homepage": "https://github.com/nonam4/react-native-vision-camera-face-detector",
+  "homepage": "https://github.com/luicfrr/react-native-vision-camera-face-detector",
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
   },
