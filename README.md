@@ -58,7 +58,7 @@ export default function App() {
     })()
   }, [device])
 
-  function handleFacesDetection( (
+  function handleFacesDetection(
     faces: Face[],
     frame: Frame
   ) { 
@@ -66,7 +66,7 @@ export default function App() {
       'faces', faces.length,
       'frame', frame.toString()
     )
-  })
+  }
 
   return (
     <View style={{ flex: 1 }}>
@@ -122,7 +122,7 @@ export default function App() {
     })()
   }, [device])
 
-  const handleDetectedFaces= Worklets.createRunOnJS( (
+  const handleDetectedFaces = Worklets.createRunOnJS( (
     faces: Face[]
   ) => { 
     console.log( 'faces detected', faces )
