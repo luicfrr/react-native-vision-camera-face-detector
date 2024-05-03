@@ -210,26 +210,6 @@ public class VisionCameraFaceDetector: FrameProcessorPlugin {
     return faceContoursTypesMap
   }
 
-  func getFrameRotation(
-    orientation: UIImage.Orientation
-  ) -> UIImage.Orientation {
-    // see -> https://developers.google.com/ml-kit/vision/face-detection/ios#2.-prepare-the-input-image
-    switch orientation {
-      // device is portrait
-      case .right, .leftMirrored:
-        return .up
-      // device is upside-down
-      case .left, .rightMirrored:
-        return .down
-      // device is landscape left
-      case .up, .downMirrored:
-        return .left
-      // device is landscape right
-      case .down, .upMirrored:
-        return .right
-    }
-  }
-
   public override func callback(
     _ frame: Frame, 
     withArguments arguments: [AnyHashable: Any]?
@@ -238,7 +218,7 @@ public class VisionCameraFaceDetector: FrameProcessorPlugin {
 
     do {
       let image = VisionImage(buffer: frame.buffer)
-      image.orientation = getFrameRotation(orientation: frame.orientation)
+      image.orientation = frame.orientation
 
       var scaleX:CGFloat
       var scaleY:CGFloat
