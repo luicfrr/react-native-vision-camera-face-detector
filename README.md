@@ -191,6 +191,8 @@ Min O.S version:
 - `Android`: `SDK 26` (Android 8)
 - `IOS`: `14`
 
+Make sure to follow tested versions and your device is using the minimum O.S version before opening issues.
+
 ## 📚 Author
 
 Made with ❤️ by [luicfrr](https://github.com/luicfrr)
