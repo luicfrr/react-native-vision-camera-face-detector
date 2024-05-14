@@ -3,7 +3,10 @@ import {
   Camera as VisionCamera,
   useFrameProcessor
 } from 'react-native-vision-camera'
-import { useSharedValue } from 'react-native-worklets-core'
+import {
+  Worklets,
+  useSharedValue
+} from 'react-native-worklets-core'
 import { useFaceDetector } from './FaceDetector'
 
 // types
