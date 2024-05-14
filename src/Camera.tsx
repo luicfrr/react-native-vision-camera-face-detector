@@ -146,7 +146,10 @@ export const Camera = React.forwardRef( ( {
       frame.decrementRefCount()
       isAsyncContextBusy.value = false
     }
-  }, [ runOnJs ] )
+  }, [
+    detectFaces,
+    runOnJs
+  ] )
 
   /**
    * Detect faces on frame on an async context without blocking camera preview
