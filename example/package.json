@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
+    "pods": "pod-install --quiet",
     "lint": "yarn test && eslint --quiet --fix --ext .js,.ts,.tsx,.jsx .",
     "test": "tsc",
     "prebuild": "npx expo prebuild",
@@ -37,6 +38,7 @@
     "babel-plugin-module-resolver": "^5.0.2",
     "eslint": "../node_modules/eslint",
     "metro-react-native-babel-preset": "^0.77.0",
+    "pod-install": "^0.2.2",
     "typescript": "../node_modules/typescript"
   },
   "resolutions": {
