@@ -1,10 +1,12 @@
 import React from 'react'
 import {
   Camera as VisionCamera,
+  // runAsync,
   useFrameProcessor
 } from 'react-native-vision-camera'
 import {
   Worklets,
+  // useRunOnJS,
   useSharedValue
 } from 'react-native-worklets-core'
 import { useFaceDetector } from './FaceDetector'
@@ -175,6 +177,28 @@ export const Camera = React.forwardRef( ( {
     'worklet'
     runAsync( frame )
   }, [ runOnAsyncContext ] )
+
+  //
+  // use bellow when vision-camera's  
+  // context creation issue is solved
+  //
+  // /**
+  //  * Runs on detection callback on js thread
+  //  */
+  // const runOnJs = useRunOnJS( faceDetectionCallback, [
+  //   faceDetectionCallback
+  // ] )
+
+  // const cameraFrameProcessor = useFrameProcessor( ( frame ) => {
+  //   'worklet'
+  //   runAsync( frame, () => {
+  //     'worklet'
+  //     runOnJs(
+  //       detectFaces( frame ),
+  //       frame
+  //     )
+  //   } )
+  // }, [ runOnJs ] )
 
   return <VisionCamera
     { ...props }
