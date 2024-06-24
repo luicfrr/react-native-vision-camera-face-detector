@@ -167,6 +167,8 @@ Here is a common issue when trying to use this package and how you can try to fi
 
 - `Regular javascript function cannot be shared. Try decorating the function with the 'worklet' keyword...`:
   - If you're using `react-native-reanimated` maybe you're missing [this](https://github.com/mrousavy/react-native-vision-camera/issues/1791#issuecomment-1892130378) step.
+- `Execution failed for task ':react-native-vision-camera-face-detector:compileDebugKotlin'...`:
+  - This error is probably related to gradle cache. Try [this](https://github.com/luicfrr/react-native-vision-camera-face-detector/issues/71#issuecomment-2186614831) sollution first.
 
 If you find other errors while using this package you're wellcome to open a new issue or create a PR with the fix.
 
