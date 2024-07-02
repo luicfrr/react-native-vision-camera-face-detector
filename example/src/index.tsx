@@ -90,6 +90,7 @@ function FaceDetection(): JSX.Element {
   const aFaceH = useSharedValue( 0 )
   const aFaceX = useSharedValue( 0 )
   const aFaceY = useSharedValue( 0 )
+  const aRot = useSharedValue( 0 )
   const animatedStyle = useAnimatedStyle( () => ( {
     position: 'absolute',
     borderWidth: 4,
@@ -108,13 +109,27 @@ function FaceDetection(): JSX.Element {
     } ),
     top: withTiming( aFaceY.value, {
       duration: 100
-    } )
+    } ),
+    transform: [ {
+      rotate: `${ aRot.value }deg`
+    } ]
   } ) )
 
   useEffect( () => {
     if ( hasPermission ) return
     requestPermission()
   }, [] )
+
+  /**
+   * Handle camera UI rotation
+   * 
+   * @param {number} rotation Camera rotation
+   */
+  function handleUiRotation(
+    rotation: number
+  ) {
+    aRot.value = rotation
+  }
 
   /**
    * Hanldes camera mount error event
@@ -181,6 +196,7 @@ function FaceDetection(): JSX.Element {
             onError={ handleCameraMountError }
             faceDetectionCallback={ handleFacesDetected }
             outputOrientation={ 'device' }
+            onUIRotationChanged={ handleUiRotation }
             faceDetectionOptions={ {
               ...faceDetectionOptions,
               autoScale
