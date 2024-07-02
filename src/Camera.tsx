@@ -203,7 +203,6 @@ export const Camera = React.forwardRef( ( {
   return <VisionCamera
     { ...props }
     ref={ ref }
-    outputOrientation={ 'device' }
     frameProcessor={ cameraFrameProcessor }
     pixelFormat='yuv'
   />

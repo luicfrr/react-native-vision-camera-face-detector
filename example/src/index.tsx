@@ -180,6 +180,7 @@ function FaceDetection(): JSX.Element {
             device={ cameraDevice }
             onError={ handleCameraMountError }
             faceDetectionCallback={ handleFacesDetected }
+            outputOrientation={ 'device' }
             faceDetectionOptions={ {
               ...faceDetectionOptions,
               autoScale
