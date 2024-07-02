@@ -182,11 +182,11 @@ If you find other errors while using this package you're wellcome to open a new 
 
 This package was tested using the following:
 
-- `react-native`: `0.73.8` (new arch disabled)
-- `react-native-vision-camera`: `4.0.4`
+- `react-native`: `0.74.3` (new arch disabled)
+- `react-native-vision-camera`: `4.4.0`
 - `react-native-worklets-core`: `1.3.3`
-- `react-native-reanimated`: `3.10.0`
-- `expo`: `50.0.17`
+- `react-native-reanimated`: `3.12.1`
+- `expo`: `51.0.17`
 
 Min O.S version:
 
