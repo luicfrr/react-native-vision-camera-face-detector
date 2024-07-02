@@ -7,16 +7,14 @@ apply plugin: "com.android.library"
 apply plugin: "kotlin-android"
 
 buildscript {
-    if (project == rootProject) {
-        repositories {
-            google()
-            mavenCentral()
-        }
+    repositories {
+        google()
+        mavenCentral()
+    }
 
-        dependencies {
-            classpath "com.android.tools.build:gradle:7.4.2"
-            classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${kotlinVersion}"
-        }
+    dependencies {
+        classpath "com.android.tools.build:gradle:7.4.2"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${kotlinVersion}"
     }
 }
 
