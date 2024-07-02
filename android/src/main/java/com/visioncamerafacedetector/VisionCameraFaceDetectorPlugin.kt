@@ -93,18 +93,42 @@ class VisionCameraFaceDetectorPlugin(
   private fun processBoundingBox(
     boundingBox: Rect,
     sourceWidth: Double,
+    sourceHeight: Double,
+    orientation: Orientation,
     scaleX: Double,
     scaleY: Double
   ): Map<String, Any> {
     val bounds: MutableMap<String, Any> = HashMap()
     val width = boundingBox.width().toDouble() * scaleX
+    val height = boundingBox.height().toDouble() * scaleY
     val x = boundingBox.left.toDouble() * scaleX
+    val y = boundingBox.top.toDouble() * scaleY
+
+    when(orientation) {
+      Orientation.PORTRAIT -> {
+        // device is landscape left
+        bounds["x"] = (-y + sourceWidth * scaleX) - width
+        bounds["y"] = (-x + sourceHeight * scaleY) - height
+      }
+      Orientation.LANDSCAPE_LEFT -> {
+        // device is portrait
+        bounds["x"] = (-x + sourceWidth * scaleX) - width
+        bounds["y"] = y
+      }
+      Orientation.PORTRAIT_UPSIDE_DOWN -> {
+        // device is landscape right
+        bounds["x"] = y
+        bounds["y"] = x
+      }
+      Orientation.LANDSCAPE_RIGHT -> {
+        // device is upside down
+        bounds["x"] = x
+        bounds["y"] = (-y + sourceHeight * scaleY) - height
+      }
+    }
 
     bounds["width"] = width
-    bounds["height"] = boundingBox.height().toDouble() * scaleY
-    bounds["x"] = (-x + sourceWidth * scaleX) - width
-    bounds["y"] = boundingBox.top.toDouble() * scaleY
-
+    bounds["height"] = height
     return bounds
   }
 
@@ -230,14 +254,18 @@ class VisionCameraFaceDetectorPlugin(
     return faceContoursTypesMap
   }
 
-  private fun getFrameRotation(
+  private fun getOrientation(
     orientation: Orientation
   ): Int {
     return when (orientation) {
+      // device is landscape left
       Orientation.PORTRAIT -> 0
-      Orientation.LANDSCAPE_LEFT -> 90
+      // device is portrait
+      Orientation.LANDSCAPE_LEFT -> 270
+      // device is landscape right
       Orientation.PORTRAIT_UPSIDE_DOWN -> 180
-      Orientation.LANDSCAPE_RIGHT -> 270
+      // device is upside-down
+      Orientation.LANDSCAPE_RIGHT -> 90
     }
   }
 
@@ -248,21 +276,12 @@ class VisionCameraFaceDetectorPlugin(
     val result = ArrayList<Map<String, Any>>()
     
     try {
-      val rotation = getFrameRotation(frame.orientation)
-      val image = InputImage.fromMediaImage(frame.image, rotation)
-
-      val sourceWidth: Double
-      val sourceHeight: Double
-      if (rotation == 270 || rotation == 90) {
-        sourceWidth = image.height.toDouble()
-        sourceHeight = image.width.toDouble()
-      } else {
-        sourceWidth = image.width.toDouble()
-        sourceHeight = image.height.toDouble()
-      }
-
-      val scaleX = if(autoScale) windowWidth / sourceWidth else 1.0
-      val scaleY = if(autoScale) windowHeight / sourceHeight else 1.0
+      val orientation = getOrientation(frame.orientation)
+      val image = InputImage.fromMediaImage(frame.image, orientation)
+      val width =  image.height.toDouble()
+      val height =  image.width.toDouble()
+      val scaleX = if(autoScale) windowWidth / width else 1.0
+      val scaleY = if(autoScale) windowHeight / height else 1.0
 
       val task = faceDetector!!.process(image)
       val faces = Tasks.await(task)
@@ -300,7 +319,9 @@ class VisionCameraFaceDetectorPlugin(
         map["yawAngle"] = face.headEulerAngleY.toDouble()
         map["bounds"] = processBoundingBox(
           face.boundingBox,
-          sourceWidth,
+          width,
+          height,
+          frame.orientation,
           scaleX,
           scaleY
         )
