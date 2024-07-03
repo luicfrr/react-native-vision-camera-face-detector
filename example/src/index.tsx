@@ -67,6 +67,10 @@ function FaceDetection(): JSX.Element {
     autoScale,
     setAutoScale
   ] = useState<boolean>( true )
+  const [
+    facingFront,
+    setFacingFront
+  ] = useState<boolean>( true )
   const faceDetectionOptions = useRef<FaceDetectionOptions>( {
     performanceMode: 'fast',
     classificationMode: 'all'
@@ -78,7 +82,7 @@ function FaceDetection(): JSX.Element {
     isFocused &&
     appState === 'active'
   )
-  const cameraDevice = useCameraDevice( 'front' )
+  const cameraDevice = useCameraDevice( facingFront ? 'front' : 'back' )
   //
   // vision camera ref
   //
@@ -247,24 +251,45 @@ function FaceDetection(): JSX.Element {
         left: 0,
         right: 0,
         display: 'flex',
-        flexDirection: 'row',
-        justifyContent: 'space-between'
+        flexDirection: 'column'
       } }
     >
-      <Button
-        onPress={ () => setAutoScale( ( current ) => !current ) }
-        title={ `${ autoScale ? 'Disable' : 'Enable' } scale` }
-      />
+      <View
+        style={ {
+          width: '100%',
+          display: 'flex',
+          flexDirection: 'row',
+          justifyContent: 'space-around'
+        } }
+      >
+        <Button
+          onPress={ () => setFacingFront( ( current ) => !current ) }
+          title={ 'Toggle Cam' }
+        />
 
-      <Button
-        onPress={ () => setCameraPaused( ( current ) => !current ) }
-        title={ `${ cameraPaused ? 'Resume' : 'Pause' } Cam` }
-      />
+        <Button
+          onPress={ () => setAutoScale( ( current ) => !current ) }
+          title={ `${ autoScale ? 'Disable' : 'Enable' } Scale` }
+        />
+      </View>
+      <View
+        style={ {
+          width: '100%',
+          display: 'flex',
+          flexDirection: 'row',
+          justifyContent: 'space-around'
+        } }
+      >
+        <Button
+          onPress={ () => setCameraPaused( ( current ) => !current ) }
+          title={ `${ cameraPaused ? 'Resume' : 'Pause' } Cam` }
+        />
 
-      <Button
-        onPress={ () => setCameraMounted( ( current ) => !current ) }
-        title={ `${ cameraMounted ? 'Unmount' : 'Mount' } Cam` }
-      />
+        <Button
+          onPress={ () => setCameraMounted( ( current ) => !current ) }
+          title={ `${ cameraMounted ? 'Unmount' : 'Mount' } Cam` }
+        />
+      </View>
     </View>
   </> )
 }
