@@ -90,16 +90,23 @@ public class VisionCameraFaceDetector: FrameProcessorPlugin {
 
   func processBoundingBox(
     from face: Face,
+    sourceWidth: CGFloat,
+    sourceHeight: CGFloat,
+    orientation: UIImage.Orientation,
     scaleX: CGFloat,
     scaleY: CGFloat
   ) -> [String:Any] {
     let boundingBox = face.frame
-
+    let width = boundingBox.width * scaleX
+    let height = boundingBox.height * scaleY
+    let x = boundingBox.origin.y * scaleX
+    let y = boundingBox.origin.x * scaleY
+    
     return [
-      "width": boundingBox.width * scaleX,
-      "height": boundingBox.height * scaleY,
-      "x": boundingBox.origin.x * scaleX,
-      "y": boundingBox.origin.y * scaleY
+      "width": width,
+      "height": height,
+      "x": (-x + sourceWidth * scaleX) - width,
+      "y": y
     ]
   }
 
@@ -210,6 +217,27 @@ public class VisionCameraFaceDetector: FrameProcessorPlugin {
     return faceContoursTypesMap
   }
 
+  func getOrientation(
+    orientation: UIImage.Orientation
+  ) -> UIImage.Orientation {
+    switch orientation {
+      case .up:
+        // device is landscape left
+        return .up
+      case .left:
+      // device is portrait
+        return .right
+      case .down:
+        // device is landscape right
+        return .down
+      case .right:
+        // device is upside-down
+        return .left
+      default:
+        return .up
+    }
+  }
+  
   public override func callback(
     _ frame: Frame, 
     withArguments arguments: [AnyHashable: Any]?
@@ -217,14 +245,20 @@ public class VisionCameraFaceDetector: FrameProcessorPlugin {
     var result: [Any] = []
 
     do {
+      // we need to invert sizes as frame is always -90deg rotated
+      let width = CGFloat(frame.height)
+      let height = CGFloat(frame.width)
+      let orientation = getOrientation(
+        orientation: frame.orientation
+      )
       let image = VisionImage(buffer: frame.buffer)
-      image.orientation = frame.orientation
-
+      image.orientation = orientation
+    
       var scaleX:CGFloat
       var scaleY:CGFloat
       if autoScale {
-        scaleX = screenBounds.size.width / CGFloat(frame.width)
-        scaleY = screenBounds.size.height / CGFloat(frame.height)
+        scaleX = screenBounds.size.width / width
+        scaleY = screenBounds.size.height / height
       } else {
         scaleX = CGFloat(1)
         scaleY = CGFloat(1)
@@ -265,6 +299,9 @@ public class VisionCameraFaceDetector: FrameProcessorPlugin {
         map["yawAngle"] = face.headEulerAngleY
         map["bounds"] = processBoundingBox(
           from: face,
+          sourceWidth: width,
+          sourceHeight: height,
+          orientation: frame.orientation,
           scaleX: scaleX,
           scaleY: scaleY
         )
