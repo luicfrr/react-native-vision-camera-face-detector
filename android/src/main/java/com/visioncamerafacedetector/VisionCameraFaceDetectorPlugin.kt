@@ -278,8 +278,9 @@ class VisionCameraFaceDetectorPlugin(
     try {
       val orientation = getOrientation(frame.orientation)
       val image = InputImage.fromMediaImage(frame.image, orientation)
-      val width =  image.height.toDouble()
-      val height =  image.width.toDouble()
+      // we need to invert sizes as frame is always -90deg rotated
+      val width = image.height.toDouble()
+      val height = image.width.toDouble()
       val scaleX = if(autoScale) windowWidth / width else 1.0
       val scaleY = if(autoScale) windowHeight / height else 1.0
 
