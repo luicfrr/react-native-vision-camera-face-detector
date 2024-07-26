@@ -9,9 +9,6 @@ import SceneKit
 
 @objc(VisionCameraFaceDetector)
 public class VisionCameraFaceDetector: FrameProcessorPlugin {
-  // device display data  
-  private let screenBounds = UIScreen.main.bounds
-
   // detection props
   private var autoScale = false
   private var faceDetector: FaceDetector! = nil
@@ -19,6 +16,8 @@ public class VisionCameraFaceDetector: FrameProcessorPlugin {
   private var runClassifications = false
   private var runContours = false
   private var trackingEnabled = false
+  private var windowWidth = 1.0
+  private var windowHeight = 1.0
 
   public override init(
     proxy: VisionCameraProxyHolder, 
@@ -26,6 +25,16 @@ public class VisionCameraFaceDetector: FrameProcessorPlugin {
   ) {
     super.init(proxy: proxy, options: options)
     let config = getConfig(withArguments: options)
+
+    let windowWidthParam = config?["windowWidth"] as? Double
+    if windowWidthParam != nil && windowWidthParam != windowWidth {
+      windowWidth = CGFloat(windowWidthParam!)
+    }
+
+    let windowHeightParam = config?["windowHeight"] as? Double
+    if windowHeightParam != nil && windowHeightParam != windowHeight {
+      windowHeight = CGFloat(windowHeightParam!)
+    }
 
     // handle auto scaling
     autoScale = config?["autoScale"] as? Bool == true
@@ -257,8 +266,8 @@ public class VisionCameraFaceDetector: FrameProcessorPlugin {
       var scaleX:CGFloat
       var scaleY:CGFloat
       if autoScale {
-        scaleX = screenBounds.size.width / width
-        scaleY = screenBounds.size.height / height
+        scaleX = windowWidth / width
+        scaleY = windowHeight / height
       } else {
         scaleX = CGFloat(1)
         scaleY = CGFloat(1)

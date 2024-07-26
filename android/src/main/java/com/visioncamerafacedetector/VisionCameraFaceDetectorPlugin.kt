@@ -21,12 +21,6 @@ class VisionCameraFaceDetectorPlugin(
   proxy: VisionCameraProxy,
   options: Map<String, Any>?
 ) : FrameProcessorPlugin() {
-  // device display data
-  private val displayMetrics = proxy.context.resources.displayMetrics
-  private val density = displayMetrics.density
-  private val windowWidth = (displayMetrics.widthPixels).toDouble() / density
-  private val windowHeight = (displayMetrics.heightPixels).toDouble() / density
-
   // detection props
   private var autoScale = false
   private var faceDetector: FaceDetector? = null
@@ -34,6 +28,8 @@ class VisionCameraFaceDetectorPlugin(
   private var runClassifications = false
   private var runContours = false
   private var trackingEnabled = false
+  private var windowWidth = 1.0
+  private var windowHeight = 1.0
 
   init {
     // handle auto scaling
@@ -44,7 +40,9 @@ class VisionCameraFaceDetectorPlugin(
     var landmarkModeValue = FaceDetectorOptions.LANDMARK_MODE_NONE
     var classificationModeValue = FaceDetectorOptions.CLASSIFICATION_MODE_NONE
     var contourModeValue = FaceDetectorOptions.CONTOUR_MODE_NONE
-    var minFaceSize = 0.15f
+
+    windowWidth = (options?.get("windowWidth") ?: 1.0) as Double
+    windowHeight = (options?.get("windowHeight") ?: 1.0) as Double
 
     if (options?.get("performanceMode").toString() == "accurate") {
       performanceModeValue = FaceDetectorOptions.PERFORMANCE_MODE_ACCURATE
@@ -65,14 +63,7 @@ class VisionCameraFaceDetectorPlugin(
       contourModeValue = FaceDetectorOptions.CONTOUR_MODE_ALL
     }
 
-    val minFaceSizeParam = options?.get("minFaceSize").toString()
-    if (
-      minFaceSizeParam != "null" &&
-      minFaceSizeParam != minFaceSize.toString()
-    ) {
-      minFaceSize = minFaceSizeParam.toFloat()
-    }
-
+    val minFaceSize: Float = (options?.get("minFaceSize") ?: 0.15f) as Float
     val optionsBuilder = FaceDetectorOptions.Builder()
       .setPerformanceMode(performanceModeValue)
       .setLandmarkMode(landmarkModeValue)

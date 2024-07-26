@@ -160,6 +160,8 @@ export default function App() {
 | `minFaceSize` | Sets the smallest desired face size, expressed as the ratio of the width of the head to width of the image. | `0.15` |
 | `trackingEnabled` | Whether or not to assign faces an ID, which can be used to track faces across images. Note that when contour detection is enabled, only one face is detected, so face tracking doesn't produce useful results. For this reason, and to improve detection speed, don't enable both contour detection and face tracking. | `false` |
 | `autoScale` | Should auto scale face bounds, contour and landmarks on native side? If this option is disabled all detection results will be relative to frame coordinates, not to screen/preview. You shouldn't use this option if you want to draw on screen using `Skia Frame Processor`. See [this](https://github.com/luicfrr/react-native-vision-camera-face-detector/issues/30#issuecomment-2058805546) and [this](https://github.com/luicfrr/react-native-vision-camera-face-detector/issues/35) for more details. | `false` |
+| `windowWidth` | * Required if you want to use `autoScale`. You must handle your own logic to get screen sizes, with or without statusbar size, etc... | `1.0` |
+| `windowHeight` | * Required if you want to use `autoScale`. You must handle your own logic to get screen sizes, with or without statusbar size, etc... | `1.0` |
 
 ## 🔧 Troubleshooting
 
@@ -183,7 +185,7 @@ If you find other errors while using this package you're wellcome to open a new 
 This package was tested using the following:
 
 - `react-native`: `0.74.3` (new arch disabled)
-- `react-native-vision-camera`: `4.4.1`
+- `react-native-vision-camera`: `4.5.0`
 - `react-native-worklets-core`: `1.3.3`
 - `react-native-reanimated`: `3.12.1`
 - `expo`: `51.0.17`

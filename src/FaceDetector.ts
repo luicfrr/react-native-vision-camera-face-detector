@@ -121,6 +121,21 @@ export interface FaceDetectionOptions {
    * @default false
    */
   autoScale?: boolean
+
+
+  /**
+   * Required if you want to use `autoScale`. You must handle your own logic to get screen sizes, with or without statusbar size, etc...
+   * 
+   * @default 1.0
+   */
+  windowWidth?: number
+
+  /**
+   * Required if you want to use `autoScale`. You must handle your own logic to get screen sizes, with or without statusbar size, etc...
+   * 
+   * @default 1.0
+   */
+  windowHeight?: number
 }
 
 /**
