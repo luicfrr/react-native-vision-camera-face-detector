@@ -140,6 +140,7 @@ export default function App() {
       {!!device? <Camera
         style={StyleSheet.absoluteFill}
         device={device}
+        isActive={true}
         frameProcessor={frameProcessor}
       /> : <Text>
         No Device
