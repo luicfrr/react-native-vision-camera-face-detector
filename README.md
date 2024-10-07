@@ -172,6 +172,7 @@ Here is a common issue when trying to use this package and how you can try to fi
   - If you're using `react-native-reanimated` maybe you're missing [this](https://github.com/mrousavy/react-native-vision-camera/issues/1791#issuecomment-1892130378) step.
 - `Execution failed for task ':react-native-vision-camera-face-detector:compileDebugKotlin'...`:
   - This error is probably related to gradle cache. Try [this](https://github.com/luicfrr/react-native-vision-camera-face-detector/issues/71#issuecomment-2186614831) sollution first.
+  - Also check [this](https://github.com/luicfrr/react-native-vision-camera-face-detector/issues/90#issuecomment-2358160166) comment.
 
 If you find other errors while using this package you're wellcome to open a new issue or create a PR with the fix.
 
