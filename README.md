@@ -101,6 +101,7 @@ import {
 } from 'react-native-vision-camera'
 import { 
   Face,
+  runAsync,
   useFaceDetector,
   FaceDetectionOptions
 } from 'react-native-vision-camera-face-detector'
@@ -129,10 +130,15 @@ export default function App() {
 
   const frameProcessor = useFrameProcessor((frame) => {
     'worklet'
-    const faces = detectFaces(frame)
+    runAsync(frame, () => {
+      'worklet'
+      const faces = detectFaces(frame)
+      // ... chain some asynchronous frame processor
+      // ... do something asynchronously with frame
+      handleDetectedFaces(faces)
+    })
     // ... chain frame processors
     // ... do something with frame
-    handleDetectedFaces(faces)
   }, [handleDetectedFaces])
 
   return (
@@ -148,7 +154,11 @@ export default function App() {
     </View>
   )
 }
-``` 
+```
+
+As face detection is a heavy process you should run it in an asynchronous thread so it can be finished without blocking your camera preview.
+You should read `vision-camera` [docs](https://react-native-vision-camera.com/docs/guides/frame-processors-interacting#running-asynchronously) about this feature.
+
 
 ## Face Detection Options
 
