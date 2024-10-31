@@ -305,7 +305,7 @@ public class VisionCameraFaceDetector: FrameProcessorPlugin {
 
         map["rollAngle"] = face.headEulerAngleZ
         map["pitchAngle"] = face.headEulerAngleX
-        map["yawAngle"] = face.headEulerAngleY
+        map["yawAngle"] = -face.headEulerAngleY  // Invert yawAngle for iOS
         map["bounds"] = processBoundingBox(
           from: face,
           sourceWidth: width,
