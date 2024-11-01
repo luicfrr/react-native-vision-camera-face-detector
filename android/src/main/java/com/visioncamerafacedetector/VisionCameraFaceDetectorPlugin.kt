@@ -63,13 +63,13 @@ class VisionCameraFaceDetectorPlugin(
       contourModeValue = FaceDetectorOptions.CONTOUR_MODE_ALL
     }
 
-    val minFaceSize: Float = (options?.get("minFaceSize") ?: 0.15f) as Float
+    val minFaceSize: Double = (options?.get("minFaceSize") ?: 0.15) as Double
     val optionsBuilder = FaceDetectorOptions.Builder()
       .setPerformanceMode(performanceModeValue)
       .setLandmarkMode(landmarkModeValue)
       .setContourMode(contourModeValue)
       .setClassificationMode(classificationModeValue)
-      .setMinFaceSize(minFaceSize)
+      .setMinFaceSize(minFaceSize.toFloat())
 
     if (options?.get("trackingEnabled").toString() == "true") {
       trackingEnabled = true
