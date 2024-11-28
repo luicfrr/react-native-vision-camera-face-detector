@@ -1,6 +1,6 @@
 {
   "name": "react-native-vision-camera-face-detector",
-  "version": "1.7.1",
+  "version": "1.7.2",
   "description": "Frame Processor Plugin to detect faces using MLKit Vision Face Detector for React Native Vision Camera!",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
