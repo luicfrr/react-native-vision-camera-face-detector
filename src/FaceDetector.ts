@@ -1,6 +1,7 @@
 import { useMemo } from 'react'
 import {
   VisionCameraProxy,
+  type CameraPosition,
   type Frame
 } from 'react-native-vision-camera'
 
@@ -122,7 +123,6 @@ export interface FaceDetectionOptions {
    */
   autoScale?: boolean
 
-
   /**
    * Required if you want to use `autoScale`. You must handle your own logic to get screen sizes, with or without statusbar size, etc...
    * 
@@ -136,6 +136,13 @@ export interface FaceDetectionOptions {
    * @default 1.0
    */
   windowHeight?: number
+
+  /**
+   * Current active camera
+   * 
+   * @default front
+   */
+  cameraFacing?: CameraPosition
 }
 
 /**

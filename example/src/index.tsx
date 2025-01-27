@@ -1,4 +1,4 @@
-import {
+import React, {
   useEffect,
   useRef,
   useState
@@ -11,6 +11,7 @@ import {
   useWindowDimensions
 } from 'react-native'
 import {
+  CameraPosition,
   Frame,
   Camera as VisionCamera,
   useCameraDevice,
@@ -73,9 +74,9 @@ function FaceDetection(): JSX.Element {
     setAutoScale
   ] = useState<boolean>( true )
   const [
-    facingFront,
-    setFacingFront
-  ] = useState<boolean>( true )
+    cameraFacing,
+    setCameraFacing
+  ] = useState<CameraPosition>( 'front' )
   const faceDetectionOptions = useRef<FaceDetectionOptions>( {
     performanceMode: 'fast',
     classificationMode: 'all',
@@ -89,7 +90,7 @@ function FaceDetection(): JSX.Element {
     isFocused &&
     appState === 'active'
   )
-  const cameraDevice = useCameraDevice( facingFront ? 'front' : 'back' )
+  const cameraDevice = useCameraDevice( cameraFacing )
   //
   // vision camera ref
   //
@@ -209,7 +210,8 @@ function FaceDetection(): JSX.Element {
             onUIRotationChanged={ handleUiRotation }
             faceDetectionOptions={ {
               ...faceDetectionOptions,
-              autoScale
+              autoScale,
+              cameraFacing
             } }
           />
 
@@ -269,7 +271,9 @@ function FaceDetection(): JSX.Element {
         } }
       >
         <Button
-          onPress={ () => setFacingFront( ( current ) => !current ) }
+          onPress={ () => setCameraFacing( ( current ) => (
+            current === 'front' ? 'back' : 'front'
+          ) ) }
           title={ 'Toggle Cam' }
         />
 

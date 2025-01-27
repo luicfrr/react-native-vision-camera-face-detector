@@ -9,6 +9,11 @@ import SceneKit
 
 @objc(VisionCameraFaceDetector)
 public class VisionCameraFaceDetector: FrameProcessorPlugin {
+  enum CameraFacing: String {
+    case front = "front"
+    case back = "back"
+  }
+  
   // detection props
   private var autoScale = false
   private var faceDetector: FaceDetector! = nil
@@ -18,6 +23,8 @@ public class VisionCameraFaceDetector: FrameProcessorPlugin {
   private var trackingEnabled = false
   private var windowWidth = 1.0
   private var windowHeight = 1.0
+  private var cameraFacing:AVCaptureDevice.Position = .front
+  private var orientationManager = VisionCameraFaceDetectorOrientation()
 
   public override init(
     proxy: VisionCameraProxyHolder, 
@@ -34,6 +41,12 @@ public class VisionCameraFaceDetector: FrameProcessorPlugin {
     let windowHeightParam = config?["windowHeight"] as? Double
     if windowHeightParam != nil && windowHeightParam != windowHeight {
       windowHeight = CGFloat(windowHeightParam!)
+    }
+    
+    if config?["cameraFacing"] as? String == "back" {
+      cameraFacing = .back
+    } else {
+      cameraFacing = .front
     }
 
     // handle auto scaling
@@ -101,7 +114,6 @@ public class VisionCameraFaceDetector: FrameProcessorPlugin {
     from face: Face,
     sourceWidth: CGFloat,
     sourceHeight: CGFloat,
-    orientation: UIImage.Orientation,
     scaleX: CGFloat,
     scaleY: CGFloat
   ) -> [String:Any] {
@@ -226,23 +238,17 @@ public class VisionCameraFaceDetector: FrameProcessorPlugin {
     return faceContoursTypesMap
   }
 
-  func getOrientation(
-    orientation: UIImage.Orientation
-  ) -> UIImage.Orientation {
-    switch orientation {
-      case .up:
-        // device is landscape left
-        return .up
-      case .left:
-      // device is portrait
-        return .right
-      case .down:
-        // device is landscape right
-        return .down
-      case .right:
-        // device is upside-down
-        return .left
-      default:
+  func getImageOrientation() -> UIImage.Orientation {
+    switch orientationManager.orientation {
+      case .portrait:
+        return cameraFacing == .front ? .leftMirrored : .right
+      case .landscapeLeft:
+        return cameraFacing == .front ? .upMirrored : .up
+      case .portraitUpsideDown:
+        return cameraFacing == .front ? .rightMirrored : .left
+      case .landscapeRight:
+        return cameraFacing == .front ? .downMirrored : .down
+      @unknown default:
         return .up
     }
   }
@@ -257,11 +263,8 @@ public class VisionCameraFaceDetector: FrameProcessorPlugin {
       // we need to invert sizes as frame is always -90deg rotated
       let width = CGFloat(frame.height)
       let height = CGFloat(frame.width)
-      let orientation = getOrientation(
-        orientation: frame.orientation
-      )
       let image = VisionImage(buffer: frame.buffer)
-      image.orientation = orientation
+      image.orientation = getImageOrientation()
     
       var scaleX:CGFloat
       var scaleY:CGFloat
@@ -310,7 +313,6 @@ public class VisionCameraFaceDetector: FrameProcessorPlugin {
           from: face,
           sourceWidth: width,
           sourceHeight: height,
-          orientation: frame.orientation,
           scaleX: scaleX,
           scaleY: scaleY
         )
