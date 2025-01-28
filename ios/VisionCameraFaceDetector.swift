@@ -45,8 +45,6 @@ public class VisionCameraFaceDetector: FrameProcessorPlugin {
     
     if config?["cameraFacing"] as? String == "back" {
       cameraFacing = .back
-    } else {
-      cameraFacing = .front
     }
 
     // handle auto scaling
