@@ -100,39 +100,61 @@ class VisionCameraFaceDetectorPlugin(
     val bounds: MutableMap<String, Any> = HashMap()
     val width = boundingBox.width().toDouble() * scaleX
     val height = boundingBox.height().toDouble() * scaleY
-    val x = boundingBox.left.toDouble() //* scaleX
-    val y = boundingBox.top.toDouble() //* scaleY
+    val x = boundingBox.left.toDouble()
+    val y = boundingBox.top.toDouble()
 
-    when(orientationManager.orientation) {
-      Surface.ROTATION_0 -> {
+    bounds["width"] = width
+    bounds["height"] = height
+
+    if(cameraFacing == Position.FRONT) {
+      when (orientationManager.orientation) {
         // device is portrait
-        bounds["x"] = ((-x * scaleX) + sourceWidth * scaleX) - width
+        Surface.ROTATION_0 -> {
+          bounds["x"] = ((-x * scaleX) + sourceWidth * scaleX) - width
+          bounds["y"] = y * scaleY
+        }
+        // device is landscape right
+        Surface.ROTATION_270 -> {
+          bounds["x"] = y * scaleX
+          bounds["y"] = x * scaleY
+        }
+        // device is upside down
+        Surface.ROTATION_180 -> {
+          bounds["x"] = x * scaleX
+          bounds["y"] = ((-y * scaleY) + sourceHeight * scaleY) - height
+        }
+        // device is landscape left
+        Surface.ROTATION_90 -> {
+          bounds["x"] = ((-y * scaleX) + sourceWidth * scaleX) - width
+          bounds["y"] = ((-x * scaleY) + sourceHeight * scaleY) - height
+        }
+      }
+      return bounds
+    }
+
+    // using back camera
+    when (orientationManager.orientation) {
+      // device is portrait
+      Surface.ROTATION_0 -> {
+        bounds["x"] = x * scaleX
         bounds["y"] = y * scaleY
       }
       // device is landscape right
       Surface.ROTATION_270 -> {
-        // device is landscape left
-        //bounds["x"] = (-x + sourceWidth * scaleX) - width
-        //bounds["y"] = (-y + sourceHeight * scaleY) - height
         bounds["x"] = y * scaleX
-        bounds["y"] = x * scaleY
+        bounds["y"] = ((-x * scaleY) + sourceHeight * scaleY) - height
       }
       // device is upside down
       Surface.ROTATION_180 -> {
-        // device is upside down
-        bounds["x"] = x * scaleX
+        bounds["x"] =((-x * scaleX) + sourceWidth * scaleX) - width
         bounds["y"] = ((-y * scaleY) + sourceHeight * scaleY) - height
       }
       // device is landscape left
       Surface.ROTATION_90 -> {
-        // device is landscape right
         bounds["x"] = ((-y * scaleX) + sourceWidth * scaleX) - width
-        bounds["y"] = ((-x * scaleY) + sourceHeight * scaleY) - height
+        bounds["y"] = x * scaleY
       }
     }
-
-    bounds["width"] = width
-    bounds["height"] = height
     return bounds
   }
 
@@ -263,11 +285,11 @@ class VisionCameraFaceDetectorPlugin(
       // device is portrait
       Surface.ROTATION_0 -> if(cameraFacing == Position.FRONT) 270 else 90
       // device is landscape right
-      Surface.ROTATION_270 -> if(cameraFacing == Position.FRONT) 180 else 0
+      Surface.ROTATION_270 -> if(cameraFacing == Position.FRONT) 180 else 180
       // device is upside down
       Surface.ROTATION_180 -> if(cameraFacing == Position.FRONT) 90 else 270
       // device is landscape left
-      Surface.ROTATION_90 -> if(cameraFacing == Position.FRONT) 0 else 180
+      Surface.ROTATION_90 -> if(cameraFacing == Position.FRONT) 0 else 0
       else -> 0
     }
   }
@@ -279,11 +301,7 @@ class VisionCameraFaceDetectorPlugin(
     val result = ArrayList<Map<String, Any>>()
     
     try {
-      val imageOrientation = getImageOrientation()
-
-      Log.i(TAG, "device orientation: ${orientationManager.orientation} -  image o: $imageOrientation")
-
-      val image = InputImage.fromMediaImage(frame.image, imageOrientation)
+      val image = InputImage.fromMediaImage(frame.image, getImageOrientation())
       // we need to invert sizes as frame is always -90deg rotated
       val width = image.height.toDouble()
       val height = image.width.toDouble()
