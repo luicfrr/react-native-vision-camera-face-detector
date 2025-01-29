@@ -2,7 +2,8 @@ import React from 'react'
 import {
   Camera as VisionCamera,
   // runAsync,
-  useFrameProcessor
+  useFrameProcessor,
+  useSkiaFrameProcessor
 } from 'react-native-vision-camera'
 import {
   Worklets,
@@ -18,6 +19,7 @@ import type {
 } from 'react'
 import type {
   CameraProps,
+  DrawableFrame,
   Frame,
   FrameInternal
 } from 'react-native-vision-camera'
@@ -43,6 +45,10 @@ type CallbackType = (
 type ComponentType = {
   faceDetectionOptions?: FaceDetectionOptions
   faceDetectionCallback: CallbackType
+  skiaActions?: (
+    faces: Face[],
+    frame: Frame
+  ) => void | Promise<void>
 } & CameraProps
 
 /**
@@ -91,6 +97,7 @@ function useRunInJS(
 export const Camera = React.forwardRef( ( {
   faceDetectionOptions,
   faceDetectionCallback,
+  skiaActions,
   ...props
 }: ComponentType,
   ref: ForwardedRef<VisionCamera>
@@ -100,6 +107,7 @@ export const Camera = React.forwardRef( ( {
    * Is there an async task already running?
    */
   const isAsyncContextBusy = useSharedValue( false )
+  const faces = useSharedValue<Face[]>( [] )
 
   /** 
    * Throws logs/errors back on js thread
@@ -130,12 +138,12 @@ export const Camera = React.forwardRef( ( {
   ) => {
     'worklet'
     try {
-      const faces = detectFaces( frame )
+      faces.value = detectFaces( frame )
       // increment frame count so we can use frame on 
       // js side without frame processor getting stuck
       frame.incrementRefCount()
       runOnJs(
-        faces,
+        faces.value,
         frame
       ).finally( () => {
         'worklet'
@@ -158,7 +166,7 @@ export const Camera = React.forwardRef( ( {
    * 
    * @param {Frame} frame Current frame
    */
-  function runAsync( frame: Frame ) {
+  function runAsync( frame: Frame | DrawableFrame ) {
     'worklet'
     if ( isAsyncContextBusy.value ) return
     // set async context as busy
@@ -173,10 +181,23 @@ export const Camera = React.forwardRef( ( {
   /**
    * Camera frame processor
    */
-  const cameraFrameProcessor = useFrameProcessor( ( frame ) => {
-    'worklet'
-    runAsync( frame )
-  }, [ runOnAsyncContext ] )
+  const cameraFrameProcessor = ( () => {
+    if ( !!skiaActions ) {
+      return useSkiaFrameProcessor( ( frame ) => {
+        'worklet'
+        skiaActions( faces.value, frame )
+        runAsync( frame )
+      }, [
+        runOnAsyncContext,
+        skiaActions
+      ] )
+    }
+
+    return useFrameProcessor( ( frame ) => {
+      'worklet'
+      runAsync( frame )
+    }, [ runOnAsyncContext ] )
+  } )()
 
   //
   // use bellow when vision-camera's  

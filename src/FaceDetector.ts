@@ -27,8 +27,8 @@ export interface Face {
   leftEyeOpenProbability: number
   rightEyeOpenProbability: number
   smilingProbability: number
-  contours: Contours
-  landmarks: Landmarks
+  contours?: Contours
+  landmarks?: Landmarks
 }
 
 export interface Bounds {
@@ -115,23 +115,23 @@ export interface FaceDetectionOptions {
   trackingEnabled?: boolean
 
   /**
-   * Should auto scale face bounds, contour and landmarks on native side? 
+   * Should handle auto scale (face bounds, contour and landmarks) and rotation on native side? 
    * This option should be disabled if you want to draw on frame using `Skia Frame Processor`.
    * See [this](https://github.com/luicfrr/react-native-vision-camera-face-detector/issues/30#issuecomment-2058805546) and [this](https://github.com/luicfrr/react-native-vision-camera-face-detector/issues/35) for more details. 
    * 
    * @default false
    */
-  autoScale?: boolean
+  autoMode?: boolean
 
   /**
-   * Required if you want to use `autoScale`. You must handle your own logic to get screen sizes, with or without statusbar size, etc...
+   * Required if you want to use `autoMode`. You must handle your own logic to get screen sizes, with or without statusbar size, etc...
    * 
    * @default 1.0
    */
   windowWidth?: number
 
   /**
-   * Required if you want to use `autoScale`. You must handle your own logic to get screen sizes, with or without statusbar size, etc...
+   * Required if you want to use `autoMode`. You must handle your own logic to get screen sizes, with or without statusbar size, etc...
    * 
    * @default 1.0
    */

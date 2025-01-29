@@ -15,7 +15,7 @@ public class VisionCameraFaceDetector: FrameProcessorPlugin {
   }
   
   // detection props
-  private var autoScale = false
+  private var autoMode = false
   private var faceDetector: FaceDetector! = nil
   private var runLandmarks = false
   private var runClassifications = false
@@ -47,8 +47,8 @@ public class VisionCameraFaceDetector: FrameProcessorPlugin {
       cameraFacing = .back
     }
 
-    // handle auto scaling
-    autoScale = config?["autoScale"] as? Bool == true
+    // handle auto scaling and rotation
+    autoMode = config?["autoMode"] as? Bool == true
 
     // initializes faceDetector on creation
     let minFaceSize = 0.15
@@ -118,14 +118,24 @@ public class VisionCameraFaceDetector: FrameProcessorPlugin {
     let boundingBox = face.frame
     let width = boundingBox.width * scaleX
     let height = boundingBox.height * scaleY
+    // inverted because we also inverted sourceWidth/height
     let x = boundingBox.origin.y * scaleX
     let y = boundingBox.origin.x * scaleY
+    
+    if(autoMode) {
+      return [
+        "width": width,
+        "height": height,
+        "x": (-x + sourceWidth * scaleX) - width,
+        "y": y
+      ]
+    }
     
     return [
       "width": width,
       "height": height,
-      "x": (-x + sourceWidth * scaleX) - width,
-      "y": y
+      "x": y,
+      "y": x
     ]
   }
 
@@ -266,7 +276,7 @@ public class VisionCameraFaceDetector: FrameProcessorPlugin {
     
       var scaleX:CGFloat
       var scaleY:CGFloat
-      if autoScale {
+      if (autoMode) {
         scaleX = windowWidth / width
         scaleY = windowHeight / height
       } else {

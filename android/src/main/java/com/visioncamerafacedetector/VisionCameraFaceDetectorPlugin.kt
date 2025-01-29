@@ -12,8 +12,6 @@ import com.google.mlkit.vision.face.FaceDetector
 import com.google.mlkit.vision.face.FaceDetectorOptions
 import com.google.mlkit.vision.face.FaceLandmark
 import com.mrousavy.camera.core.FrameInvalidError
-import com.mrousavy.camera.core.types.JSUnionValue
-import com.mrousavy.camera.core.types.Orientation
 import com.mrousavy.camera.core.types.Position
 import com.mrousavy.camera.frameprocessors.Frame
 import com.mrousavy.camera.frameprocessors.FrameProcessorPlugin
@@ -25,7 +23,7 @@ class VisionCameraFaceDetectorPlugin(
   options: Map<String, Any>?
 ) : FrameProcessorPlugin() {
   // detection props
-  private var autoScale = false
+  private var autoMode = false
   private var faceDetector: FaceDetector? = null
   private var runLandmarks = false
   private var runClassifications = false
@@ -38,7 +36,7 @@ class VisionCameraFaceDetectorPlugin(
 
   init {
     // handle auto scaling
-    autoScale = options?.get("autoScale").toString() == "true"
+    autoMode = options?.get("autoMode").toString() == "true"
 
     // initializes faceDetector on creation
     var performanceModeValue = FaceDetectorOptions.PERFORMANCE_MODE_FAST
@@ -105,7 +103,12 @@ class VisionCameraFaceDetectorPlugin(
 
     bounds["width"] = width
     bounds["height"] = height
+    bounds["x"] = x * scaleX
+    bounds["y"] = y * scaleY
 
+    if(!autoMode) return bounds
+
+    // using front camera
     if(cameraFacing == Position.FRONT) {
       when (orientationManager.orientation) {
         // device is portrait
@@ -305,8 +308,8 @@ class VisionCameraFaceDetectorPlugin(
       // we need to invert sizes as frame is always -90deg rotated
       val width = image.height.toDouble()
       val height = image.width.toDouble()
-      val scaleX = if(autoScale) windowWidth / width else 1.0
-      val scaleY = if(autoScale) windowHeight / height else 1.0
+      val scaleX = if(autoMode) windowWidth / width else 1.0
+      val scaleY = if(autoMode) windowHeight / height else 1.0
       val task = faceDetector!!.process(image)
       val faces = Tasks.await(task)
       faces.forEach{face ->
