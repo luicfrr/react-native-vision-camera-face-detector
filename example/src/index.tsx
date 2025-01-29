@@ -230,8 +230,6 @@ function FaceDetection(): JSX.Element {
     frame: DrawableFrame
   ): void {
     'worklet'
-    frame.render()
-
     // if no faces are detected we do nothing
     if (
       autoMode ||
@@ -258,11 +256,6 @@ function FaceDetection(): JSX.Element {
     ]
 
     necessaryContours.map( ( key ) => {
-      const keyContours = contours?.[ key ]
-
-      console.log( keyContours )
-      if ( !keyContours ) return
-
       contours?.[ key ]?.map( ( point, index ) => {
         if ( index === 0 ) {
           // it's a starting point

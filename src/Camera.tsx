@@ -185,6 +185,7 @@ export const Camera = React.forwardRef( ( {
     if ( !!skiaActions ) {
       return useSkiaFrameProcessor( ( frame ) => {
         'worklet'
+        frame.render()
         skiaActions( faces.value, frame )
         runAsync( frame )
       }, [
