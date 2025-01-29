@@ -194,17 +194,9 @@ class VisionCameraFaceDetectorPlugin(
     for (i in faceLandmarksTypesStrings.indices) {
       val landmark = face.getLandmark(faceLandmarksTypes[i])
       val landmarkName = faceLandmarksTypesStrings[i]
-      Log.d(
-        TAG,
-        "Getting '$landmarkName' landmark"
-      )
-      if (landmark == null) {
-        Log.d(
-          TAG,
-          "Landmark '$landmarkName' is null - going next"
-        )
-        continue
-      }
+
+      if (landmark == null) continue
+
       val point = landmark.position
       val currentPointsMap: MutableMap<String, Double> = HashMap()
       currentPointsMap["x"] = point.x.toDouble() * scaleX
@@ -258,24 +250,16 @@ class VisionCameraFaceDetectorPlugin(
     for (i in faceContoursTypesStrings.indices) {
       val contour = face.getContour(faceContoursTypes[i])
       val contourName = faceContoursTypesStrings[i]
-      Log.d(
-        TAG,
-        "Getting '$contourName' contour"
-      )
-      if (contour == null) {
-        Log.d(
-          TAG,
-          "Face contour '$contourName' is null - going next"
-        )
-        continue
-      }
+
+      if (contour == null) continue
+
       val points = contour.points
-      val pointsMap: MutableMap<String, Map<String, Double>> = HashMap()
+      val pointsMap: MutableList<Map<String, Double>> = mutableListOf()
       for (j in points.indices) {
         val currentPointsMap: MutableMap<String, Double> = HashMap()
         currentPointsMap["x"] = points[j].x.toDouble() * scaleX
         currentPointsMap["y"] = points[j].y.toDouble() * scaleY
-        pointsMap[j.toString()] = currentPointsMap
+        pointsMap.add(currentPointsMap)
       }
 
       faceContoursTypesMap[contourName] = pointsMap
