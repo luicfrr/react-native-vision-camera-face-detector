@@ -26,7 +26,8 @@ import {
   Camera,
   Face,
   FaceDetectionOptions,
-  Contours
+  Contours,
+  Landmarks
 } from 'react-native-vision-camera-face-detector'
 import {
   ClipOp,
@@ -88,6 +89,7 @@ function FaceDetection(): JSX.Element {
     performanceMode: 'fast',
     classificationMode: 'all',
     contourMode: 'all',
+    landmarkMode: 'all',
     windowWidth: width,
     windowHeight: height
   } ).current
@@ -134,16 +136,6 @@ function FaceDetection(): JSX.Element {
       rotate: `${ aRot.value }deg`
     } ]
   } ) )
-  // skia drawings
-  const blurRadius = 25
-  const blurFilter = Skia.ImageFilter.MakeBlur(
-    blurRadius,
-    blurRadius,
-    TileMode.Repeat,
-    null
-  )
-  const paint = Skia.Paint()
-  paint.setImageFilter( blurFilter )
 
   useEffect( () => {
     if ( hasPermission ) return
@@ -244,38 +236,73 @@ function FaceDetection(): JSX.Element {
 
     const {
       bounds,
-      contours
+      contours,
+      landmarks
     } = faces[ 0 ]
 
     // draw a blur shape around the face points
-    const path = Skia.Path.Make()
+    const blurRadius = 25
+    const blurFilter = Skia.ImageFilter.MakeBlur(
+      blurRadius,
+      blurRadius,
+      TileMode.Repeat,
+      null
+    )
+    const blurPaint = Skia.Paint()
+    blurPaint.setImageFilter( blurFilter )
+    const contourPath = Skia.Path.Make()
     const necessaryContours: ( keyof Contours )[] = [
       'FACE',
       'LEFT_CHEEK',
-      'RIGHT_CHEEK',
+      'RIGHT_CHEEK'
     ]
 
     necessaryContours.map( ( key ) => {
       contours?.[ key ]?.map( ( point, index ) => {
         if ( index === 0 ) {
           // it's a starting point
-          path.moveTo( point.x, point.y )
+          contourPath.moveTo( point.x, point.y )
         } else {
           // it's a continuation
-          path.lineTo( point.x, point.y )
+          contourPath.lineTo( point.x, point.y )
         }
       } )
-      path.close()
+      contourPath.close()
     } )
 
     frame.save()
-    frame.clipPath( path, ClipOp.Intersect, true )
-    frame.render( paint )
+    frame.clipPath( contourPath, ClipOp.Intersect, true )
+    frame.render( blurPaint )
     frame.restore()
+
+    // draw mouth shape
+    const mouthPath = Skia.Path.Make()
+    const mouthPaint = Skia.Paint()
+    mouthPaint.setColor( Skia.Color( 'red' ) )
+    const necessaryLandmarks: ( keyof Landmarks )[] = [
+      'MOUTH_BOTTOM',
+      'MOUTH_LEFT',
+      'MOUTH_RIGHT'
+    ]
+
+    necessaryLandmarks.map( ( key, index ) => {
+      const point = landmarks?.[ key ]
+      if ( !point ) return
+
+      if ( index === 0 ) {
+        // it's a starting point
+        mouthPath.moveTo( point.x, point.y )
+      } else {
+        // it's a continuation
+        mouthPath.lineTo( point.x, point.y )
+      }
+    } )
+    mouthPath.close()
+    frame.drawPath( mouthPath, mouthPaint )
 
     // draw a rectangle around the face
     const rectPaint = Skia.Paint()
-    rectPaint.setColor( Skia.Color( 'red' ) )
+    rectPaint.setColor( Skia.Color( 'blue' ) )
     rectPaint.setStyle( 1 )
     rectPaint.setStrokeWidth( 5 )
     frame.drawRect( bounds, rectPaint )
