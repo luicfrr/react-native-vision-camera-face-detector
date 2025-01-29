@@ -21,7 +21,7 @@ Then you need to add `react-native-worklets-core` plugin to `babel.config.js`. M
 
 ## 💡 Usage
 
-Recommended way:
+Recommended way (see [Example App](https://github.com/luicfrr/react-native-vision-camera-face-detector/blob/main/example/src/index.tsx) for Skia usage):
 ```jsx
 import { 
   StyleSheet, 
@@ -159,7 +159,6 @@ export default function App() {
 As face detection is a heavy process you should run it in an asynchronous thread so it can be finished without blocking your camera preview.
 You should read `vision-camera` [docs](https://react-native-vision-camera.com/docs/guides/frame-processors-interacting#running-asynchronously) about this feature.
 
-
 ## Face Detection Options
 
 | Option  | Description | Default |
@@ -170,9 +169,9 @@ You should read `vision-camera` [docs](https://react-native-vision-camera.com/do
 | `classificationMode` | Whether or not to classify faces into categories such as 'smiling', and 'eyes open'. | `none` |
 | `minFaceSize` | Sets the smallest desired face size, expressed as the ratio of the width of the head to width of the image. | `0.15` |
 | `trackingEnabled` | Whether or not to assign faces an ID, which can be used to track faces across images. Note that when contour detection is enabled, only one face is detected, so face tracking doesn't produce useful results. For this reason, and to improve detection speed, don't enable both contour detection and face tracking. | `false` |
-| `autoScale` | Should auto scale face bounds, contour and landmarks on native side? If this option is disabled all detection results will be relative to frame coordinates, not to screen/preview. You shouldn't use this option if you want to draw on screen using `Skia Frame Processor`. See [this](https://github.com/luicfrr/react-native-vision-camera-face-detector/issues/30#issuecomment-2058805546) and [this](https://github.com/luicfrr/react-native-vision-camera-face-detector/issues/35) for more details. | `false` |
-| `windowWidth` | * Required if you want to use `autoScale`. You must handle your own logic to get screen sizes, with or without statusbar size, etc... | `1.0` |
-| `windowHeight` | * Required if you want to use `autoScale`. You must handle your own logic to get screen sizes, with or without statusbar size, etc... | `1.0` |
+| `autoMode` | Should handle auto scale (face bounds, contour and landmarks) and rotation on native side? If this option is disabled all detection results will be relative to frame coordinates, not to screen/preview. You shouldn't use this option if you want to draw on screen using `Skia Frame Processor`. See [this](https://github.com/luicfrr/react-native-vision-camera-face-detector/issues/30#issuecomment-2058805546) and [this](https://github.com/luicfrr/react-native-vision-camera-face-detector/issues/35) for more details. | `false` |
+| `windowWidth` | * Required if you want to use `autoMode`. You must handle your own logic to get screen sizes, with or without statusbar size, etc... | `1.0` |
+| `windowHeight` | * Required if you want to use `autoMode`. You must handle your own logic to get screen sizes, with or without statusbar size, etc... | `1.0` |
 | `cameraFacing` | Current active camera | `front` |
 
 ## 🔧 Troubleshooting
@@ -200,8 +199,9 @@ This package was tested using the following:
 - `react-native`: `0.76.5` (new arch disabled)
 - `react-native-vision-camera`: `4.6.3`
 - `react-native-worklets-core`: `1.5.0`
-- `react-native-reanimated`: `3.16.6`
-- `expo`: `52.0.23`
+- `@shopify/react-native-skia`: `1.11.1`
+- `react-native-reanimated`: `3.16.7`
+- `expo`: `52.0.27`
 
 Min O.S version:
 
