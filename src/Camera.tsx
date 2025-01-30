@@ -207,9 +207,7 @@ export const Camera = React.forwardRef( ( {
     if (
       !autoMode &&
       !!skiaActions
-    ) {
-      return skiaFrameProcessor
-    }
+    ) return skiaFrameProcessor
 
     return cameraFrameProcessor
   } )()

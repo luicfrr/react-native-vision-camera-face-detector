@@ -229,8 +229,7 @@ function FaceDetection(): JSX.Element {
     ) return
 
     console.log(
-      'SKIA - ',
-      'faces', faces.length,
+      'SKIA - faces', faces.length,
       'frame', frame.toString()
     )
 
