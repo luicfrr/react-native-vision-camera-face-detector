@@ -179,25 +179,39 @@ export const Camera = React.forwardRef( ( {
   }
 
   /**
+   * Skia frame processor
+   */
+  const skiaFrameProcessor = useSkiaFrameProcessor( ( frame ) => {
+    'worklet'
+    frame.render()
+    skiaActions!( faces.value, frame )
+    runAsync( frame )
+  }, [
+    runOnAsyncContext,
+    skiaActions
+  ] )
+
+  /**
+   * Default frame processor
+   */
+  const cameraFrameProcessor = useFrameProcessor( ( frame ) => {
+    'worklet'
+    runAsync( frame )
+  }, [ runOnAsyncContext ] )
+
+  /**
    * Camera frame processor
    */
-  const cameraFrameProcessor = ( () => {
-    if ( !!skiaActions ) {
-      return useSkiaFrameProcessor( ( frame ) => {
-        'worklet'
-        frame.render()
-        skiaActions( faces.value, frame )
-        runAsync( frame )
-      }, [
-        runOnAsyncContext,
-        skiaActions
-      ] )
+  const frameProcessor = ( () => {
+    const { autoMode } = faceDetectionOptions ?? {}
+    if (
+      !autoMode &&
+      !!skiaActions
+    ) {
+      return skiaFrameProcessor
     }
 
-    return useFrameProcessor( ( frame ) => {
-      'worklet'
-      runAsync( frame )
-    }, [ runOnAsyncContext ] )
+    return cameraFrameProcessor
   } )()
 
   //
@@ -225,7 +239,7 @@ export const Camera = React.forwardRef( ( {
   return <VisionCamera
     { ...props }
     ref={ ref }
-    frameProcessor={ cameraFrameProcessor }
+    frameProcessor={ frameProcessor }
     pixelFormat='yuv'
   />
 } )
