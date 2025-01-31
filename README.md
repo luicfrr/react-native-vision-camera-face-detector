@@ -22,7 +22,7 @@ Then you need to add `react-native-worklets-core` plugin to `babel.config.js`. M
 ## 🪲 Knowing Bugs
 
 There's a [bug](https://github.com/mrousavy/react-native-vision-camera/issues/3362) on Skia Frame Processor that may cause a Black Screen on some Android Devices.
-This Black Screen bug can be easily fixed with [this trick](https://github.com/mrousavy/react-native-vision-camera/issues/3362#issuecomment-2624299305) but it makes Frame drawings to be in incorrect orientation.
+This bug can be easily fixed with [this trick](https://github.com/mrousavy/react-native-vision-camera/issues/3362#issuecomment-2624299305) but it makes Frame drawings to be in incorrect orientation.
 
 ## 💡 Usage
 
