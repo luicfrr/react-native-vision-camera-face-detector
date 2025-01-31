@@ -166,18 +166,18 @@ You should read `vision-camera` [docs](https://react-native-vision-camera.com/do
 
 ## Face Detection Options
 
-| Option  | Description | Default |
-| ------------- | ------------- | ------------- |
-| `performanceMode` | Favor speed or accuracy when detecting faces.  | `fast` |
-| `landmarkMode` | Whether to attempt to identify facial `landmarks`: eyes, ears, nose, cheeks, mouth, and so on. | `none` |
-| `contourMode` | Whether to detect the contours of facial features. Contours are detected for only the most prominent face in an image. | `none` |
-| `classificationMode` | Whether or not to classify faces into categories such as 'smiling', and 'eyes open'. | `none` |
-| `minFaceSize` | Sets the smallest desired face size, expressed as the ratio of the width of the head to width of the image. | `0.15` |
-| `trackingEnabled` | Whether or not to assign faces an ID, which can be used to track faces across images. Note that when contour detection is enabled, only one face is detected, so face tracking doesn't produce useful results. For this reason, and to improve detection speed, don't enable both contour detection and face tracking. | `false` |
-| `autoMode` | Should handle auto scale (face bounds, contour and landmarks) and rotation on native side? If this option is disabled all detection results will be relative to frame coordinates, not to screen/preview. You shouldn't use this option if you want to draw on screen using `Skia Frame Processor`. See [this](https://github.com/luicfrr/react-native-vision-camera-face-detector/issues/30#issuecomment-2058805546) and [this](https://github.com/luicfrr/react-native-vision-camera-face-detector/issues/35) for more details. | `false` |
-| `windowWidth` | * Required if you want to use `autoMode`. You must handle your own logic to get screen sizes, with or without statusbar size, etc... | `1.0` |
-| `windowHeight` | * Required if you want to use `autoMode`. You must handle your own logic to get screen sizes, with or without statusbar size, etc... | `1.0` |
-| `cameraFacing` | Current active camera | `front` |
+| Option  | Description | Default | Options |
+| ------------- | ------------- | ------------- | ------------- |
+| `performanceMode` | Favor speed or accuracy when detecting faces.  | `fast` | `fast`, `accurate`|
+| `landmarkMode` | Whether to attempt to identify facial `landmarks`: eyes, ears, nose, cheeks, mouth, and so on. | `none` | `none`, `all` |
+| `contourMode` | Whether to detect the contours of facial features. Contours are detected for only the most prominent face in an image. | `none` | `none`, `all` |
+| `classificationMode` | Whether or not to classify faces into categories such as 'smiling', and 'eyes open'. | `none` | `none`, `all` |
+| `minFaceSize` | Sets the smallest desired face size, expressed as the ratio of the width of the head to width of the image. | `0.15` | `number` |
+| `trackingEnabled` | Whether or not to assign faces an ID, which can be used to track faces across images. Note that when contour detection is enabled, only one face is detected, so face tracking doesn't produce useful results. For this reason, and to improve detection speed, don't enable both contour detection and face tracking. | `false` | `boolean` |
+| `autoMode` | Should handle auto scale (face bounds, contour and landmarks) and rotation on native side? If this option is disabled all detection results will be relative to frame coordinates, not to screen/preview. You shouldn't use this option if you want to draw on screen using `Skia Frame Processor`. See [this](https://github.com/luicfrr/react-native-vision-camera-face-detector/issues/30#issuecomment-2058805546) and [this](https://github.com/luicfrr/react-native-vision-camera-face-detector/issues/35) for more details. | `false` | `boolean` |
+| `windowWidth` | * Required if you want to use `autoMode`. You must handle your own logic to get screen sizes, with or without statusbar size, etc... | `1.0` | `number` |
+| `windowHeight` | * Required if you want to use `autoMode`. You must handle your own logic to get screen sizes, with or without statusbar size, etc... | `1.0` | `number` |
+| `cameraFacing` | Current active camera | `front` | `front`, `back` |
 
 ## 🔧 Troubleshooting
 
