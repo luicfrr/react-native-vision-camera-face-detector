@@ -176,10 +176,7 @@ function FaceDetection(): JSX.Element {
     frame: Frame
   ): void {
     // if no faces are detected we do nothing
-    if (
-      !autoMode ||
-      Object.keys( faces ).length <= 0
-    ) {
+    if ( Object.keys( faces ).length <= 0 ) {
       aFaceW.value = 0
       aFaceH.value = 0
       aFaceX.value = 0
@@ -223,10 +220,7 @@ function FaceDetection(): JSX.Element {
   ): void {
     'worklet'
     // if no faces are detected we do nothing
-    if (
-      autoMode ||
-      Object.keys( faces ).length <= 0
-    ) return
+    if ( Object.keys( faces ).length <= 0 ) return
 
     console.log(
       'SKIA - faces', faces.length,
