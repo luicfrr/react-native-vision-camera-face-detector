@@ -201,12 +201,12 @@ If you find other errors while using this package you're wellcome to open a new 
 
 This package was tested using the following:
 
-- `react-native`: `0.76.5` (new arch disabled)
+- `react-native`: `0.76.6` (new arch disabled)
 - `react-native-vision-camera`: `4.6.3`
 - `react-native-worklets-core`: `1.5.0`
 - `@shopify/react-native-skia`: `1.11.1`
 - `react-native-reanimated`: `3.16.7`
-- `expo`: `52.0.27`
+- `expo`: `52.0.28`
 
 Min O.S version:
 
