@@ -6,6 +6,7 @@ labels: bug
 assignees: ''
 
 ---
+<!-- Please DON'T PIN ME. I'm not a free support for you -->
 
 <!-- Issues without any log, screenshot, dependencies versions, etc... will be ignored and closed without any response. Please help me to help you 😉 -->
 
