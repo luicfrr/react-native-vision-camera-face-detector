@@ -34,7 +34,7 @@
   "devDependencies": {
     "@babel/core": "^7.26.7",
     "@babel/preset-env": "^7.26.7",
-    "@babel/runtime": "^7.26.7",
+    "@babel/runtime": "^7.26.10",
     "@types/react": "../node_modules/@types/react",
     "babel-plugin-module-resolver": "^5.0.2",
     "eslint": "../node_modules/eslint",
