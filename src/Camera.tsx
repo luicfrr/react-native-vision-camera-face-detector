@@ -47,7 +47,7 @@ type ComponentType = {
   faceDetectionCallback: CallbackType
   skiaActions?: (
     faces: Face[],
-    frame: Frame
+    frame: DrawableFrame
   ) => void | Promise<void>
 } & CameraProps
 
