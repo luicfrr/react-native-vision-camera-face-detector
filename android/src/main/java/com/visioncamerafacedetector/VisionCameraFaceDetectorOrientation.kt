@@ -1,7 +1,7 @@
 package com.visioncamerafacedetector
 
 import android.content.Context
-import android.os.Build
+import android.util.Log
 import android.view.OrientationEventListener
 import android.view.Surface
 
