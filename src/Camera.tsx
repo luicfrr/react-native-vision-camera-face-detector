@@ -1,6 +1,4 @@
-import React, {
-  useRef
-} from 'react'
+import React from 'react'
 import {
   Camera as VisionCamera,
   // runAsync,
@@ -109,7 +107,7 @@ export const Camera = React.forwardRef( ( {
    * Is there an async task already running?
    */
   const isAsyncContextBusy = useSharedValue( false )
-  const faces = useRef<Face[]>( [] )
+  const faces = useSharedValue<string>( '[]' )
 
   /** 
    * Throws logs/errors back on js thread
@@ -140,13 +138,16 @@ export const Camera = React.forwardRef( ( {
   ) => {
     'worklet'
     try {
-      faces.current = detectFaces( frame )
+      faces.value = JSON.stringify(
+        detectFaces( frame )
+      )
       // increment frame count so we can use frame on 
       // js side without frame processor getting stuck
       frame.incrementRefCount()
       runOnJs(
-        faces.current,
-        frame
+        JSON.parse(
+          faces.value
+        ), frame
       ).finally( () => {
         'worklet'
         // finally decrement frame count so it can be dropped
@@ -186,7 +187,9 @@ export const Camera = React.forwardRef( ( {
   const skiaFrameProcessor = useSkiaFrameProcessor( ( frame ) => {
     'worklet'
     frame.render()
-    skiaActions!( faces.current, frame )
+    skiaActions!( JSON.parse(
+      faces.value
+    ), frame )
     runAsync( frame )
   }, [
     runOnAsyncContext,
@@ -206,6 +209,7 @@ export const Camera = React.forwardRef( ( {
    */
   const frameProcessor = ( () => {
     const { autoMode } = faceDetectionOptions ?? {}
+
     if (
       !autoMode &&
       !!skiaActions
