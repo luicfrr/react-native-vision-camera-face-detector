@@ -4,9 +4,8 @@ import android.content.Context
 import android.os.Build
 import android.view.OrientationEventListener
 import android.view.Surface
-import androidx.annotation.RequiresApi
 
-@RequiresApi(Build.VERSION_CODES.CUPCAKE)
+private const val TAG = "FaceDetectorOrientation"
 class VisionCameraFaceDetectorOrientation(private val context: Context) {
     var orientation = Surface.ROTATION_0
     private var orientationListener: OrientationEventListener? = null
@@ -35,14 +34,14 @@ class VisionCameraFaceDetectorOrientation(private val context: Context) {
             orientationListener != null &&
             orientationListener!!.canDetectOrientation()
         ) {
-            println("Enabling device orientation listener")
+            Log.d(TAG, "Enabling device orientation listener")
             orientationListener!!.enable()
         }
     }
 
     private fun stopDeviceOrientationListener() {
         if (orientationListener != null) {
-            println("Disabled device orientation listener")
+            Log.d(TAG, "Disabled device orientation listener")
             orientationListener!!.disable()
         }
     }
