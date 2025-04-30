@@ -176,7 +176,7 @@ function FaceDetection(): JSX.Element {
     frame: Frame
   ): void {
     // if no faces are detected we do nothing
-    if ( Object.keys( faces ).length <= 0 ) {
+    if ( faces.length <= 0 ) {
       aFaceW.value = 0
       aFaceH.value = 0
       aFaceX.value = 0
