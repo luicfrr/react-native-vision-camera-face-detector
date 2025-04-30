@@ -186,7 +186,8 @@ function FaceDetection(): JSX.Element {
 
     console.log(
       'faces', faces.length,
-      'frame', frame.toString()
+      'frame', frame.toString(),
+      'faces', JSON.stringify( faces )
     )
 
     const { bounds } = faces[ 0 ]
