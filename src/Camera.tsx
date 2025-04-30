@@ -1,4 +1,6 @@
-import React from 'react'
+import React, {
+  useRef
+} from 'react'
 import {
   Camera as VisionCamera,
   // runAsync,
@@ -28,11 +30,8 @@ import type {
   FaceDetectionOptions
 } from './FaceDetector'
 
-type FacesActionType = ( faces: Face[] ) => void
-
 type UseWorkletType = (
-  frame: FrameInternal,
-  facesAction: FacesActionType
+  frame: FrameInternal
 ) => Promise<void>
 
 type UseRunInJSType = (
@@ -63,10 +62,7 @@ type ComponentType = {
  * @returns {UseWorkletType} A memoized Worklet
  */
 function useWorklet(
-  func: (
-    frame: FrameInternal,
-    facesAction: FacesActionType
-  ) => void,
+  func: ( frame: FrameInternal ) => void,
   dependencyList: DependencyList
 ): UseWorkletType {
   const worklet = React.useMemo( () => {
@@ -113,6 +109,7 @@ export const Camera = React.forwardRef( ( {
    * Is there an async task already running?
    */
   const isAsyncContextBusy = useSharedValue( false )
+  const faces = useRef<Face[]>( [] )
 
   /** 
    * Throws logs/errors back on js thread
@@ -139,18 +136,16 @@ export const Camera = React.forwardRef( ( {
    * Async context that will handle face detection
    */
   const runOnAsyncContext = useWorklet( (
-    frame,
-    facesAction
+    frame: FrameInternal
   ) => {
     'worklet'
     try {
-      const faces = detectFaces( frame )
-      facesAction( faces )
+      faces.current = detectFaces( frame )
       // increment frame count so we can use frame on 
       // js side without frame processor getting stuck
       frame.incrementRefCount()
       runOnJs(
-        faces,
+        faces.current,
         frame
       ).finally( () => {
         'worklet'
@@ -173,10 +168,7 @@ export const Camera = React.forwardRef( ( {
    * 
    * @param {Frame} frame Current frame
    */
-  function runAsync(
-    frame: Frame | DrawableFrame,
-    facesAction?: FacesActionType
-  ) {
+  function runAsync( frame: Frame | DrawableFrame ) {
     'worklet'
     if ( isAsyncContextBusy.value ) return
     // set async context as busy
@@ -185,13 +177,7 @@ export const Camera = React.forwardRef( ( {
     const internal = frame as FrameInternal
     internal.incrementRefCount()
     // detect faces in async context
-    runOnAsyncContext(
-      internal,
-      ( faces ) => {
-        'worklet'
-        facesAction?.( faces )
-      }
-    )
+    runOnAsyncContext( internal )
   }
 
   /**
@@ -200,13 +186,8 @@ export const Camera = React.forwardRef( ( {
   const skiaFrameProcessor = useSkiaFrameProcessor( ( frame ) => {
     'worklet'
     frame.render()
-    runAsync(
-      frame,
-      ( faces ) => {
-        'worklet'
-        skiaActions?.( faces, frame )
-      }
-    )
+    skiaActions!( faces.current, frame )
+    runAsync( frame )
   }, [
     runOnAsyncContext,
     skiaActions
