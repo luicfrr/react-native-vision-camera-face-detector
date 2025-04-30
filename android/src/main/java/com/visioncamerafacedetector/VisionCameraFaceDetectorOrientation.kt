@@ -12,6 +12,7 @@ class VisionCameraFaceDetectorOrientation(private val context: Context) {
 
     init {
         if (orientationListener == null) {
+            Log.d(TAG, "Assigning new device orientation listener")
             orientationListener = object : OrientationEventListener(context) {
                 override fun onOrientationChanged(rotationDegrees: Int) {
                     orientation = degreesToSurfaceRotation(rotationDegrees)
