@@ -221,7 +221,7 @@ function FaceDetection(): JSX.Element {
   ): void {
     'worklet'
     // if no faces are detected we do nothing
-    if ( Object.keys( faces ).length <= 0 ) return
+    if ( faces.length <= 0 ) return
 
     console.log(
       'SKIA - faces', faces.length,
