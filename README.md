@@ -101,12 +101,12 @@ import {
 } from 'react'
 import {
   Camera,
+  runAsync,
   useCameraDevice,
   useFrameProcessor
 } from 'react-native-vision-camera'
 import { 
   Face,
-  runAsync,
   useFaceDetector,
   FaceDetectionOptions
 } from 'react-native-vision-camera-face-detector'
