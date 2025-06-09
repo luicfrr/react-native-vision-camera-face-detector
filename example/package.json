@@ -17,6 +17,8 @@
   "main": "index.js",
   "dependencies": {
     "@react-native-community/hooks": "^100.1.0",
+    "@react-native-firebase/app": "^22.2.0",
+    "@react-native-firebase/messaging": "^22.2.0",
     "@react-navigation/native": "^7.1.6",
     "@shopify/react-native-skia": "1.5.0",
     "expo": "^52",
