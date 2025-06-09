@@ -211,7 +211,7 @@ This package was tested using the following:
 Min O.S version:
 
 - `Android`: `SDK 26` (Android 8)
-- `IOS`: `15.1`
+- `IOS`: `15.5`
 
 Make sure to follow tested versions and your device is using the minimum O.S version before opening issues.
 

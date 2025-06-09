@@ -46,7 +46,7 @@ export default {
           buildToolsVersion: '34.0.0'
         },
         ios: {
-          deploymentTarget: '15.1',
+          deploymentTarget: '15.5',
           useFrameworks: 'static'
         }
       } ]
