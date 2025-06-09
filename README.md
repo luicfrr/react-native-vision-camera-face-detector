@@ -206,6 +206,7 @@ This package was tested using the following:
 - `react-native-worklets-core`: `1.5.0`
 - `@shopify/react-native-skia`: `1.5.0`
 - `react-native-reanimated`: `~3.16.1`
+- `@react-native-firebase`: `^22.2.0`
 - `expo`: `^52`
 
 Min O.S version:
