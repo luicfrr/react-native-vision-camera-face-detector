@@ -2,7 +2,11 @@
 
 `react-native-vision-camera-face-detector` is a React Native library that integrates with the Vision Camera module to provide face detection functionality. It allows you to easily detect faces in real-time using device's front and back camera.
 
-Is this package usefull to you? Support it [buying me a coffee ☕](https://coff.ee/luicfrr) or giving a ⭐ on [GitHub](https://github.com/luicfrr/react-native-vision-camera-face-detector).
+Is this package usefull to you?
+
+<a href="https://www.buymeacoffee.com/luicfrr" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>
+
+Or give it a ⭐ on [GitHub](https://github.com/luicfrr/react-native-vision-camera-face-detector).
 
 ## 🏗️ Features
 
