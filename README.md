@@ -172,6 +172,7 @@ You should read `vision-camera` [docs](https://react-native-vision-camera.com/do
 
 | Option  | Description | Default | Options |
 | ------------- | ------------- | ------------- | ------------- |
+| `cameraFacing` | Current active camera | `front` | `front`, `back` |
 | `performanceMode` | Favor speed or accuracy when detecting faces.  | `fast` | `fast`, `accurate`|
 | `landmarkMode` | Whether to attempt to identify facial `landmarks`: eyes, ears, nose, cheeks, mouth, and so on. | `none` | `none`, `all` |
 | `contourMode` | Whether to detect the contours of facial features. Contours are detected for only the most prominent face in an image. | `none` | `none`, `all` |
@@ -181,7 +182,6 @@ You should read `vision-camera` [docs](https://react-native-vision-camera.com/do
 | `autoMode` | Should handle auto scale (face bounds, contour and landmarks) and rotation on native side? If this option is disabled all detection results will be relative to frame coordinates, not to screen/preview. You shouldn't use this option if you want to draw on screen using `Skia Frame Processor`. See [this](https://github.com/luicfrr/react-native-vision-camera-face-detector/issues/30#issuecomment-2058805546) and [this](https://github.com/luicfrr/react-native-vision-camera-face-detector/issues/35) for more details. | `false` | `boolean` |
 | `windowWidth` | * Required if you want to use `autoMode`. You must handle your own logic to get screen sizes, with or without statusbar size, etc... | `1.0` | `number` |
 | `windowHeight` | * Required if you want to use `autoMode`. You must handle your own logic to get screen sizes, with or without statusbar size, etc... | `1.0` | `number` |
-| `cameraFacing` | Current active camera | `front` | `front`, `back` |
 
 ## 🔧 Troubleshooting
 
