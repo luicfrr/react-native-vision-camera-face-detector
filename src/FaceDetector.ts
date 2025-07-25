@@ -29,6 +29,7 @@ export interface Face {
   smilingProbability: number
   contours?: Contours
   landmarks?: Landmarks
+  trackingId?: number
 }
 
 export interface Bounds {
