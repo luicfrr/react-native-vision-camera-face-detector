@@ -24,7 +24,7 @@ public class VisionCameraFaceDetector: FrameProcessorPlugin {
   private var windowWidth = 1.0
   private var windowHeight = 1.0
   private var cameraFacing:AVCaptureDevice.Position = .front
-  private var orientationManager = VisionCameraFaceDetectorOrientation()
+  private var orientationManager: VisionCameraFaceDetectorOrientation! = nil
 
   public override init(
     proxy: VisionCameraProxyHolder, 
@@ -32,6 +32,8 @@ public class VisionCameraFaceDetector: FrameProcessorPlugin {
   ) {
     super.init(proxy: proxy, options: options)
     let config = getConfig(withArguments: options)
+    
+    orientationManager = VisionCameraFaceDetectorOrientation()
 
     let windowWidthParam = config?["windowWidth"] as? Double
     if windowWidthParam != nil && windowWidthParam != windowWidth {
@@ -247,7 +249,7 @@ public class VisionCameraFaceDetector: FrameProcessorPlugin {
   }
 
   func getImageOrientation() -> UIImage.Orientation {
-    switch orientationManager.orientation {
+    switch orientationManager!.orientation {
       case .portrait:
         return cameraFacing == .front ? .leftMirrored : .right
       case .landscapeLeft:

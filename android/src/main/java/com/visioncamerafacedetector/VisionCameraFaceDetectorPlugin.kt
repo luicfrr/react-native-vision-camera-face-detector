@@ -32,9 +32,12 @@ class VisionCameraFaceDetectorPlugin(
   private var windowWidth = 1.0
   private var windowHeight = 1.0
   private var cameraFacing: Position = Position.FRONT
-  private val orientationManager = VisionCameraFaceDetectorOrientation(proxy.context)
+  private var orientationManager: VisionCameraFaceDetectorOrientation? = null
 
   init {
+    // initializes orientation manager
+    orientationManager = VisionCameraFaceDetectorOrientation(proxy.context)
+
     // handle auto scaling
     autoMode = options?.get("autoMode").toString() == "true"
 
@@ -110,7 +113,7 @@ class VisionCameraFaceDetectorPlugin(
 
     // using front camera
     if(cameraFacing == Position.FRONT) {
-      when (orientationManager.orientation) {
+      when (orientationManager?.orientation) {
         // device is portrait
         Surface.ROTATION_0 -> {
           bounds["x"] = ((-x * scaleX) + sourceWidth * scaleX) - width
@@ -136,7 +139,7 @@ class VisionCameraFaceDetectorPlugin(
     }
 
     // using back camera
-    when (orientationManager.orientation) {
+    when (orientationManager?.orientation) {
       // device is portrait
       Surface.ROTATION_0 -> {
         bounds["x"] = x * scaleX
@@ -268,7 +271,7 @@ class VisionCameraFaceDetectorPlugin(
   }
 
   private fun getImageOrientation(): Int {
-    return when (orientationManager.orientation) {
+    return when (orientationManager?.orientation) {
       // device is portrait
       Surface.ROTATION_0 -> if(cameraFacing == Position.FRONT) 270 else 90
       // device is landscape right
