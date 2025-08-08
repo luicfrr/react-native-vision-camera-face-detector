@@ -132,7 +132,7 @@ export default function App() {
   useEffect( () => {
     return () => {
       if ( Platform.OS !== 'android' ) return
-      // you must call native `stopListeners` if:
+      // you must call `stopListeners` if:
       // - camera view is unmouted
       // - current view is unmounted
       stopListeners()
