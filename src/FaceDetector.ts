@@ -1,5 +1,9 @@
 import { useMemo } from 'react'
 import {
+  Platform,
+  NativeModules
+} from 'react-native'
+import {
   VisionCameraProxy,
   type CameraPosition,
   type Frame
@@ -12,6 +16,13 @@ type FaceDetectorPlugin = {
    * @param {Frame} frame Frame to detect faces
    */
   detectFaces: ( frame: Frame ) => Face[]
+  /**
+   * Stop orientation listeners for Android.
+   * Does nothing for IOS.
+   * 
+   * @returns {void}
+   */
+  stopListeners: () => void
 }
 
 type Point = {
@@ -170,6 +181,12 @@ function createFaceDetectorPlugin(
       'worklet'
       // @ts-ignore
       return plugin.call( frame ) as Face[]
+    },
+    stopListeners: () => {
+      if ( Platform.OS !== 'android' ) return
+
+      const { VisionCameraFaceDetectorOrientationManager } = NativeModules
+      VisionCameraFaceDetectorOrientationManager.stopDeviceOrientationListener()
     }
   }
 }

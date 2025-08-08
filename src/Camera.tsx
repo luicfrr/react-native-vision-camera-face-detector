@@ -1,4 +1,6 @@
-import React from 'react'
+import React, {
+  useEffect
+} from 'react'
 import {
   Camera as VisionCamera,
   // runAsync,
@@ -102,12 +104,19 @@ export const Camera = React.forwardRef( ( {
 }: ComponentType,
   ref: ForwardedRef<VisionCamera>
 ) => {
-  const { detectFaces } = useFaceDetector( faceDetectionOptions )
   /** 
    * Is there an async task already running?
    */
   const isAsyncContextBusy = useSharedValue( false )
   const faces = useSharedValue<string>( '[]' )
+  const {
+    detectFaces,
+    stopListeners
+  } = useFaceDetector( faceDetectionOptions )
+
+  useEffect( () => {
+    return () => stopListeners()
+  }, [] )
 
   /** 
    * Throws logs/errors back on js thread

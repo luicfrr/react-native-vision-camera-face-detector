@@ -96,7 +96,9 @@ Or use it following [vision-camera docs](https://react-native-vision-camera.com/
 import { 
   StyleSheet, 
   Text, 
-  View 
+  View,
+  NativeModules,
+  Platform
 } from 'react-native'
 import { 
   useEffect, 
@@ -122,7 +124,20 @@ export default function App() {
   } ).current
 
   const device = useCameraDevice('front')
-  const { detectFaces } = useFaceDetector( faceDetectionOptions )
+  const { 
+    detectFaces,
+    stopListeners
+  } = useFaceDetector( faceDetectionOptions )
+
+  useEffect( () => {
+    return () => {
+      if ( Platform.OS !== 'android' ) return
+      // you must call `stopListeners` if:
+      // - camera view is unmouted
+      // - current view is unmounted
+      stopListeners()
+    }
+  }, [] )
 
   useEffect(() => {
     (async () => {
