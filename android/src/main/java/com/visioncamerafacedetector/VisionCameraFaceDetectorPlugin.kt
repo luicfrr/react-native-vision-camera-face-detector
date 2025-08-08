@@ -15,12 +15,11 @@ import com.mrousavy.camera.core.FrameInvalidError
 import com.mrousavy.camera.core.types.Position
 import com.mrousavy.camera.frameprocessors.Frame
 import com.mrousavy.camera.frameprocessors.FrameProcessorPlugin
-import com.mrousavy.camera.frameprocessors.VisionCameraProxy
 
 private const val TAG = "FaceDetector"
 class VisionCameraFaceDetectorPlugin(
-  proxy: VisionCameraProxy,
-  options: Map<String, Any>?
+  options: Map<String, Any>?,
+  private val orientationManager: VisionCameraFaceDetectorOrientation
 ) : FrameProcessorPlugin() {
   // detection props
   private var autoMode = false
@@ -32,12 +31,8 @@ class VisionCameraFaceDetectorPlugin(
   private var windowWidth = 1.0
   private var windowHeight = 1.0
   private var cameraFacing: Position = Position.FRONT
-  private var orientationManager: VisionCameraFaceDetectorOrientation? = null
 
   init {
-    // initializes orientation manager
-    orientationManager = VisionCameraFaceDetectorOrientation(proxy.context)
-
     // handle auto scaling
     autoMode = options?.get("autoMode").toString() == "true"
 
