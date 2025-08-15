@@ -131,15 +131,18 @@ export default function App() {
 
   useEffect( () => {
     return () => {
-      if ( Platform.OS !== 'android' ) return
-      // you must call `stopListeners` if:
-      // - camera view is unmouted
-      // - current view is unmounted
+      // you must call `stopListeners` when current component is unmounted
       stopListeners()
     }
   }, [] )
 
   useEffect(() => {
+    if(!device) {
+      // you must call `stopListeners` when `Camera` component is unmounted
+      stopListeners()
+      return
+    }
+
     (async () => {
       const status = await Camera.requestCameraPermission()
       console.log({ status })
