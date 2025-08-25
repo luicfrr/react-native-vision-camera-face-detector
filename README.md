@@ -213,7 +213,6 @@ import { countFaces } from 'react-native-vision-camera-face-detector'
 const n = await countFaces(require('./assets/group.jpg')) // e.g. 3
 ```
 
-If you’ve just added/updated this library, rebuild your native app so the new native module is available.
 
 ## Face Detection Options
 
