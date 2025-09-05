@@ -186,6 +186,34 @@ export default function App() {
 As face detection is a heavy process you should run it in an asynchronous thread so it can be finished without blocking your camera preview.
 You should read `vision-camera` [docs](https://react-native-vision-camera.com/docs/guides/frame-processors-interacting#running-asynchronously) about this feature.
 
+## 🖼️ Static Image Face Detection
+
+You can detect whether a static image contains a face without using the camera.
+
+- Returns `true` if at least one face is detected.
+- Accepts `require('path/to/file')`, a URI string (e.g. `file://`, `content://`, `http(s)://`), or an object `{ uri: string }`.
+
+```ts
+import { hasFace } from 'react-native-vision-camera-face-detector'
+
+// Using a bundled asset
+const result1 = await hasFace(require('./assets/photo.jpg')) // true | false
+
+// Using a local file path or content URI (e.g. from an image picker)
+const result2 = await hasFace('file:///storage/emulated/0/Download/pic.jpg')
+const result3 = await hasFace({ uri: 'content://media/external/images/media/12345' })
+
+console.log({ result1, result2, result3 })
+```
+
+To get the number of faces in an image:
+
+```ts
+import { countFaces } from 'react-native-vision-camera-face-detector'
+const n = await countFaces(require('./assets/group.jpg')) // e.g. 3
+```
+
+
 ## Face Detection Options
 
 | Option  | Description | Default | Options |

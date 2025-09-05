@@ -28,7 +28,10 @@ class VisionCameraFaceDetectorPluginPackage: ReactPackage {
   }
 
   override fun createNativeModules(reactContext: ReactApplicationContext): List<NativeModule> {
-    return listOf(VisionCameraFaceDetectorOrientationManager(reactContext))
+    return listOf(
+      VisionCameraFaceDetectorOrientationManager(reactContext),
+      ImageFaceDetectorModule(reactContext)
+    )
   }
 
 
