@@ -1,54 +1,68 @@
-import { Image, NativeModules } from 'react-native'
+import {
+  Image,
+  NativeModules
+} from 'react-native'
+import type {
+  Face,
+  FaceDetectionOptions
+} from './FaceDetector'
 
-const MODULE_NAME = 'ImageFaceDetector'
-
-export type InputImage = number | string | { uri: string }
-
-function resolveUri(image: InputImage): string {
-  if (typeof image === 'number') {
-    const source = Image.resolveAssetSource(image)
-    if (!source?.uri) throw new Error('Failed to resolve asset source from number id.')
-    return source.uri
-  }
-
-  if (typeof image === 'string') {
-    return image
-  }
-
-  if (typeof image === 'object' && image?.uri) {
-    return image.uri
-  }
-
-  throw new Error('Unsupported image input. Expected asset id, uri string, or { uri } object.')
+type InputImage = number | string | { uri: string }
+export interface ImageFaceDetectionOptions {
+  image: InputImage,
+  options?: Omit<
+    FaceDetectionOptions,
+    'autoMode' |
+    'windowWidth' |
+    'windowHeight' |
+    'cameraFacing'
+  >
 }
 
 /**
- * Detect if the given static image contains at least one face.
- *
- * Accepts require('path/to/image.png'), a uri string (file://, content://, http(s)://), or an object { uri }.
+ * Resolves input image
+ * 
+ * @param {InputImage} image Image path
+ * @returns {string} Resolved image
  */
-export async function hasFace(image: InputImage): Promise<boolean> {
-  const uri = resolveUri(image)
-  // @ts-ignore
-  const NativeModule = NativeModules[MODULE_NAME]
-  if (!NativeModule?.hasFaceInImage) {
-    throw new Error(`${MODULE_NAME}.hasFaceInImage is not available. Did you rebuild the native app?`)
-  }
-  const result = await NativeModule.hasFaceInImage(uri)
-  return !!result
+function resolveUri( image: InputImage ): string {
+  const uri = ( () => {
+    switch ( typeof image ) {
+      case 'number': {
+        const source = Image.resolveAssetSource( image )
+        return source?.uri
+      }
+      case 'string': {
+        return image
+      }
+      case 'object': {
+        return image?.uri
+      }
+      default: {
+        return undefined
+      }
+    }
+  } )()
+
+  if ( !uri ) throw new Error( 'Unable to resolve image' )
+  return uri
 }
 
 /**
- * Count faces in a static image.
- * Returns the number of detected faces (0 if none).
+ * Detect faces in a static image
+ * 
+ * @param {InputImage} image Image path
+ * @returns {Promise<Face[]>} List of detected faces
  */
-export async function countFaces(image: InputImage): Promise<number> {
-  const uri = resolveUri(image)
+export async function detectFaces( {
+  image,
+  options
+}: ImageFaceDetectionOptions ): Promise<Face[]> {
+  const uri = resolveUri( image )
   // @ts-ignore
-  const NativeModule = NativeModules[MODULE_NAME]
-  if (!NativeModule?.countFacesInImage) {
-    throw new Error(`${MODULE_NAME}.countFacesInImage is not available. Did you rebuild the native app?`)
-  }
-  const result = await NativeModule.countFacesInImage(uri)
-  return typeof result === 'number' ? result : (result ? 1 : 0)
+  const { ImageFaceDetector } = NativeModules
+  return await ImageFaceDetector?.detectFaces(
+    uri,
+    options
+  )
 }

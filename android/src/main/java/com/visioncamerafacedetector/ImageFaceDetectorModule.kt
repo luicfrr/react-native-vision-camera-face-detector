@@ -12,73 +12,96 @@ import java.io.InputStream
 import java.net.HttpURLConnection
 import java.net.URL
 
-class ImageFaceDetectorModule(private val reactContext: ReactApplicationContext) : ReactContextBaseJavaModule(reactContext) {
+private const val TAG = "ImageFaceDetector"
+class ImageFaceDetectorModule(
+  private val reactContext: ReactApplicationContext
+) : ReactContextBaseJavaModule(reactContext) {
   override fun getName(): String = "ImageFaceDetector"
 
   @ReactMethod
-  fun hasFaceInImage(uriString: String, promise: Promise) {
-    Thread {
-      try {
-        val bitmap = loadBitmapFromUri(uriString)
-        if (bitmap == null) {
-          promise.reject("E_LOAD_IMAGE", "Could not load image from uri: $uriString")
-          return@Thread
+  fun detectFaces(
+    uri: String, 
+    options: Map<String, Any>?
+  ) {
+    val result = ArrayList<Map<String, Any>>()
+
+    try {
+      var performanceModeValue = FaceDetectorOptions.PERFORMANCE_MODE_FAST
+      var landmarkModeValue = FaceDetectorOptions.LANDMARK_MODE_NONE
+      var classificationModeValue = FaceDetectorOptions.CLASSIFICATION_MODE_NONE
+      var contourModeValue = FaceDetectorOptions.CONTOUR_MODE_NONE
+      var runLandmarks = false
+      var runClassifications = false
+      var runContours = false
+      var trackingEnabled = false
+
+      val optionsBuilder = FaceDetectorOptions.Builder()
+        .setPerformanceMode(performanceModeValue)
+        .setLandmarkMode(landmarkModeValue)
+        .setContourMode(contourModeValue)
+        .setClassificationMode(classificationModeValue)
+        .setMinFaceSize(minFaceSize.toFloat())
+
+      if (options?.get("trackingEnabled").toString() == "true") {
+        trackingEnabled = true
+        optionsBuilder.enableTracking()
+      }
+
+      val faceDetector = FaceDetection.getClient(
+        optionsBuilder.build()
+      )
+      val image = InputImage.fromBitmap(
+        loadBitmapFromUri(uri), 0
+      )
+      val task = faceDetector.process(image)
+      val faces = Tasks.await(task)
+      
+      faces.forEach{face ->
+        val map: MutableMap<String, Any> = HashMap()
+
+        if (runLandmarks) {
+          map["landmarks"] = processLandmarks(
+            face,
+            scaleX,
+            scaleY
+          )
         }
 
-        val options = FaceDetectorOptions.Builder()
-          .setPerformanceMode(FaceDetectorOptions.PERFORMANCE_MODE_FAST)
-          .setLandmarkMode(FaceDetectorOptions.LANDMARK_MODE_NONE)
-          .setContourMode(FaceDetectorOptions.CONTOUR_MODE_NONE)
-          .setClassificationMode(FaceDetectorOptions.CLASSIFICATION_MODE_NONE)
-          .setMinFaceSize(0.15f)
-          .build()
-
-        val detector = FaceDetection.getClient(options)
-        val image = InputImage.fromBitmap(bitmap, 0)
-        detector.process(image)
-          .addOnSuccessListener { faces ->
-            promise.resolve(faces.isNotEmpty())
-          }
-          .addOnFailureListener { e ->
-            promise.reject("E_DETECT", "Failed to run face detection", e)
-          }
-      } catch (e: Exception) {
-        promise.reject("E_UNEXPECTED", e.message, e)
-      }
-    }.start()
-  }
-
-  @ReactMethod
-  fun countFacesInImage(uriString: String, promise: Promise) {
-    Thread {
-      try {
-        val bitmap = loadBitmapFromUri(uriString)
-        if (bitmap == null) {
-          promise.reject("E_LOAD_IMAGE", "Could not load image from uri: $uriString")
-          return@Thread
+        if (runClassifications) {
+          map["leftEyeOpenProbability"] = face.leftEyeOpenProbability?.toDouble() ?: -1
+          map["rightEyeOpenProbability"] = face.rightEyeOpenProbability?.toDouble() ?: -1
+          map["smilingProbability"] = face.smilingProbability?.toDouble() ?: -1
         }
 
-        val options = FaceDetectorOptions.Builder()
-          .setPerformanceMode(FaceDetectorOptions.PERFORMANCE_MODE_FAST)
-          .setLandmarkMode(FaceDetectorOptions.LANDMARK_MODE_NONE)
-          .setContourMode(FaceDetectorOptions.CONTOUR_MODE_NONE)
-          .setClassificationMode(FaceDetectorOptions.CLASSIFICATION_MODE_NONE)
-          .setMinFaceSize(0.15f)
-          .build()
+        if (runContours) {
+          map["contours"] = processFaceContours(
+            face,
+            scaleX,
+            scaleY
+          )
+        }
 
-        val detector = FaceDetection.getClient(options)
-        val image = InputImage.fromBitmap(bitmap, 0)
-        detector.process(image)
-          .addOnSuccessListener { faces ->
-            promise.resolve(faces.size)
-          }
-          .addOnFailureListener { e ->
-            promise.reject("E_DETECT", "Failed to run face detection", e)
-          }
-      } catch (e: Exception) {
-        promise.reject("E_UNEXPECTED", e.message, e)
+        if (trackingEnabled) {
+          map["trackingId"] = face.trackingId ?: -1
+        }
+
+        map["rollAngle"] = face.headEulerAngleZ.toDouble()
+        map["pitchAngle"] = face.headEulerAngleX.toDouble()
+        map["yawAngle"] = face.headEulerAngleY.toDouble()
+        map["bounds"] = processBoundingBox(
+          face.boundingBox,
+          width,
+          height,
+          scaleX,
+          scaleY
+        )
+        result.add(map)
       }
-    }.start()
+    } catch (e: Exception) {
+      Log.e(TAG, "Error processing image face detection: ", e)
+    }
+
+    return result
   }
 
   private fun loadBitmapFromUri(uriString: String): Bitmap? {
@@ -123,7 +146,9 @@ class ImageFaceDetectorModule(private val reactContext: ReactApplicationContext)
 private fun InputStream?.useDecode(): Bitmap? {
   if (this == null) return null
   return try {
-    this.use { BitmapFactory.decodeStream(it) }
+    this.use { 
+      BitmapFactory.decodeStream(it)
+    }
   } catch (e: Exception) {
     null
   }

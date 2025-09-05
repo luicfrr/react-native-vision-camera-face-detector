@@ -1,6 +1,6 @@
 ## 📚 Introduction
 
-`react-native-vision-camera-face-detector` is a React Native library that integrates with the Vision Camera module to provide face detection functionality. It allows you to easily detect faces in real-time using device's front and back camera.
+`react-native-vision-camera-face-detector` is a React Native library that integrates with the Vision Camera module to provide face detection functionality. It allows you to easily detect faces in real-time using device's front/back camera. Also supports static image face detections (thanks to @XChikuX).
 
 Is this package usefull to you?
 
@@ -188,31 +188,43 @@ You should read `vision-camera` [docs](https://react-native-vision-camera.com/do
 
 ## 🖼️ Static Image Face Detection
 
-You can detect whether a static image contains a face without using the camera.
+You can detect faces in static images without using the camera.
 
-- Returns `true` if at least one face is detected.
-- Accepts `require('path/to/file')`, a URI string (e.g. `file://`, `content://`, `http(s)://`), or an object `{ uri: string }`.
+Supported image sources: 
+- Requirings (`require('path/to/file')`)
+- URI string (`file://`, `content://`, `http(s)://`)
+- Object (`{ uri: string }`)
 
 ```ts
-import { hasFace } from 'react-native-vision-camera-face-detector'
+import { 
+  detectFaces,
+  FaceDetectionOptions
+} from 'react-native-vision-camera-face-detector'
 
+const detectionOptions: FaceDetectionOptions = {
+  // detection options
+}
 // Using a bundled asset
-const result1 = await hasFace(require('./assets/photo.jpg')) // true | false
-
+const faces1 = await detectFaces({
+  image: require('./assets/photo.jpg'),
+  options: detectionOptions
+})
 // Using a local file path or content URI (e.g. from an image picker)
-const result2 = await hasFace('file:///storage/emulated/0/Download/pic.jpg')
-const result3 = await hasFace({ uri: 'content://media/external/images/media/12345' })
+const faces2 = await detectFaces({
+  image: 'file:///storage/emulated/0/Download/pic.jpg',
+  options: detectionOptions
+})
+const faces3 = await detectFaces({
+  image: { uri: 'content://media/external/images/media/12345' },
+  options: detectionOptions
+})
 
-console.log({ result1, result2, result3 })
+console.log({ 
+  faces1, 
+  faces2, 
+  faces3 
+})
 ```
-
-To get the number of faces in an image:
-
-```ts
-import { countFaces } from 'react-native-vision-camera-face-detector'
-const n = await countFaces(require('./assets/group.jpg')) // e.g. 3
-```
-
 
 ## Face Detection Options
 
