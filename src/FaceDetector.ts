@@ -186,7 +186,7 @@ function createFaceDetectorPlugin(
       if ( Platform.OS !== 'android' ) return
 
       const { VisionCameraFaceDetectorOrientationManager } = NativeModules
-      VisionCameraFaceDetectorOrientationManager.stopDeviceOrientationListener()
+      VisionCameraFaceDetectorOrientationManager?.stopDeviceOrientationListener()
     }
   }
 }
