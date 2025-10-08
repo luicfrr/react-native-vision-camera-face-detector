@@ -1,6 +1,6 @@
 package com.visioncamerafacedetector
 
-import android.content.ContentResolver
+import android.util.Log
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
@@ -21,9 +21,11 @@ class ImageFaceDetectorModule(
   @ReactMethod
   fun detectFaces(
     uri: String, 
-    options: Map<String, Any>?
+    options: ReadableMap?,
+    promise: Promise
   ) {
-    val result = ArrayList<Map<String, Any>>()
+    val common = FaceDetectorCommon()
+    val result: WritableArray = Arguments.createArray()
 
     try {
       var performanceModeValue = FaceDetectorOptions.PERFORMANCE_MODE_FAST
@@ -35,6 +37,26 @@ class ImageFaceDetectorModule(
       var runContours = false
       var trackingEnabled = false
 
+      if (options?.getString("performanceMode") == "accurate") {
+        performanceModeValue = FaceDetectorOptions.PERFORMANCE_MODE_ACCURATE
+      }
+
+      if (options?.getString("landmarkMode") == "all") {
+        runLandmarks = true
+        landmarkModeValue = FaceDetectorOptions.LANDMARK_MODE_ALL
+      }
+
+      if (options?.getString("classificationMode") == "all") {
+        runClassifications = true
+        classificationModeValue = FaceDetectorOptions.CLASSIFICATION_MODE_ALL
+      }
+
+      if (options?.getString("contourMode") == "all") {
+        runContours = true
+        contourModeValue = FaceDetectorOptions.CONTOUR_MODE_ALL
+      }
+
+      val minFaceSize: Double = (options?.getDouble("minFaceSize") ?: 0.15) as Double
       val optionsBuilder = FaceDetectorOptions.Builder()
         .setPerformanceMode(performanceModeValue)
         .setLandmarkMode(landmarkModeValue)
@@ -42,7 +64,7 @@ class ImageFaceDetectorModule(
         .setClassificationMode(classificationModeValue)
         .setMinFaceSize(minFaceSize.toFloat())
 
-      if (options?.get("trackingEnabled").toString() == "true") {
+      if (options?.getString("trackingEnabled") == "true") {
         trackingEnabled = true
         optionsBuilder.enableTracking()
       }
@@ -51,57 +73,49 @@ class ImageFaceDetectorModule(
         optionsBuilder.build()
       )
       val image = InputImage.fromBitmap(
-        loadBitmapFromUri(uri), 0
+        loadBitmapFromUri(uri)!!, 0
       )
-      val task = faceDetector.process(image)
-      val faces = Tasks.await(task)
-      
-      faces.forEach{face ->
-        val map: MutableMap<String, Any> = HashMap()
+      faceDetector.process(image)
+        .addOnSuccessListener{faces ->
+          faces.forEach{face ->
+            val map: WritableMap = Arguments.createMap()
 
-        if (runLandmarks) {
-          map["landmarks"] = processLandmarks(
-            face,
-            scaleX,
-            scaleY
-          )
+            if (runLandmarks) {
+              map.putMap("landmarks", common.processLandmarks(face))
+            }
+
+            if (runClassifications) {
+              map.putDouble("leftEyeOpenProbability", face.leftEyeOpenProbability?.toDouble() ?: -1.0)
+              map.putDouble("rightEyeOpenProbability", face.rightEyeOpenProbability?.toDouble() ?: -1.0)
+              map.putDouble("smilingProbability", face.smilingProbability?.toDouble() ?: -1.0)
+            }
+
+            if (runContours) {
+              map.putMap("contours", common.processFaceContours(face))
+            }
+
+            if (trackingEnabled) {
+              map.putInt("trackingId", face.trackingId ?: -1)
+            }
+
+            map.putDouble("rollAngle", face.headEulerAngleZ.toDouble())
+            map.putDouble("pitchAngle", face.headEulerAngleX.toDouble())
+            map.putDouble("yawAngle", face.headEulerAngleY.toDouble())
+            map.putMap("bounds", common.processBoundingBox(face.boundingBox))
+
+            result.pushMap(map)
+          }
+
+          promise.resolve(result)
         }
-
-        if (runClassifications) {
-          map["leftEyeOpenProbability"] = face.leftEyeOpenProbability?.toDouble() ?: -1
-          map["rightEyeOpenProbability"] = face.rightEyeOpenProbability?.toDouble() ?: -1
-          map["smilingProbability"] = face.smilingProbability?.toDouble() ?: -1
+        .addOnFailureListener { e ->
+          Log.e(TAG, "Error processing image face detection: ", e)
+          promise.reject("E_DETECT", "Error processing image face detection", e)
         }
-
-        if (runContours) {
-          map["contours"] = processFaceContours(
-            face,
-            scaleX,
-            scaleY
-          )
-        }
-
-        if (trackingEnabled) {
-          map["trackingId"] = face.trackingId ?: -1
-        }
-
-        map["rollAngle"] = face.headEulerAngleZ.toDouble()
-        map["pitchAngle"] = face.headEulerAngleX.toDouble()
-        map["yawAngle"] = face.headEulerAngleY.toDouble()
-        map["bounds"] = processBoundingBox(
-          face.boundingBox,
-          width,
-          height,
-          scaleX,
-          scaleY
-        )
-        result.add(map)
-      }
     } catch (e: Exception) {
-      Log.e(TAG, "Error processing image face detection: ", e)
+      Log.e(TAG, "Error preparing face detection: ", e)
+      promise.reject("E_LOAD", "Error preparing face detection: ", e)
     }
-
-    return result
   }
 
   private fun loadBitmapFromUri(uriString: String): Bitmap? {

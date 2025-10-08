@@ -31,6 +31,7 @@ class VisionCameraFaceDetectorPlugin(
   private var windowWidth = 1.0
   private var windowHeight = 1.0
   private var cameraFacing: Position = Position.FRONT
+  private val common = FaceDetectorCommon()
 
   init {
     // handle auto scaling
@@ -86,185 +87,6 @@ class VisionCameraFaceDetectorPlugin(
     )
   }
 
-  private fun processBoundingBox(
-    boundingBox: Rect,
-    sourceWidth: Double,
-    sourceHeight: Double,
-    scaleX: Double,
-    scaleY: Double
-  ): Map<String, Any> {
-    val bounds: MutableMap<String, Any> = HashMap()
-    val width = boundingBox.width().toDouble() * scaleX
-    val height = boundingBox.height().toDouble() * scaleY
-    val x = boundingBox.left.toDouble()
-    val y = boundingBox.top.toDouble()
-
-    bounds["width"] = width
-    bounds["height"] = height
-    bounds["x"] = x * scaleX
-    bounds["y"] = y * scaleY
-
-    if(!autoMode) return bounds
-
-    // using front camera
-    if(cameraFacing == Position.FRONT) {
-      when (orientationManager?.orientation) {
-        // device is portrait
-        Surface.ROTATION_0 -> {
-          bounds["x"] = ((-x * scaleX) + sourceWidth * scaleX) - width
-          bounds["y"] = y * scaleY
-        }
-        // device is landscape right
-        Surface.ROTATION_270 -> {
-          bounds["x"] = y * scaleX
-          bounds["y"] = x * scaleY
-        }
-        // device is upside down
-        Surface.ROTATION_180 -> {
-          bounds["x"] = x * scaleX
-          bounds["y"] = ((-y * scaleY) + sourceHeight * scaleY) - height
-        }
-        // device is landscape left
-        Surface.ROTATION_90 -> {
-          bounds["x"] = ((-y * scaleX) + sourceWidth * scaleX) - width
-          bounds["y"] = ((-x * scaleY) + sourceHeight * scaleY) - height
-        }
-      }
-      return bounds
-    }
-
-    // using back camera
-    when (orientationManager?.orientation) {
-      // device is portrait
-      Surface.ROTATION_0 -> {
-        bounds["x"] = x * scaleX
-        bounds["y"] = y * scaleY
-      }
-      // device is landscape right
-      Surface.ROTATION_270 -> {
-        bounds["x"] = y * scaleX
-        bounds["y"] = ((-x * scaleY) + sourceHeight * scaleY) - height
-      }
-      // device is upside down
-      Surface.ROTATION_180 -> {
-        bounds["x"] =((-x * scaleX) + sourceWidth * scaleX) - width
-        bounds["y"] = ((-y * scaleY) + sourceHeight * scaleY) - height
-      }
-      // device is landscape left
-      Surface.ROTATION_90 -> {
-        bounds["x"] = ((-y * scaleX) + sourceWidth * scaleX) - width
-        bounds["y"] = x * scaleY
-      }
-    }
-    return bounds
-  }
-
-  private fun processLandmarks(
-    face: Face,
-    scaleX: Double,
-    scaleY: Double
-  ): Map<String, Any> {
-    val faceLandmarksTypes = intArrayOf(
-      FaceLandmark.LEFT_CHEEK,
-      FaceLandmark.LEFT_EAR,
-      FaceLandmark.LEFT_EYE,
-      FaceLandmark.MOUTH_BOTTOM,
-      FaceLandmark.MOUTH_LEFT,
-      FaceLandmark.MOUTH_RIGHT,
-      FaceLandmark.NOSE_BASE,
-      FaceLandmark.RIGHT_CHEEK,
-      FaceLandmark.RIGHT_EAR,
-      FaceLandmark.RIGHT_EYE
-    )
-    val faceLandmarksTypesStrings = arrayOf(
-      "LEFT_CHEEK",
-      "LEFT_EAR",
-      "LEFT_EYE",
-      "MOUTH_BOTTOM",
-      "MOUTH_LEFT",
-      "MOUTH_RIGHT",
-      "NOSE_BASE",
-      "RIGHT_CHEEK",
-      "RIGHT_EAR",
-      "RIGHT_EYE"
-    )
-    val faceLandmarksTypesMap: MutableMap<String, Any> = HashMap()
-    for (i in faceLandmarksTypesStrings.indices) {
-      val landmark = face.getLandmark(faceLandmarksTypes[i])
-      val landmarkName = faceLandmarksTypesStrings[i]
-
-      if (landmark == null) continue
-
-      val point = landmark.position
-      val currentPointsMap: MutableMap<String, Double> = HashMap()
-      currentPointsMap["x"] = point.x.toDouble() * scaleX
-      currentPointsMap["y"] = point.y.toDouble() * scaleY
-      faceLandmarksTypesMap[landmarkName] = currentPointsMap
-    }
-
-    return faceLandmarksTypesMap
-  }
-
-  private fun processFaceContours(
-    face: Face,
-    scaleX: Double,
-    scaleY: Double
-  ): Map<String, Any> {
-    val faceContoursTypes = intArrayOf(
-      FaceContour.FACE,
-      FaceContour.LEFT_CHEEK,
-      FaceContour.LEFT_EYE,
-      FaceContour.LEFT_EYEBROW_BOTTOM,
-      FaceContour.LEFT_EYEBROW_TOP,
-      FaceContour.LOWER_LIP_BOTTOM,
-      FaceContour.LOWER_LIP_TOP,
-      FaceContour.NOSE_BOTTOM,
-      FaceContour.NOSE_BRIDGE,
-      FaceContour.RIGHT_CHEEK,
-      FaceContour.RIGHT_EYE,
-      FaceContour.RIGHT_EYEBROW_BOTTOM,
-      FaceContour.RIGHT_EYEBROW_TOP,
-      FaceContour.UPPER_LIP_BOTTOM,
-      FaceContour.UPPER_LIP_TOP
-    )
-    val faceContoursTypesStrings = arrayOf(
-      "FACE",
-      "LEFT_CHEEK",
-      "LEFT_EYE",
-      "LEFT_EYEBROW_BOTTOM",
-      "LEFT_EYEBROW_TOP",
-      "LOWER_LIP_BOTTOM",
-      "LOWER_LIP_TOP",
-      "NOSE_BOTTOM",
-      "NOSE_BRIDGE",
-      "RIGHT_CHEEK",
-      "RIGHT_EYE",
-      "RIGHT_EYEBROW_BOTTOM",
-      "RIGHT_EYEBROW_TOP",
-      "UPPER_LIP_BOTTOM",
-      "UPPER_LIP_TOP"
-    )
-    val faceContoursTypesMap: MutableMap<String, Any> = HashMap()
-    for (i in faceContoursTypesStrings.indices) {
-      val contour = face.getContour(faceContoursTypes[i])
-      val contourName = faceContoursTypesStrings[i]
-
-      if (contour == null) continue
-
-      val points = contour.points
-      val pointsMap: MutableList<Map<String, Double>> = mutableListOf()
-      for (j in points.indices) {
-        val currentPointsMap: MutableMap<String, Double> = HashMap()
-        currentPointsMap["x"] = points[j].x.toDouble() * scaleX
-        currentPointsMap["y"] = points[j].y.toDouble() * scaleY
-        pointsMap.add(currentPointsMap)
-      }
-
-      faceContoursTypesMap[contourName] = pointsMap
-    }
-    return faceContoursTypesMap
-  }
-
   private fun getImageOrientation(): Int {
     return when (orientationManager?.orientation) {
       // device is portrait
@@ -298,7 +120,7 @@ class VisionCameraFaceDetectorPlugin(
         val map: MutableMap<String, Any> = HashMap()
 
         if (runLandmarks) {
-          map["landmarks"] = processLandmarks(
+          map["landmarks"] = common.processLandmarks(
             face,
             scaleX,
             scaleY
@@ -312,7 +134,7 @@ class VisionCameraFaceDetectorPlugin(
         }
 
         if (runContours) {
-          map["contours"] = processFaceContours(
+          map["contours"] = common.processFaceContours(
             face,
             scaleX,
             scaleY
@@ -326,7 +148,7 @@ class VisionCameraFaceDetectorPlugin(
         map["rollAngle"] = face.headEulerAngleZ.toDouble()
         map["pitchAngle"] = face.headEulerAngleX.toDouble()
         map["yawAngle"] = face.headEulerAngleY.toDouble()
-        map["bounds"] = processBoundingBox(
+        map["bounds"] = common.processBoundingBox(
           face.boundingBox,
           width,
           height,
