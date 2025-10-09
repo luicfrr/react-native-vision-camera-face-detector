@@ -1,6 +1,6 @@
 ## 📚 Introduction
 
-`react-native-vision-camera-face-detector` is a React Native library that integrates with the Vision Camera module to provide face detection functionality. It allows you to easily detect faces in real-time using device's front and back camera.
+`react-native-vision-camera-face-detector` is a React Native library that integrates with the Vision Camera module to provide face detection functionality. It allows you to easily detect faces in real-time using device's front/back camera. Also supports static image face detections (thanks to @XChikuX).
 
 Is this package usefull to you?
 
@@ -186,6 +186,46 @@ export default function App() {
 As face detection is a heavy process you should run it in an asynchronous thread so it can be finished without blocking your camera preview.
 You should read `vision-camera` [docs](https://react-native-vision-camera.com/docs/guides/frame-processors-interacting#running-asynchronously) about this feature.
 
+## 🖼️ Static Image Face Detection
+
+You can detect faces in static images without using the camera.
+
+Supported image sources: 
+- Requirings (`require('path/to/file')`)
+- URI string (`file://`, `content://`, `http(s)://`)
+- Object (`{ uri: string }`)
+
+```ts
+import { 
+  detectFaces,
+  FaceDetectionOptions
+} from 'react-native-vision-camera-face-detector'
+
+const detectionOptions: FaceDetectionOptions = {
+  // detection options
+}
+// Using a bundled asset
+const faces1 = await detectFaces({
+  image: require('./assets/photo.jpg'),
+  options: detectionOptions
+})
+// Using a local file path or content URI (e.g. from an image picker)
+const faces2 = await detectFaces({
+  image: 'file:///storage/emulated/0/Download/pic.jpg',
+  options: detectionOptions
+})
+const faces3 = await detectFaces({
+  image: { uri: 'content://media/external/images/media/12345' },
+  options: detectionOptions
+})
+
+console.log({ 
+  faces1, 
+  faces2, 
+  faces3 
+})
+```
+
 ## Face Detection Options
 
 | Option  | Description | Default | Options |
@@ -223,13 +263,13 @@ If you find other errors while using this package you're wellcome to open a new 
 
 This package was tested using the following:
 
-- `react-native`: `0.76.9` (new arch disabled)
-- `react-native-vision-camera`: `4.6.4`
-- `react-native-worklets-core`: `1.5.0`
-- `@shopify/react-native-skia`: `1.5.0`
-- `react-native-reanimated`: `~3.16.1`
-- `@react-native-firebase`: `^22.2.0`
-- `expo`: `^52`
+- `react-native`: `0.79.5` (new arch disabled)
+- `react-native-vision-camera`: `4.7.2`
+- `react-native-worklets-core`: `1.6.2`
+- `@shopify/react-native-skia`: `2.2.19`
+- `react-native-reanimated`: `~3.17.4`
+- `@react-native-firebase`: `^22.2.1`
+- `expo`: `^53`
 
 Min O.S version:
 

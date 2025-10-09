@@ -18,6 +18,7 @@ import {
   useCameraDevice,
   useCameraPermission
 } from 'react-native-vision-camera'
+import { launchImageLibraryAsync } from 'expo-image-picker'
 import { useIsFocused } from '@react-navigation/core'
 import { useAppState } from '@react-native-community/hooks'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
@@ -27,7 +28,8 @@ import {
   Face,
   FaceDetectionOptions,
   Contours,
-  Landmarks
+  Landmarks,
+  detectFaces
 } from 'react-native-vision-camera-face-detector'
 import {
   ClipOp,
@@ -302,6 +304,28 @@ function FaceDetection(): JSX.Element {
     frame.drawRect( bounds, rectPaint )
   }
 
+  /**
+   * Detect faces from image
+   * 
+   * @returns {Promise<void>} Promise
+   */
+  async function detectFacesFromImage(): Promise<void> {
+    // No permissions request is necessary for launching the image library
+    let result = await launchImageLibraryAsync( {
+      mediaTypes: [ 'images' ],
+      allowsEditing: true,
+      aspect: [ 4, 3 ],
+      quality: 1
+    } )
+
+    if ( result.canceled ) return
+
+    const faces = await detectFaces( {
+      image: result.assets[ 0 ].uri
+    } )
+    console.log( 'image detected faces', faces )
+  }
+
   return ( <>
     <View
       style={ [
@@ -378,6 +402,20 @@ function FaceDetection(): JSX.Element {
         flexDirection: 'column'
       } }
     >
+      <View
+        style={ {
+          width: '100%',
+          display: 'flex',
+          flexDirection: 'row',
+          justifyContent: 'space-around'
+        } }
+      >
+        <Button
+          onPress={ detectFacesFromImage }
+          title={ 'Pick from file' }
+        />
+      </View>
+
       <View
         style={ {
           width: '100%',
