@@ -263,13 +263,13 @@ If you find other errors while using this package you're wellcome to open a new 
 
 This package was tested using the following:
 
-- `react-native`: `0.76.9` (new arch disabled)
-- `react-native-vision-camera`: `4.6.4`
-- `react-native-worklets-core`: `1.5.0`
-- `@shopify/react-native-skia`: `1.5.0`
-- `react-native-reanimated`: `~3.16.1`
-- `@react-native-firebase`: `^22.2.0`
-- `expo`: `^52`
+- `react-native`: `0.79.5` (new arch disabled)
+- `react-native-vision-camera`: `4.7.2`
+- `react-native-worklets-core`: `1.6.2`
+- `@shopify/react-native-skia`: `2.2.19`
+- `react-native-reanimated`: `~3.17.4`
+- `@react-native-firebase`: `^22.2.1`
+- `expo`: `^53`
 
 Min O.S version:
 
