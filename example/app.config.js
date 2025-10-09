@@ -1,5 +1,6 @@
 export default {
   expo: {
+    newArchEnabled: false,
     name: 'Face Detector Example',
     slug: 'face-detector-example',
     version: '1.0.0',
@@ -44,9 +45,9 @@ export default {
           // android 8
           minSdkVersion: 26,
           // android 14
-          compileSdkVersion: 34,
-          targetSdkVersion: 34,
-          buildToolsVersion: '34.0.0'
+          compileSdkVersion: 35,
+          targetSdkVersion: 35,
+          buildToolsVersion: '35.0.0'
         },
         ios: {
           deploymentTarget: '15.5',

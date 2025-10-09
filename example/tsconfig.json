@@ -3,7 +3,6 @@
   "compilerOptions": {
     "strict": true,
     "forceConsistentCasingInFileNames": true,
-    "module": "commonjs",
     "isolatedModules": true,
     "typeRoots": [
       "./node_modules/@types"
