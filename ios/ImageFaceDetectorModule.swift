@@ -46,103 +46,42 @@ class ImageFaceDetectorModule: NSObject {
     rejecter: @escaping RCTPromiseRejectBlock
   ) {
     let common = FaceDetectorCommon()
-    var result: [Any] = []
-
     do {
-      var runLandmarks = false
-      var runClassifications = false
-      var runContours = false
-      var trackingEnabled = false
-      
-      let minFaceSize = 0.15
       let config = common.getConfig(withArguments: options)
-      let optionsBuilder = FaceDetectorOptions()
-          optionsBuilder.performanceMode = .fast
-          optionsBuilder.landmarkMode = .none
-          optionsBuilder.contourMode = .none
-          optionsBuilder.classificationMode = .none
-          optionsBuilder.minFaceSize = minFaceSize
-          optionsBuilder.isTrackingEnabled = false
-
-      if config["performanceMode"] as? String == "accurate" {
-        optionsBuilder.performanceMode = .accurate
-      }
-
-      if config["landmarkMode"] as? String == "all" {
-        runLandmarks = true
-        optionsBuilder.landmarkMode = .all
-      }
-
-      if config["classificationMode"] as? String == "all" {
-        runClassifications = true
-        optionsBuilder.classificationMode = .all
-      }
-
-      if config["contourMode"] as? String == "all" {
-        runContours = true
-        optionsBuilder.contourMode = .all
-      }
-
-      let minFaceSizeParam = config["minFaceSize"] as? Double
-      if minFaceSizeParam != nil && minFaceSizeParam != minFaceSize {
-        optionsBuilder.minFaceSize = CGFloat(minFaceSizeParam!)
-      }
-
-      if config["trackingEnabled"] as? Bool == true {
-        trackingEnabled = true
-        optionsBuilder.isTrackingEnabled = true
-      }
-
-      let faceDetector = FaceDetector.faceDetector(options: optionsBuilder)    
+      let faceDetectorResult = common.getFaceDetector(
+        config: config
+      )
+      let runLandmarks = faceDetectorResult.runLandmarks
+      let runClassifications = faceDetectorResult.runClassifications
+      let runContours = faceDetectorResult.runContours
+      let trackingEnabled = faceDetectorResult.trackingEnabled
+      let faceDetector = faceDetectorResult.faceDetector
+      
       let image = try self.loadUIImage(from: uri)
       let visionImage = VisionImage(image: image)
       visionImage.orientation = image.imageOrientation
 
       faceDetector.process(visionImage) { faces, error in
         if let error = error {
-          rejecter("E_DETECT", "Error processing image face detection", error)
+          print("Error processing image face detection: \(error)")
+          // resolve empty list on error
+          resolver([])
           return
         }
 
-        for face in faces ?? [] {
-          var map: [String: Any] = [:]
-
-          if runLandmarks {
-            map["landmarks"] = common.processLandmarks(
-              from: face
-            )
-          }
-
-          if runClassifications {
-            map["leftEyeOpenProbability"] = face.leftEyeOpenProbability
-            map["rightEyeOpenProbability"] = face.rightEyeOpenProbability
-            map["smilingProbability"] = face.smilingProbability
-          }
-
-          if runContours {
-            map["contours"] = common.processFaceContours(
-              from: face
-            )
-          }
-
-          if trackingEnabled {
-            map["trackingId"] = face.trackingID
-          }
-
-          map["rollAngle"] = face.headEulerAngleZ
-          map["pitchAngle"] = face.headEulerAngleX
-          map["yawAngle"] = face.headEulerAngleY
-          map["bounds"] = common.processBoundingBox(
-            from: face
-          )
-
-          result.append(map)
-        }
-
+        let result = common.processFaces(
+          faces: faces ?? [],
+          runLandmarks: runLandmarks,
+          runClassifications: runClassifications,
+          runContours: runContours,
+          trackingEnabled: trackingEnabled
+        )
         resolver(result)
       }
     } catch let error {
-      rejecter("E_LOAD", "Error preparing face detection: \(error.localizedDescription)", error)
+      print("Error preparing face detection: \(error)")
+      // resolve empty list on error
+      resolver([])
     }
   }
 }

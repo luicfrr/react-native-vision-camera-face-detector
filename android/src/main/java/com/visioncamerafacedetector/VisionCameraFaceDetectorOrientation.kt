@@ -4,10 +4,11 @@ import android.util.Log
 import android.view.OrientationEventListener
 import android.view.Surface
 import com.facebook.react.bridge.ReactApplicationContext
-import com.facebook.react.bridge.ReactMethod
 
 private const val TAG = "FaceDetectorOrientation"
-class VisionCameraFaceDetectorOrientation(private val context: ReactApplicationContext) {
+class VisionCameraFaceDetectorOrientation(
+  private val context: ReactApplicationContext
+) {
   var orientation = Surface.ROTATION_0
   private var orientationListener: OrientationEventListener? = null
 
@@ -35,7 +36,6 @@ class VisionCameraFaceDetectorOrientation(private val context: ReactApplicationC
     }
   }
 
-  @ReactMethod
   fun stopDeviceOrientationListener() {
     orientationListener?.disable()
     orientationListener = null

@@ -52,47 +52,15 @@ public class VisionCameraFaceDetector: FrameProcessorPlugin {
 
     // handle auto scaling and rotation
     autoMode = config["autoMode"] as? Bool == true
-
-    // initializes faceDetector on creation
-    let minFaceSize = 0.15
-    let optionsBuilder = FaceDetectorOptions()
-        optionsBuilder.performanceMode = .fast
-        optionsBuilder.landmarkMode = .none
-        optionsBuilder.contourMode = .none
-        optionsBuilder.classificationMode = .none
-        optionsBuilder.minFaceSize = minFaceSize
-        optionsBuilder.isTrackingEnabled = false
-
-    if config["performanceMode"] as? String == "accurate" {
-      optionsBuilder.performanceMode = .accurate
-    }
-
-    if config["landmarkMode"] as? String == "all" {
-      runLandmarks = true
-      optionsBuilder.landmarkMode = .all
-    }
-
-    if config["classificationMode"] as? String == "all" {
-      runClassifications = true
-      optionsBuilder.classificationMode = .all
-    }
-
-    if config["contourMode"] as? String == "all" {
-      runContours = true
-      optionsBuilder.contourMode = .all
-    }
-
-    let minFaceSizeParam = config["minFaceSize"] as? Double
-    if minFaceSizeParam != nil && minFaceSizeParam != minFaceSize {
-      optionsBuilder.minFaceSize = CGFloat(minFaceSizeParam!)
-    }
-
-    if config["trackingEnabled"] as? Bool == true {
-      trackingEnabled = true
-      optionsBuilder.isTrackingEnabled = true
-    }
-
-    faceDetector = FaceDetector.faceDetector(options: optionsBuilder)
+    let faceDetectorResult = common.getFaceDetector(
+      config: config
+    )
+    
+    runLandmarks = faceDetectorResult.runLandmarks
+    runClassifications = faceDetectorResult.runClassifications
+    runContours = faceDetectorResult.runContours
+    trackingEnabled = faceDetectorResult.trackingEnabled
+    faceDetector = faceDetectorResult.faceDetector
   }
 
   func getImageOrientation() -> UIImage.Orientation {
@@ -114,8 +82,6 @@ public class VisionCameraFaceDetector: FrameProcessorPlugin {
     _ frame: Frame, 
     withArguments arguments: [AnyHashable: Any]?
   ) -> Any {
-    var result: [Any] = []
-
     do {
       // we need to invert sizes as frame is always -90deg rotated
       let width = CGFloat(frame.height)
@@ -134,52 +100,22 @@ public class VisionCameraFaceDetector: FrameProcessorPlugin {
       }
 
       let faces: [Face] = try faceDetector!.results(in: image)
-      for face in faces {
-        var map: [String: Any] = [:]
-
-        if runLandmarks {
-          map["landmarks"] = common.processLandmarks(
-            from: face,
-            scaleX: scaleX,
-            scaleY: scaleY
-          )
-        }
-
-        if runClassifications {
-          map["leftEyeOpenProbability"] = face.leftEyeOpenProbability
-          map["rightEyeOpenProbability"] = face.rightEyeOpenProbability
-          map["smilingProbability"] = face.smilingProbability
-        }
-
-        if runContours {
-          map["contours"] = common.processFaceContours(
-            from: face,
-            scaleX: scaleX,
-            scaleY: scaleY
-          )
-        }
-
-        if trackingEnabled {
-          map["trackingId"] = face.trackingID
-        }
-
-        map["rollAngle"] = face.headEulerAngleZ
-        map["pitchAngle"] = face.headEulerAngleX
-        map["yawAngle"] = face.headEulerAngleY
-        map["bounds"] = common.processBoundingBox(
-          from: face,
-          sourceWidth: width,
-          sourceHeight: height,
-          scaleX: scaleX,
-          scaleY: scaleY
-        )
-
-        result.append(map)
-      }
+      return common.processFaces(
+        faces: faces,
+        runLandmarks: runLandmarks,
+        runClassifications: runClassifications,
+        runContours: runContours,
+        trackingEnabled: trackingEnabled,
+        sourceWidth: width,
+        sourceHeight: height,
+        scaleX: scaleX,
+        scaleY: scaleY,
+        autoMode: autoMode
+      )
     } catch let error {
       print("Error processing face detection: \(error)")
     }
 
-    return result
+    return []
   }
 }

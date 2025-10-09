@@ -1,5 +1,13 @@
 import MLKitFaceDetection
 
+struct FaceDetectorResult {
+    let runContours: Bool
+    let runClassifications: Bool
+    let runLandmarks: Bool
+    let trackingEnabled: Bool
+    let faceDetector: FaceDetector
+}
+
 final class FaceDetectorCommon {
   func getConfig(
     withArguments arguments: [AnyHashable: Any]?
@@ -15,7 +23,7 @@ final class FaceDetectorCommon {
     return config
   }
 
-  func processBoundingBox(
+  private func processBoundingBox(
     from face: Face,
     sourceWidth: CGFloat = 0.0,
     sourceHeight: CGFloat = 0.0,
@@ -47,7 +55,7 @@ final class FaceDetectorCommon {
     ]
   }
 
-  func processLandmarks(
+  private func processLandmarks(
     from face: Face,
     scaleX: CGFloat = 1.0,
     scaleY: CGFloat = 1.0
@@ -91,7 +99,7 @@ final class FaceDetectorCommon {
     return faceLandMarksTypesMap
   }
 
-  func processFaceContours(
+  private func processFaceContours(
     from face: Face,
     scaleX: CGFloat = 1.0,
     scaleY: CGFloat = 1.0
@@ -152,5 +160,125 @@ final class FaceDetectorCommon {
     }
 
     return faceContoursTypesMap
+  }
+  
+  func getFaceDetector(
+    config: [String:Any]
+  ) -> FaceDetectorResult {
+    var runLandmarks = false
+    var runClassifications = false
+    var runContours = false
+    var trackingEnabled = false
+    
+    let minFaceSize = 0.15
+    let optionsBuilder = FaceDetectorOptions()
+        optionsBuilder.performanceMode = .fast
+        optionsBuilder.landmarkMode = .none
+        optionsBuilder.contourMode = .none
+        optionsBuilder.classificationMode = .none
+        optionsBuilder.minFaceSize = minFaceSize
+        optionsBuilder.isTrackingEnabled = false
+
+    if config["performanceMode"] as? String == "accurate" {
+      optionsBuilder.performanceMode = .accurate
+    }
+
+    if config["landmarkMode"] as? String == "all" {
+      runLandmarks = true
+      optionsBuilder.landmarkMode = .all
+    }
+
+    if config["classificationMode"] as? String == "all" {
+      runClassifications = true
+      optionsBuilder.classificationMode = .all
+    }
+
+    if config["contourMode"] as? String == "all" {
+      runContours = true
+      optionsBuilder.contourMode = .all
+    }
+
+    let minFaceSizeParam = config["minFaceSize"] as? Double
+    if minFaceSizeParam != nil && minFaceSizeParam != minFaceSize {
+      optionsBuilder.minFaceSize = CGFloat(minFaceSizeParam!)
+    }
+
+    if config["trackingEnabled"] as? Bool == true {
+      trackingEnabled = true
+      optionsBuilder.isTrackingEnabled = true
+    }
+
+    let faceDetector = FaceDetector.faceDetector(
+      options: optionsBuilder
+    )
+  
+    return FaceDetectorResult(
+      runContours: runContours,
+      runClassifications: runClassifications,
+      runLandmarks: runLandmarks,
+      trackingEnabled: trackingEnabled,
+      faceDetector: faceDetector
+    )
+  }
+  
+  func processFaces(
+    faces: [Face],
+    runLandmarks: Bool,
+    runClassifications: Bool,
+    runContours: Bool,
+    trackingEnabled: Bool,
+    sourceWidth: CGFloat = 0.0,
+    sourceHeight: CGFloat = 0.0,
+    scaleX: CGFloat = 1.0,
+    scaleY: CGFloat = 1.0,
+    autoMode: Bool = false
+  ) -> [Any] {
+    var result: [Any] = []
+    
+    for face in faces {
+      var map: [String: Any] = [:]
+      
+      if runLandmarks {
+        map["landmarks"] = processLandmarks(
+          from: face,
+          scaleX: scaleX,
+          scaleY: scaleY
+        )
+      }
+      
+      if runClassifications {
+        map["leftEyeOpenProbability"] = face.leftEyeOpenProbability
+        map["rightEyeOpenProbability"] = face.rightEyeOpenProbability
+        map["smilingProbability"] = face.smilingProbability
+      }
+      
+      if runContours {
+        map["contours"] = processFaceContours(
+          from: face,
+          scaleX: scaleX,
+          scaleY: scaleY
+        )
+      }
+      
+      if trackingEnabled {
+        map["trackingId"] = face.trackingID
+      }
+      
+      map["rollAngle"] = face.headEulerAngleZ
+      map["pitchAngle"] = face.headEulerAngleX
+      map["yawAngle"] = face.headEulerAngleY
+      map["bounds"] = processBoundingBox(
+        from: face,
+        sourceWidth: sourceWidth,
+        sourceHeight: sourceHeight,
+        scaleX: scaleX,
+        scaleY: scaleY,
+        autoMode: autoMode
+      )
+      
+      result.append(map)
+    }
+    
+    return result
   }
 }
