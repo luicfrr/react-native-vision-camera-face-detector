@@ -98,7 +98,7 @@ class ImageFaceDetectorModule(
         ReadableType.Null -> list.add("")
         ReadableType.Boolean -> list.add(readableArray.getBoolean(i))
         ReadableType.Number -> list.add(readableArray.getDouble(i))
-        ReadableType.String -> list.add(readableArray.getString(i))
+        ReadableType.String -> list.add(readableArray.getString(i) ?: "")
         ReadableType.Map -> list.add(toMap(readableArray.getMap(i)))
         ReadableType.Array -> list.add(toList(readableArray.getArray(i)))
       }
