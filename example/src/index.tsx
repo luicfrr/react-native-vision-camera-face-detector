@@ -327,6 +327,11 @@ function FaceDetection(): ReactNode {
     console.log( 'image detected faces', faces )
   }
 
+  /**
+   * Detect faces from photo
+   * 
+   * @returns {Promise<void>} Promise
+   */
   async function detectFacesFromPhoto(): Promise<void> {
     if ( !camera.current ) return
     // take snapshot is faster than take photo 
