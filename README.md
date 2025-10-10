@@ -188,7 +188,7 @@ You should read `vision-camera` [docs](https://react-native-vision-camera.com/do
 
 ## 🖼️ Static Image Face Detection
 
-You can detect faces in static images without using the camera.
+You can detect faces in static images without the camera (picking images from your gallery/files) or you can use it to detect faces in photos taken from camera (see [Example App](https://github.com/luicfrr/react-native-vision-camera-face-detector/blob/main/example/src/index.tsx)):
 
 Supported image sources: 
 - Requirings (`require('path/to/file')`)
@@ -228,18 +228,29 @@ console.log({
 
 ## Face Detection Options
 
+#### Common (Frame Processor and Static Images)
 | Option  | Description | Default | Options |
 | ------------- | ------------- | ------------- | ------------- |
-| `cameraFacing` | Current active camera | `front` | `front`, `back` |
 | `performanceMode` | Favor speed or accuracy when detecting faces.  | `fast` | `fast`, `accurate`|
 | `landmarkMode` | Whether to attempt to identify facial `landmarks`: eyes, ears, nose, cheeks, mouth, and so on. | `none` | `none`, `all` |
 | `contourMode` | Whether to detect the contours of facial features. Contours are detected for only the most prominent face in an image. | `none` | `none`, `all` |
 | `classificationMode` | Whether or not to classify faces into categories such as 'smiling', and 'eyes open'. | `none` | `none`, `all` |
 | `minFaceSize` | Sets the smallest desired face size, expressed as the ratio of the width of the head to width of the image. | `0.15` | `number` |
 | `trackingEnabled` | Whether or not to assign faces an ID, which can be used to track faces across images. Note that when contour detection is enabled, only one face is detected, so face tracking doesn't produce useful results. For this reason, and to improve detection speed, don't enable both contour detection and face tracking. | `false` | `boolean` |
+
+
+#### Frame Processor
+| Option  | Description | Default | Options |
+| ------------- | ------------- | ------------- | ------------- |
+| `cameraFacing` | Current active camera | `front` | `front`, `back` |
 | `autoMode` | Should handle auto scale (face bounds, contour and landmarks) and rotation on native side? If this option is disabled all detection results will be relative to frame coordinates, not to screen/preview. You shouldn't use this option if you want to draw on screen using `Skia Frame Processor`. See [this](https://github.com/luicfrr/react-native-vision-camera-face-detector/issues/30#issuecomment-2058805546) and [this](https://github.com/luicfrr/react-native-vision-camera-face-detector/issues/35) for more details. | `false` | `boolean` |
 | `windowWidth` | * Required if you want to use `autoMode`. You must handle your own logic to get screen sizes, with or without statusbar size, etc... | `1.0` | `number` |
 | `windowHeight` | * Required if you want to use `autoMode`. You must handle your own logic to get screen sizes, with or without statusbar size, etc... | `1.0` | `number` |
+
+#### Static Images
+| Option  | Description | Default | Options |
+| ------------- | ------------- | ------------- | ------------- |
+| `image` | Image source | - | `number`, `string`, `{ uri: string }` |
 
 ## 🔧 Troubleshooting
 

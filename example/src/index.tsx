@@ -327,6 +327,17 @@ function FaceDetection(): ReactNode {
     console.log( 'image detected faces', faces )
   }
 
+  async function detectFacesFromPhoto(): Promise<void> {
+    if ( !camera.current ) return
+    // take snapshot is faster than take photo 
+    // but it does not process captured image
+    const { path } = await camera.current?.takeSnapshot()
+    const faces = await detectFaces( {
+      image: `file://${ path }`
+    } )
+    console.log( 'photo detected faces', faces )
+  }
+
   return ( <>
     <View
       style={ [
@@ -413,7 +424,13 @@ function FaceDetection(): ReactNode {
       >
         <Button
           onPress={ detectFacesFromImage }
-          title={ 'Pick from file' }
+          title={ 'Detect from file' }
+        />
+
+        <Button
+          disabled={ !cameraMounted }
+          onPress={ detectFacesFromPhoto }
+          title={ 'Detect from photo' }
         />
       </View>
 
