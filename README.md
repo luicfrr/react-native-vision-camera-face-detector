@@ -198,10 +198,10 @@ Supported image sources:
 ```ts
 import { 
   detectFaces,
-  FaceDetectionOptions
+  ImageFaceDetectionOptions
 } from 'react-native-vision-camera-face-detector'
 
-const detectionOptions: FaceDetectionOptions = {
+const detectionOptions: ImageFaceDetectionOptions = {
   // detection options
 }
 // Using a bundled asset
