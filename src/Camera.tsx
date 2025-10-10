@@ -17,7 +17,7 @@ import { useFaceDetector } from './FaceDetector'
 // types
 import type {
   DependencyList,
-  ForwardedRef
+  RefObject
 } from 'react'
 import type {
   CameraProps,
@@ -45,6 +45,7 @@ type CallbackType = (
 ) => void | Promise<void>
 
 type ComponentType = {
+  ref: RefObject<VisionCamera | null>
   faceDetectionOptions?: FaceDetectionOptions
   faceDetectionCallback: CallbackType
   skiaActions?: (
@@ -96,14 +97,13 @@ function useRunInJS(
  * @param {ComponentType} props Camera + face detection props 
  * @returns 
  */
-export const Camera = React.forwardRef( ( {
+export function Camera( {
+  ref,
   faceDetectionOptions,
   faceDetectionCallback,
   skiaActions,
   ...props
-}: ComponentType,
-  ref: ForwardedRef<VisionCamera>
-) => {
+}: ComponentType ) {
   /** 
    * Is there an async task already running?
    */
@@ -255,4 +255,4 @@ export const Camera = React.forwardRef( ( {
     frameProcessor={ frameProcessor }
     pixelFormat='yuv'
   />
-} )
+}

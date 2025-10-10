@@ -1,4 +1,5 @@
 import React, {
+  ReactNode,
   useEffect,
   useRef,
   useState
@@ -45,9 +46,9 @@ import Animated, {
 /**
  * Entry point component
  *
- * @return {JSX.Element} Component
+ * @return {ReactNode} Component
  */
-function Index(): JSX.Element {
+function Index(): ReactNode {
   return (
     <SafeAreaProvider>
       <NavigationContainer>
@@ -60,9 +61,9 @@ function Index(): JSX.Element {
 /**
  * Face detection component
  *
- * @return {JSX.Element} Component
+ * @return {ReactNode} Component
  */
-function FaceDetection(): JSX.Element {
+function FaceDetection(): ReactNode {
   const {
     width,
     height
