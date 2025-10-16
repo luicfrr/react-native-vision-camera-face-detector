@@ -4,19 +4,13 @@ import {
 } from 'react-native'
 import type {
   Face,
-  FaceDetectionOptions
+  CommonFaceDetectionOptions
 } from './FaceDetector'
 
 type InputImage = number | string | { uri: string }
 export interface ImageFaceDetectionOptions {
   image: InputImage,
-  options?: Omit<
-    FaceDetectionOptions,
-    'autoMode' |
-    'windowWidth' |
-    'windowHeight' |
-    'cameraFacing'
-  >
+  options?: CommonFaceDetectionOptions
 }
 
 /**

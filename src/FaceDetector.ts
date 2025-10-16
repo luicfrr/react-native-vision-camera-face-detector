@@ -81,7 +81,7 @@ export interface Landmarks {
   RIGHT_EYE: Point
 }
 
-export interface FaceDetectionOptions {
+export interface CommonFaceDetectionOptions {
   /**
    * Favor speed or accuracy when detecting faces.
    *
@@ -125,6 +125,16 @@ export interface FaceDetectionOptions {
    * @default false
    */
   trackingEnabled?: boolean
+}
+
+export interface FrameFaceDetectionOptions
+  extends CommonFaceDetectionOptions {
+  /**
+   * Current active camera
+   * 
+   * @default front
+   */
+  cameraFacing?: CameraPosition
 
   /**
    * Should handle auto scale (face bounds, contour and landmarks) and rotation on native side? 
@@ -148,23 +158,16 @@ export interface FaceDetectionOptions {
    * @default 1.0
    */
   windowHeight?: number
-
-  /**
-   * Current active camera
-   * 
-   * @default front
-   */
-  cameraFacing?: CameraPosition
 }
 
 /**
  * Create a new instance of face detector plugin
  * 
- * @param {FaceDetectionOptions | undefined} options Detection options
+ * @param {FrameFaceDetectionOptions | undefined} options Detection options
  * @returns {FaceDetectorPlugin} Plugin instance
  */
 function createFaceDetectorPlugin(
-  options?: FaceDetectionOptions
+  options?: FrameFaceDetectionOptions
 ): FaceDetectorPlugin {
   const plugin = VisionCameraProxy.initFrameProcessorPlugin( 'detectFaces', {
     ...options
@@ -194,12 +197,12 @@ function createFaceDetectorPlugin(
 /**
  * Use an instance of face detector plugin.
  * 
- * @param {FaceDetectionOptions | undefined} options Detection options
+ * @param {FrameFaceDetectionOptions | undefined} options Detection options
  * @returns {FaceDetectorPlugin} Memoized plugin instance that will be 
  * destroyed once the component using `useFaceDetector()` unmounts.
  */
 export function useFaceDetector(
-  options?: FaceDetectionOptions
+  options?: FrameFaceDetectionOptions
 ): FaceDetectorPlugin {
   return useMemo( () => (
     createFaceDetectorPlugin( options )

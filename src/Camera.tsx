@@ -27,7 +27,7 @@ import type {
 } from 'react-native-vision-camera'
 import type {
   Face,
-  FaceDetectionOptions
+  FrameFaceDetectionOptions
 } from './FaceDetector'
 
 type UseWorkletType = (
@@ -46,7 +46,7 @@ type CallbackType = (
 
 type ComponentType = {
   ref: RefObject<VisionCamera | null>
-  faceDetectionOptions?: FaceDetectionOptions
+  faceDetectionOptions?: FrameFaceDetectionOptions
   faceDetectionCallback: CallbackType
   skiaActions?: (
     faces: Face[],

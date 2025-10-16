@@ -25,12 +25,12 @@ import { useAppState } from '@react-native-community/hooks'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 import { NavigationContainer } from '@react-navigation/native'
 import {
-  Camera,
   Face,
-  FaceDetectionOptions,
+  Camera,
   Contours,
   Landmarks,
-  detectFaces
+  detectFaces,
+  FrameFaceDetectionOptions
 } from 'react-native-vision-camera-face-detector'
 import {
   ClipOp,
@@ -88,7 +88,7 @@ function FaceDetection(): ReactNode {
     cameraFacing,
     setCameraFacing
   ] = useState<CameraPosition>( 'front' )
-  const faceDetectionOptions = useRef<FaceDetectionOptions>( {
+  const faceDetectionOptions = useRef<FrameFaceDetectionOptions>( {
     performanceMode: 'fast',
     classificationMode: 'all',
     contourMode: 'all',
