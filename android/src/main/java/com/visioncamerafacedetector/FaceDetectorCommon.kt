@@ -97,8 +97,13 @@ class FaceDetectorCommon() {
 
   private fun processLandmarks(
     face: Face,
+    sourceWidth: Double = 0.0,
+    sourceHeight: Double = 0.0,
     scaleX: Double = 1.0,
-    scaleY: Double = 1.0
+    scaleY: Double = 1.0,
+    autoMode: Boolean = false,
+    cameraFacing: Position = Position.FRONT,
+    orientation: Int? = Surface.ROTATION_0
   ): Map<String, Any> {
     val faceLandmarksTypes = intArrayOf(
       FaceLandmark.LEFT_CHEEK,
@@ -133,8 +138,71 @@ class FaceDetectorCommon() {
 
       val point = landmark.position
       val currentPointsMap: MutableMap<String, Double> = HashMap()
-      currentPointsMap["x"] = point.x.toDouble() * scaleX
-      currentPointsMap["y"] = point.y.toDouble() * scaleY
+      val x = point.x.toDouble()
+      val y = point.y.toDouble()
+      currentPointsMap["x"] = x * scaleX
+      currentPointsMap["y"] = y * scaleY
+
+      if(autoMode) {
+        if(cameraFacing == Position.FRONT) {
+          // using front camera
+          when (orientation) {
+            // device is portrait
+            Surface.ROTATION_0 -> {
+              currentPointsMap["x"] = ((-x * scaleX) + sourceWidth * scaleX)
+              currentPointsMap["y"] = y * scaleY
+            }
+            // device is landscape right
+            Surface.ROTATION_270 -> {
+              currentPointsMap["x"] = y * scaleX
+              currentPointsMap["y"] = x * scaleY
+            }
+            // device is upside down
+            Surface.ROTATION_180 -> {
+              currentPointsMap["x"] = x * scaleX
+              currentPointsMap["y"] = ((-y * scaleY) + sourceHeight * scaleY)
+            }
+            // device is landscape left
+            Surface.ROTATION_90 -> {
+              currentPointsMap["x"] = ((-y * scaleX) + sourceWidth * scaleX)
+              currentPointsMap["y"] = ((-x * scaleY) + sourceHeight * scaleY)
+            }
+            else -> {
+              currentPointsMap["x"] = x * scaleX
+              currentPointsMap["y"] = y * scaleY
+            }
+          }
+        } else {
+          // using back camera
+          when (orientation) {
+            // device is portrait
+            Surface.ROTATION_0 -> {
+              currentPointsMap["x"] = x * scaleX
+              currentPointsMap["y"] = y * scaleY
+            }
+            // device is landscape right
+            Surface.ROTATION_270 -> {
+              currentPointsMap["x"] = y * scaleX
+              currentPointsMap["y"] = ((-x * scaleY) + sourceHeight * scaleY)
+            }
+            // device is upside down
+            Surface.ROTATION_180 -> {
+              currentPointsMap["x"] =((-x * scaleX) + sourceWidth * scaleX)
+              currentPointsMap["y"] = ((-y * scaleY) + sourceHeight * scaleY)
+            }
+            // device is landscape left
+            Surface.ROTATION_90 -> {
+              currentPointsMap["x"] = ((-y * scaleX) + sourceWidth * scaleX)
+              currentPointsMap["y"] = x * scaleY
+            }
+            else -> {
+              currentPointsMap["x"] = x * scaleX
+              currentPointsMap["y"] = y * scaleY
+            }
+          }
+        }
+      } 
+
       faceLandmarksTypesMap[landmarkName] = currentPointsMap
     }
 
@@ -143,8 +211,13 @@ class FaceDetectorCommon() {
 
   private fun processFaceContours(
     face: Face,
+    sourceWidth: Double = 0.0,
+    sourceHeight: Double = 0.0,
     scaleX: Double = 1.0,
-    scaleY: Double = 1.0
+    scaleY: Double = 1.0,
+    autoMode: Boolean = false,
+    cameraFacing: Position = Position.FRONT,
+    orientation: Int? = Surface.ROTATION_0
   ): Map<String, Any> {
     val faceContoursTypes = intArrayOf(
       FaceContour.FACE,
@@ -191,8 +264,71 @@ class FaceDetectorCommon() {
       val pointsMap: MutableList<Map<String, Double>> = mutableListOf()
       for (j in points.indices) {
         val currentPointsMap: MutableMap<String, Double> = HashMap()
+        val x = points[j].x.toDouble()
+        val y = points[j].y.toDouble()
         currentPointsMap["x"] = points[j].x.toDouble() * scaleX
         currentPointsMap["y"] = points[j].y.toDouble() * scaleY
+
+        if(autoMode) {
+          if(cameraFacing == Position.FRONT) {
+            // using front camera
+            when (orientation) {
+              // device is portrait
+              Surface.ROTATION_0 -> {
+                currentPointsMap["x"] = ((-x * scaleX) + sourceWidth * scaleX)
+                currentPointsMap["y"] = y * scaleY
+              }
+              // device is landscape right
+              Surface.ROTATION_270 -> {
+                currentPointsMap["x"] = y * scaleX
+                currentPointsMap["y"] = x * scaleY
+              }
+              // device is upside down
+              Surface.ROTATION_180 -> {
+                currentPointsMap["x"] = x * scaleX
+                currentPointsMap["y"] = ((-y * scaleY) + sourceHeight * scaleY)
+              }
+              // device is landscape left
+              Surface.ROTATION_90 -> {
+                currentPointsMap["x"] = ((-y * scaleX) + sourceWidth * scaleX)
+                currentPointsMap["y"] = ((-x * scaleY) + sourceHeight * scaleY)
+              }
+              else -> {
+                currentPointsMap["x"] = x * scaleX
+                currentPointsMap["y"] = y * scaleY
+              }
+            }
+          } else {
+            // using back camera
+            when (orientation) {
+              // device is portrait
+              Surface.ROTATION_0 -> {
+                currentPointsMap["x"] = x * scaleX
+                currentPointsMap["y"] = y * scaleY
+              }
+              // device is landscape right
+              Surface.ROTATION_270 -> {
+                currentPointsMap["x"] = y * scaleX
+                currentPointsMap["y"] = ((-x * scaleY) + sourceHeight * scaleY)
+              }
+              // device is upside down
+              Surface.ROTATION_180 -> {
+                currentPointsMap["x"] =((-x * scaleX) + sourceWidth * scaleX)
+                currentPointsMap["y"] = ((-y * scaleY) + sourceHeight * scaleY)
+              }
+              // device is landscape left
+              Surface.ROTATION_90 -> {
+                currentPointsMap["x"] = ((-y * scaleX) + sourceWidth * scaleX)
+                currentPointsMap["y"] = x * scaleY
+              }
+              else -> {
+                currentPointsMap["x"] = x * scaleX
+                currentPointsMap["y"] = y * scaleY
+              }
+            }
+          }
+        }
+
         pointsMap.add(currentPointsMap)
       }
 
@@ -280,8 +416,13 @@ class FaceDetectorCommon() {
       if (runLandmarks) {
         map["landmarks"] = processLandmarks(
           face,
+          sourceWidth,
+          sourceHeight,
           scaleX,
-          scaleY
+          scaleY,
+          autoMode,
+          cameraFacing,
+          orientation
         )
       }
 
@@ -294,8 +435,13 @@ class FaceDetectorCommon() {
       if (runContours) {
         map["contours"] = processFaceContours(
           face,
+          sourceWidth,
+          sourceHeight,
           scaleX,
-          scaleY
+          scaleY,
+          autoMode,
+          cameraFacing,
+          orientation
         )
       }
 

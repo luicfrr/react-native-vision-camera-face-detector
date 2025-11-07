@@ -1,4 +1,5 @@
 import MLKitFaceDetection
+import AVFoundation
 
 struct FaceDetectorResult {
     let runContours: Bool
@@ -57,8 +58,11 @@ final class FaceDetectorCommon {
 
   private func processLandmarks(
     from face: Face,
+    sourceWidth: CGFloat = 0.0,
+    sourceHeight: CGFloat = 0.0,
     scaleX: CGFloat = 1.0,
-    scaleY: CGFloat = 1.0
+    scaleY: CGFloat = 1.0,
+    autoMode: Bool = false
   ) -> [String:[String: CGFloat?]] {
     let faceLandmarkTypes = [
       FaceLandmarkType.leftCheek,
@@ -89,10 +93,23 @@ final class FaceDetectorCommon {
     var faceLandMarksTypesMap: [String: [String: CGFloat?]] = [:]
     for i in 0..<faceLandmarkTypes.count {
       let landmark = face.landmark(ofType: faceLandmarkTypes[i]);
-      let position = [
-        "x": landmark?.position.x ?? 0.0 * scaleX,
-        "y": landmark?.position.y ?? 0.0 * scaleY
-      ]
+      // inverted because we also inverted sourceWidth/height
+      let x = landmark?.position.y ?? 0.0 * scaleX
+      let y = landmark?.position.x ?? 0.0 * scaleY
+
+      var position: [String: CGFloat] 
+      if autoMode {
+        position = [
+          "x": (-x + sourceWidth * scaleX),
+          "y": y
+        ]
+      } else {
+        position = [
+          "x": y,
+          "y": x
+        ]
+      }
+      
       faceLandMarksTypesMap[faceLandmarksTypesStrings[i]] = position
     }
 
@@ -101,8 +118,13 @@ final class FaceDetectorCommon {
 
   private func processFaceContours(
     from face: Face,
+    sourceWidth: CGFloat = 0.0,
+    sourceHeight: CGFloat = 0.0,
     scaleX: CGFloat = 1.0,
-    scaleY: CGFloat = 1.0
+    scaleY: CGFloat = 1.0,
+    autoMode: Bool = false,
+    cameraFacing: AVCaptureDevice.Position = .front,
+    orientation: UIDeviceOrientation = .portrait
   ) -> [String:[[String:CGFloat]]] {
     let faceContoursTypes = [
       FaceContourType.face,
@@ -142,17 +164,41 @@ final class FaceDetectorCommon {
 
     var faceContoursTypesMap: [String:[[String:CGFloat]]] = [:]
     for i in 0..<faceContoursTypes.count {
-      let contour = face.contour(ofType: faceContoursTypes[i]);
-      var pointsArray: [[String:CGFloat]] = []
+      let contour = face.contour(ofType: faceContoursTypes[i])
 
+      var pointsArray: [[String:CGFloat]] = []
       if let points = contour?.points {
         for point in points {
-          let currentPointsMap = [
-            "x": point.x * scaleX,
-            "y": point.y * scaleY,
-          ]
+          var x = point.x
+          var y = point.y
 
-          pointsArray.append(currentPointsMap)
+          switch orientation {
+            case .portrait:
+              swap(&x, &y)
+            case .landscapeLeft:
+              break
+            case .portraitUpsideDown:
+              x = -x
+              y = -y
+            case .landscapeRight:
+              swap(&x, &y)
+              x = -x
+              y = -y
+            default:
+              break
+          }
+
+          x *= scaleX
+          y *= scaleY
+
+          if autoMode && cameraFacing == .front {
+            x = sourceWidth * scaleX - x
+          }
+
+          pointsArray.append([
+            "x": x,
+            "y": y
+          ])
         }
 
         faceContoursTypesMap[faceContoursTypesStrings[i]] = pointsArray
@@ -231,7 +277,9 @@ final class FaceDetectorCommon {
     sourceHeight: CGFloat = 0.0,
     scaleX: CGFloat = 1.0,
     scaleY: CGFloat = 1.0,
-    autoMode: Bool = false
+    autoMode: Bool = false,
+    cameraFacing: AVCaptureDevice.Position = .front,
+    orientation: UIDeviceOrientation = .portrait
   ) -> [Any] {
     var result: [Any] = []
     
@@ -241,8 +289,11 @@ final class FaceDetectorCommon {
       if runLandmarks {
         map["landmarks"] = processLandmarks(
           from: face,
+          sourceWidth: sourceWidth,
+          sourceHeight: sourceHeight,
           scaleX: scaleX,
-          scaleY: scaleY
+          scaleY: scaleY,
+          autoMode: autoMode
         )
       }
       
@@ -255,8 +306,13 @@ final class FaceDetectorCommon {
       if runContours {
         map["contours"] = processFaceContours(
           from: face,
+          sourceWidth: sourceWidth,
+          sourceHeight: sourceHeight,
           scaleX: scaleX,
-          scaleY: scaleY
+          scaleY: scaleY,
+          autoMode: autoMode,
+          cameraFacing: cameraFacing,
+          orientation: orientation
         )
       }
       
