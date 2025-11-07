@@ -23,7 +23,7 @@ public class VisionCameraFaceDetector: FrameProcessorPlugin {
   private var trackingEnabled = false
   private var windowWidth = 1.0
   private var windowHeight = 1.0
-  private var cameraFacing:AVCaptureDevice.Position = .front
+  private var cameraFacing: AVCaptureDevice.Position = .front
   private var common: FaceDetectorCommon! = nil
   private var orientationManager: VisionCameraFaceDetectorOrientation! = nil
 
@@ -110,7 +110,9 @@ public class VisionCameraFaceDetector: FrameProcessorPlugin {
         sourceHeight: height,
         scaleX: scaleX,
         scaleY: scaleY,
-        autoMode: autoMode
+        autoMode: autoMode,
+        cameraFacing: cameraFacing,
+        orientation: orientationManager!.orientation
       )
     } catch let error {
       print("Error processing face detection: \(error)")
