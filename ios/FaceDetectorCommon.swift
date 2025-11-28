@@ -1,4 +1,5 @@
 import MLKitFaceDetection
+import VisionCamera
 import AVFoundation
 
 struct FaceDetectorResult {
@@ -124,7 +125,7 @@ final class FaceDetectorCommon {
     scaleY: CGFloat = 1.0,
     autoMode: Bool = false,
     cameraFacing: AVCaptureDevice.Position = .front,
-    orientation: UIDeviceOrientation = .portrait
+    orientation: Orientation = .portrait
   ) -> [String:[[String:CGFloat]]] {
     let faceContoursTypes = [
       FaceContourType.face,
@@ -279,7 +280,7 @@ final class FaceDetectorCommon {
     scaleY: CGFloat = 1.0,
     autoMode: Bool = false,
     cameraFacing: AVCaptureDevice.Position = .front,
-    orientation: UIDeviceOrientation = .portrait
+    orientation: Orientation = .portrait
   ) -> [Any] {
     var result: [Any] = []
     
