@@ -1,0 +1,109 @@
+name: 🐛 Bug Report
+description: File a bug report
+title: '🐛 '
+labels: [🐛 bug]
+body:
+  - type: textarea
+    attributes:
+      label: What's happening?
+      description: Explain what you are trying to do and what happened instead. Be as precise as possible, I can't help you if I don't understand your issue.
+      placeholder: I wanted to take a picture, but the method failed with this error "[capture/photo-not-enabled] Failed to take photo, photo is not enabled!"
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Reproduceable Code
+      description: >
+        Share a small reproduceable code snippet here (or the entire file if necessary).
+        Most importantly, share how you use the `<Camera>` component and what props you pass to it.
+        This will be automatically formatted into code, so no need for backticks.
+      render: tsx
+      placeholder: >
+        const faceDetectionOptions = useRef<FaceDetectionOptions>( {
+        } ).current
+
+        // ...
+
+        <Camera
+          style={StyleSheet.absoluteFill}
+          device={device}
+          isActive={true} 
+          faceDetectionCallback={ handleFacesDetection }
+          faceDetectionOptions={ faceDetectionOptions }
+        />
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Relevant log output
+      description: >
+        Paste any relevant **native log output** (Xcode Logs/Android Studio Logcat) here.
+        This will be automatically formatted into code, so no need for backticks.
+
+        * For iOS, run the project through Xcode and copy the logs from the log window.
+
+        * For Android, either open the project through Android Studio and paste the logs from the logcat window, or run `adb logcat` in terminal.
+      render: shell
+      placeholder: >
+        09:03:46 I ReactNativeJS: Running "FaceDetectorExample" with {"rootTag":11}
+
+        09:03:47 I ReactNativeJS: Re-rendering App. Camera: undefined | Microphone: undefined
+
+        09:03:47 I VisionCamera: Installing JSI bindings...
+
+        09:03:47 I VisionCamera: Finished installing JSI bindings!
+        ...
+    validations:
+      required: true
+  - type: input
+    attributes:
+      label: Device
+      description: >
+        Which device are you seeing this Problem on?
+        Mention the full name of the phone, as well as the operating system and version.
+        If you have tested this on multiple devices (ex. Android and iOS) then mention all of those devices (comma separated)
+      placeholder: ex. iPhone 11 Pro (iOS 14.3), Galaxy S24 (Android 16)
+    validations:
+      required: true
+  - type: input
+    attributes:
+      label: VisionCamera Version
+      description: Which version of react-native-vision-camera are you using?
+      placeholder: ex. 4.7.2
+    validations:
+      required: true
+  - type: input
+    attributes:
+      label: VisionCameraFaceDetector Version
+      description: Which version of react-native-vision-camera-face-detector are you using?
+      placeholder: ex. 1.10.1
+    validations:
+      required: true
+  - type: dropdown
+    attributes:
+      label: Can you reproduce this issue in the VisionCameraFaceDetector Example app?
+      description: >
+        Try to build the example app (`example/`) and see if the issue is reproduceable here.
+        **Note:** If you don't try this in the example app, I most likely won't help you with your issue.
+      options:
+        - I didn't try (⚠️ your issue might get ignored & closed if you don't try this)
+        - Yes, I can reproduce the same issue in the Example app here
+        - No, I cannot reproduce the issue in the Example app
+      default: 0
+    validations:
+      required: true
+  - type: checkboxes
+    attributes:
+      label: Additional information
+      description: Please check all the boxes that apply
+      options:
+        - label: I am using Expo
+        - label: I have enabled Frame Processors (react-native-worklets-core)
+        - label: I have read the [VisionCamera's Troubleshooting Guide](https://react-native-vision-camera.com/docs/guides/troubleshooting)
+          required: true
+        - label: I have read all the [VisionCameraFaceDetector's README file](https://github.com/luicfrr/react-native-vision-camera-face-detector)
+          required: true
+        - label: I searched for [similar issues in this repository](https://github.com/luicfrr/react-native-vision-camera-face-detector/issues) and found none.
+          required: true
+        - label: I understand this is an open-source project and that I am not paying anything to use this package, so I do not expect an urgent fix, a custom feature, or a tutorial on how to do something.
+          required: true
