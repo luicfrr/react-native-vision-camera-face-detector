@@ -44,20 +44,7 @@ class VisionCameraFaceDetectorPlugin(
     trackingEnabled = faceDetectorResult.trackingEnabled
     faceDetector = faceDetectorResult.faceDetector
   }
-
-  private fun getImageOrientation(): Int {
-    return when (orientationManager.orientation) {
-      // device is portrait
-      Surface.ROTATION_0 -> if(cameraFacing == Position.FRONT) 270 else 90
-      // device is landscape right
-      Surface.ROTATION_270 -> if(cameraFacing == Position.FRONT) 180 else 180
-      // device is upside down
-      Surface.ROTATION_180 -> if(cameraFacing == Position.FRONT) 90 else 270
-      // device is landscape left
-      Surface.ROTATION_90 -> if(cameraFacing == Position.FRONT) 0 else 0
-      else -> 0
-    }
-  }
+  
 
   override fun callback(
     frame: Frame,
@@ -66,7 +53,7 @@ class VisionCameraFaceDetectorPlugin(
     try {
       val image = InputImage.fromMediaImage(
         frame.image,
-        getImageOrientation()
+        frame.imageProxy.imageInfo.rotationDegrees
       )
       // we need to invert sizes as frame is always -90deg rotated
       val width = image.height.toDouble()
