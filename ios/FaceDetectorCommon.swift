@@ -95,8 +95,8 @@ final class FaceDetectorCommon {
     for i in 0..<faceLandmarkTypes.count {
       let landmark = face.landmark(ofType: faceLandmarkTypes[i]);
       // inverted because we also inverted sourceWidth/height
-      let x = landmark?.position.y ?? 0.0 * scaleX
-      let y = landmark?.position.x ?? 0.0 * scaleY
+      let x = (landmark?.position.y ?? 0.0) * scaleX
+      let y = (landmark?.position.x ?? 0.0) * scaleY
 
       var position: [String: CGFloat] 
       if autoMode {
