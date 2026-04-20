@@ -1,35 +1,9 @@
 import { useMemo } from 'react'
-import { NitroModules, type HybridObject } from 'react-native-nitro-modules'
-import {
-  type CameraPosition,
-  type Frame
-} from 'react-native-vision-camera'
+import { NitroModules } from 'react-native-nitro-modules'
 
-interface FaceDetectorPlugin extends HybridObject<{
-  ios: 'swift',
-  android: 'kotlin'
-}> {
-  /**
-   * Initializ
-   * 
-   * @param options 
-   * @returns 
-   */
-  setup: ( options?: FrameFaceDetectionOptions ) => void
-  /**
-   * Detect faces on frame
-   * 
-   * @param {Frame} frame Frame to detect faces
-   */
-  detectFaces: ( frame: Frame ) => Promise<Face[]>
-  /**
-   * Stop orientation listeners for Android.
-   * Does nothing for IOS.
-   * 
-   * @returns {void}
-   */
-  stopListeners: () => void
-}
+// types
+import { type CameraPosition } from 'react-native-vision-camera'
+import type { FaceDetectorPlugin } from './specs/FaceDetector.nitro'
 
 type Point = {
   x: number
