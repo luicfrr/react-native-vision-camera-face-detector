@@ -3,35 +3,36 @@ import React, {
 } from 'react'
 import {
   Camera as VisionCamera,
-  // runAsync,
-  useFrameProcessor,
-  useSkiaFrameProcessor
+  useAsyncRunner,
+  useFrameOutput
 } from 'react-native-vision-camera'
 import {
   Worklets,
-  // useRunOnJS,
   useSharedValue
 } from 'react-native-worklets-core'
+import { scheduleOnRN } from 'react-native-worklets'
+import { SkiaCamera } from 'react-native-vision-camera-skia'
 import { useFaceDetector } from './FaceDetector'
 
 // types
 import type {
+  ComponentProps,
   DependencyList,
   RefObject
 } from 'react'
 import type {
   CameraProps,
-  DrawableFrame,
-  Frame,
-  FrameInternal
+  CameraRef,
+  Frame
 } from 'react-native-vision-camera'
+import type { SkiaCameraProps } from 'react-native-vision-camera-skia'
 import type {
   Face,
   FrameFaceDetectionOptions
 } from './FaceDetector'
 
 type UseWorkletType = (
-  frame: FrameInternal
+  frame: Frame
 ) => Promise<void>
 
 type UseRunInJSType = (
@@ -44,15 +45,22 @@ type CallbackType = (
   frame: Frame
 ) => void | Promise<void>
 
-type ComponentType = {
-  ref: RefObject<VisionCamera | null>
+type OnFrameType = ComponentProps<typeof SkiaCamera>[ 'onFrame' ]
+type ComponentType = ( ( {
+  ref: RefObject<CameraRef | null>
   faceDetectionOptions?: FrameFaceDetectionOptions
   faceDetectionCallback: CallbackType
-  skiaActions?: (
+  skiaActions?: undefined
+} & CameraProps ) | ( {
+  ref: RefObject<CameraRef | null>
+  faceDetectionOptions?: FrameFaceDetectionOptions
+  faceDetectionCallback: CallbackType
+  skiaActions: (
     faces: Face[],
-    frame: DrawableFrame
+    frame: Parameters<NonNullable<OnFrameType>>[ 0 ],
+    render: Parameters<NonNullable<OnFrameType>>[ 1 ]
   ) => void | Promise<void>
-} & CameraProps
+} ) & SkiaCameraProps )
 
 /**
  * Create a Worklet function that persists between re-renders.
@@ -63,11 +71,11 @@ type ComponentType = {
  * @returns {UseWorkletType} A memoized Worklet
  */
 function useWorklet(
-  func: ( frame: FrameInternal ) => void,
+  func: ( frame: Frame ) => void,
   dependencyList: DependencyList
 ): UseWorkletType {
   const worklet = React.useMemo( () => {
-    const context = Worklets.defaultContext
+    const context = Worklets.createContext( 'FaceDetectorContext' )
     return context.createRunAsync( func )
   }, dependencyList )
 
@@ -104,15 +112,13 @@ export function Camera( {
   skiaActions,
   ...props
 }: ComponentType ) {
-  /** 
-   * Is there an async task already running?
-   */
-  const isAsyncContextBusy = useSharedValue( false )
+  const asyncRunner = useAsyncRunner()
   const faces = useSharedValue<string>( '[]' )
   const {
     detectFaces,
     stopListeners
   } = useFaceDetector( faceDetectionOptions )
+  const { autoMode } = faceDetectionOptions ?? {}
 
   useEffect( () => {
     return () => stopListeners()
@@ -143,30 +149,32 @@ export function Camera( {
    * Async context that will handle face detection
    */
   const runOnAsyncContext = useWorklet( (
-    frame: FrameInternal
+    frame: Frame
   ) => {
     'worklet'
-    try {
-      faces.value = JSON.stringify(
-        detectFaces( frame )
-      )
-      // increment frame count so we can use frame on 
-      // js side without frame processor getting stuck
-      frame.incrementRefCount()
-      runOnJs(
-        JSON.parse(
-          faces.value
-        ), frame
-      ).finally( () => {
-        'worklet'
-        // finally decrement frame count so it can be dropped
-        frame.decrementRefCount()
-      } )
-    } catch ( error: any ) {
-      logOnJs( 'Execution error:', error )
-    } finally {
-      frame.decrementRefCount()
-      isAsyncContextBusy.value = false
+    const finished = asyncRunner.runAsync( () => {
+      'worklet'
+      try {
+        faces.value = JSON.stringify(
+          detectFaces( frame )
+        )
+        // increment frame count so we can use frame on 
+        // js side without frame processor getting stuck
+        scheduleOnRN(
+          JSON.parse(
+            faces.value
+          ),
+          frame
+        )
+      } catch ( error: any ) {
+        logOnJs( 'Execution error:', error )
+      } finally {
+        frame.dispose()
+      }
+    } )
+
+    if ( !finished ) {
+      frame.dispose()
     }
   }, [
     detectFaces,
@@ -174,85 +182,35 @@ export function Camera( {
   ] )
 
   /**
-   * Detect faces on frame on an async context without blocking camera preview
-   * 
-   * @param {Frame} frame Current frame
+   * Default frame output
    */
-  function runAsync( frame: Frame | DrawableFrame ) {
-    'worklet'
-    if ( isAsyncContextBusy.value ) return
-    // set async context as busy
-    isAsyncContextBusy.value = true
-    // cast to internal frame and increment ref count
-    const internal = frame as FrameInternal
-    internal.incrementRefCount()
-    // detect faces in async context
-    runOnAsyncContext( internal )
-  }
+  const frameOutput = useFrameOutput( {
+    pixelFormat: 'yuv',
+    onFrame: ( frame ) => {
+      'worklet'
+      runOnAsyncContext( frame )
+    }
+  } )
 
-  /**
-   * Skia frame processor
-   */
-  const skiaFrameProcessor = useSkiaFrameProcessor( ( frame ) => {
-    'worklet'
-    frame.render()
-    skiaActions!( JSON.parse(
-      faces.value
-    ), frame )
-    runAsync( frame )
-  }, [
-    runOnAsyncContext,
-    skiaActions
-  ] )
-
-  /**
-   * Default frame processor
-   */
-  const cameraFrameProcessor = useFrameProcessor( ( frame ) => {
-    'worklet'
-    runAsync( frame )
-  }, [ runOnAsyncContext ] )
-
-  /**
-   * Camera frame processor
-   */
-  const frameProcessor = ( () => {
-    const { autoMode } = faceDetectionOptions ?? {}
-
-    if (
-      !autoMode &&
-      !!skiaActions
-    ) return skiaFrameProcessor
-
-    return cameraFrameProcessor
-  } )()
-
-  //
-  // use bellow when vision-camera's  
-  // context creation issue is solved
-  //
-  // /**
-  //  * Runs on detection callback on js thread
-  //  */
-  // const runOnJs = useRunOnJS( faceDetectionCallback, [
-  //   faceDetectionCallback
-  // ] )
-
-  // const cameraFrameProcessor = useFrameProcessor( ( frame ) => {
-  //   'worklet'
-  //   runAsync( frame, () => {
-  //     'worklet'
-  //     runOnJs(
-  //       detectFaces( frame ),
-  //       frame
-  //     )
-  //   } )
-  // }, [ runOnJs ] )
+  if (
+    !autoMode &&
+    !!skiaActions
+  ) return <SkiaCamera
+    { ...props as SkiaCameraProps }
+    onFrame={ ( frame, render ) => {
+      'worklet'
+      skiaActions(
+        JSON.parse( faces.value ),
+        frame,
+        render
+      )
+      frame.dispose()
+    } }
+  />
 
   return <VisionCamera
     { ...props }
     ref={ ref }
-    frameProcessor={ frameProcessor }
-    pixelFormat='yuv'
+    outputs={ [ frameOutput ] }
   />
 }

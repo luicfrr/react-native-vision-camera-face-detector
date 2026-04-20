@@ -1,21 +1,27 @@
 import { useMemo } from 'react'
+import { NitroModules, type HybridObject } from 'react-native-nitro-modules'
 import {
-  Platform,
-  NativeModules
-} from 'react-native'
-import {
-  VisionCameraProxy,
   type CameraPosition,
   type Frame
 } from 'react-native-vision-camera'
 
-type FaceDetectorPlugin = {
+interface FaceDetectorPlugin extends HybridObject<{
+  ios: 'swift',
+  android: 'kotlin'
+}> {
+  /**
+   * Initializ
+   * 
+   * @param options 
+   * @returns 
+   */
+  setup: ( options?: FrameFaceDetectionOptions ) => void
   /**
    * Detect faces on frame
    * 
    * @param {Frame} frame Frame to detect faces
    */
-  detectFaces: ( frame: Frame ) => Face[]
+  detectFaces: ( frame: Frame ) => Promise<Face[]>
   /**
    * Stop orientation listeners for Android.
    * Does nothing for IOS.
@@ -168,30 +174,18 @@ export interface FrameFaceDetectionOptions
  */
 function createFaceDetectorPlugin(
   options?: FrameFaceDetectionOptions
-): FaceDetectorPlugin {
-  const plugin = VisionCameraProxy.initFrameProcessorPlugin( 'detectFaces', {
-    ...options
-  } )
+): Omit<FaceDetectorPlugin, 'setup'> {
+  const plugin = NitroModules.createHybridObject<FaceDetectorPlugin>( 'FaceDetectorPlugin' )
 
   if ( !plugin ) {
     throw new Error( 'Failed to load Frame Processor Plugin "detectFaces"!' )
   }
 
-  return {
-    detectFaces: (
-      frame: Frame
-    ): Face[] => {
-      'worklet'
-      // @ts-ignore
-      return plugin.call( frame ) as Face[]
-    },
-    stopListeners: () => {
-      if ( Platform.OS !== 'android' ) return
+  plugin.setup( {
+    ...options
+  } )
 
-      const { VisionCameraFaceDetectorOrientationManager } = NativeModules
-      VisionCameraFaceDetectorOrientationManager?.stopDeviceOrientationListener()
-    }
-  }
+  return plugin
 }
 
 /**
@@ -203,7 +197,7 @@ function createFaceDetectorPlugin(
  */
 export function useFaceDetector(
   options?: FrameFaceDetectionOptions
-): FaceDetectorPlugin {
+): Omit<FaceDetectorPlugin, 'setup'> {
   return useMemo( () => (
     createFaceDetectorPlugin( options )
   ), [ options ] )
