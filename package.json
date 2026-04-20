@@ -50,25 +50,30 @@
   },
   "devDependencies": {
     "@react-native-community/eslint-config": "^3.2.0",
-    "@release-it/conventional-changelog": "^10.0.1",
-    "@tsconfig/react-native": "^3.0.7",
+    "@release-it/conventional-changelog": "^10.0.6",
+    "@tsconfig/react-native": "^3.0.9",
     "@types/react": "^19",
-    "eslint": "^9.37.0",
+    "eslint": "^10.2.1",
     "eslint-config-prettier": "^10.1.8",
-    "eslint-plugin-prettier": "^5.5.4",
-    "prettier": "^3.6.2",
+    "eslint-plugin-prettier": "^5.5.5",
+    "prettier": "^3.8.3",
     "react": "^19",
-    "react-native": "0.79.6",
-    "react-native-builder-bob": "^0.40.13",
-    "react-native-vision-camera": "4.7.2",
-    "react-native-worklets-core": "^1.6.2",
-    "release-it": "^19.0.5",
-    "typescript": "~5.9.3"
+    "react-native": "0.85.1",
+    "react-native-builder-bob": "^0.41.0",
+    "react-native-nitro-image": "^0.13.1",
+    "react-native-nitro-modules": "^0.35.4",
+    "react-native-reanimated": "^4.3.0",
+    "react-native-vision-camera": "^5.0.1",
+    "react-native-vision-camera-skia": "^5.0.1",
+    "react-native-worklets": "^0.8.1",
+    "react-native-worklets-core": "^1.6.3",
+    "release-it": "^20.0.0",
+    "typescript": "~6.0.3"
   },
   "peerDependencies": {
     "react": ">= 18",
     "react-native": ">= 0.74",
-    "react-native-vision-camera": ">= 4.0"
+    "react-native-vision-camera": ">= 5.0"
   },
   "jest": {
     "preset": "react-native",
