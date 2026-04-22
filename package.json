@@ -9,28 +9,22 @@
   "source": "src/index",
   "files": [
     "src",
+    "react-native.config.js",
     "lib",
-    "!**/__tests__",
-    "!**/__fixtures__",
-    "!**/__mocks__",
     "nitrogen",
     "android/build.gradle",
     "android/gradle.properties",
     "android/fix-prefab.gradle",
     "android/CMakeLists.txt",
     "android/src",
-    "cpp",
     "ios/**/*.h",
     "ios/**/*.m",
     "ios/**/*.mm",
     "ios/**/*.cpp",
     "ios/**/*.swift",
-    "app.plugin.js",
     "nitro.json",
     "*.podspec",
-    "README.md",
-    "!android/build",
-    "!ios/build"
+    "README.md"
   ],
   "scripts": {
     "typescript": "tsc --noEmit",
@@ -70,6 +64,7 @@
     "eslint": "^10.2.1",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.5",
+    "nitrogen": "^0.35.4",
     "prettier": "^3.8.3",
     "react": "^19",
     "react-native": "0.85.1",
@@ -80,20 +75,14 @@
     "react-native-vision-camera": "^5.0.1",
     "react-native-vision-camera-skia": "^5.0.1",
     "react-native-worklets": "^0.8.1",
-    "react-native-worklets-core": "^1.6.3",
     "release-it": "^20.0.0",
     "typescript": "~6.0.3"
   },
   "peerDependencies": {
     "react": ">= 18",
     "react-native": ">= 0.74",
+    "react-native-nitro-modules": ">= 0.35",
     "react-native-vision-camera": ">= 5.0"
-  },
-  "jest": {
-    "preset": "react-native",
-    "modulePathIgnorePatterns": [
-      "<rootDir>/lib/"
-    ]
   },
   "release-it": {
     "git": {

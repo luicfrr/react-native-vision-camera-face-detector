@@ -1,27 +1,23 @@
-import { type Frame } from 'react-native-vision-camera'
-import { type HybridObject } from 'react-native-nitro-modules'
-import type {
-  Face,
-  FrameFaceDetectionOptions
-} from '../FaceDetector'
+import type { Frame } from 'react-native-vision-camera'
+import type { HybridObject } from 'react-native-nitro-modules'
+import type { Face } from './Face.nitro'
 
-export interface FaceDetectorPlugin extends HybridObject<{
+export interface FaceDetector extends HybridObject<{
   ios: 'swift',
   android: 'kotlin'
 }> {
-  /**
-   * Initializ
-   * 
-   * @param options 
-   * @returns 
-   */
-  setup: ( options?: FrameFaceDetectionOptions ) => void
   /**
    * Detect faces on frame
    * 
    * @param {Frame} frame Frame to detect faces
    */
-  detectFaces: ( frame: Frame ) => Promise<Face[]>
+  detectFaces: ( frame: Frame ) => Face[]
+  /**
+   * Async detect faces on frame
+   * 
+   * @param {Frame} frame Frame to detect faces
+   */
+  detectFacesAsync: ( frame: Frame ) => Promise<Face[]>
   /**
    * Stop orientation listeners for Android.
    * Does nothing for IOS.

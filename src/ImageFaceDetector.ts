@@ -2,15 +2,13 @@ import {
   Image,
   NativeModules
 } from 'react-native'
-import type {
-  Face,
-  CommonFaceDetectionOptions
-} from './FaceDetector'
+import type { Face } from './specs/Face.nitro'
+import type { CommonFaceDetectorOptions } from './specs/FaceDetectorFactory.nitro'
 
 type InputImage = number | string | { uri: string }
 export interface ImageFaceDetectionOptions {
   image: InputImage,
-  options?: CommonFaceDetectionOptions
+  options?: CommonFaceDetectorOptions
 }
 
 /**
@@ -55,7 +53,7 @@ export async function detectFaces( {
   const uri = resolveUri( image )
   // @ts-ignore
   const { ImageFaceDetector } = NativeModules
-  return await ImageFaceDetector?.detectFaces(
+  return await ImageFaceDetector?.detectFacesAsync(
     uri,
     options
   )
