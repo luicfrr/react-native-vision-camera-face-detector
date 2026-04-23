@@ -18,6 +18,9 @@ export default {
     ios: {
       bundleIdentifier: 'com.facedetector.example',
       buildNumber: '1',
+      "infoPlist": {
+        "NSCameraUsageDescription": "$(PRODUCT_NAME) needs access to your Camera to capture photos and videos.",
+      },
       privacyManifests: {
         NSPrivacyAccessedAPITypes: [ {
           NSPrivacyAccessedAPIType: 'NSPrivacyAccessedAPICategoryUserDefaults',
@@ -31,12 +34,12 @@ export default {
       adaptiveIcon: {
         foregroundImage: './assets/adaptive-icon.png',
         backgroundColor: '#ffffff'
+      },
+      "android": {
+        "permissions": [ "android.permission.CAMERA" ]
       }
     },
     plugins: [
-      [ 'react-native-vision-camera', {
-        cameraPermissionText: '$(PRODUCT_NAME) needs to access your device\'s camera.'
-      } ],
       [ 'expo-image-picker', {
         photosPermission: 'The app accesses your photos to let you share them with your friends.'
       } ],
