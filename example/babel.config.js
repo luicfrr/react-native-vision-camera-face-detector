@@ -20,6 +20,6 @@ module.exports = {
       processNestedWorklets: true
     }
   ], [
-    'react-native-worklets-core/plugin'
+    'react-native-worklets/plugin'
   ] ]
 }
