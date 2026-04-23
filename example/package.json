@@ -35,6 +35,7 @@
     "react-native-vision-camera": "../node_modules/react-native-vision-camera",
     "react-native-vision-camera-face-detector": "link:../",
     "react-native-vision-camera-skia": "../node_modules/react-native-vision-camera-skia",
+    "react-native-vision-camera-worklets": "../node_modules/react-native-vision-camera-worklets",
     "react-native-worklets": "../node_modules/react-native-worklets"
   },
   "devDependencies": {

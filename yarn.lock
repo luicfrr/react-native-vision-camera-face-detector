@@ -5235,6 +5235,11 @@ react-native-vision-camera-skia@^5.0.6:
   resolved "https://registry.yarnpkg.com/react-native-vision-camera-skia/-/react-native-vision-camera-skia-5.0.6.tgz#a388aa53c4d22ded37418be2b894c1c1e2847fa2"
   integrity sha512-VKuzzr/CC8rWWHyJWQagbTWzVw+2dVBLAmPEX9u5hw5DGF1zyWzoxsg00iyNWFnY/e0xKsh4BKtSLs9/0QXU5w==
 
+react-native-vision-camera-worklets@^5.0.6:
+  version "5.0.6"
+  resolved "https://registry.yarnpkg.com/react-native-vision-camera-worklets/-/react-native-vision-camera-worklets-5.0.6.tgz#a5b815da27167e1f8cb9630a97f88d553bda076a"
+  integrity sha512-yP2YJ529dfBfA6nvHiAbGN7kGXD0k0rULAj0QjLe1wIQBW5b/ujvVc0SsYWcBCSPnou6754MH6cbkghSlgRPyQ==
+
 react-native-vision-camera@^5.0.6:
   version "5.0.6"
   resolved "https://registry.yarnpkg.com/react-native-vision-camera/-/react-native-vision-camera-5.0.6.tgz#c1e845a770389da0c3863443c2e26ec002f2704e"

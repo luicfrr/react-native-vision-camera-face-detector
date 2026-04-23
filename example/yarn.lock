@@ -5337,6 +5337,9 @@ react-native-skia-apple-tvos@147.1.0:
 react-native-vision-camera-skia@../node_modules/react-native-vision-camera-skia:
   version "5.0.6"
 
+react-native-vision-camera-worklets@../node_modules/react-native-vision-camera-worklets:
+  version "5.0.6"
+
 react-native-vision-camera@../node_modules/react-native-vision-camera:
   version "5.0.6"
 
