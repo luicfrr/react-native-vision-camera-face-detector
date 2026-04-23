@@ -1,24 +1,22 @@
 package com.nitro.visioncamerafacedetector
 
-import androidx.annotation.OptIn
-import androidx.camera.core.ExperimentalGetImage
-import com.google.android.gms.tasks.Tasks
-import com.google.mlkit.vision.face.FaceDetector
 import com.google.mlkit.vision.face.FaceDetection
+import com.margelo.nitro.NitroModules
 import com.margelo.nitro.camera.HybridFrameSpec
-import com.nitro.visioncamerafacedetector.extensions.toInputImage
+import com.margelo.nitro.camera.facedetector.FaceDetectorOptions
 import com.nitro.visioncamerafacedetector.extensions.toMLFaceDetectorOptions
 import com.margelo.nitro.core.Promise
+import com.margelo.nitro.camera.CameraPosition
 
 class HybridFaceDetector(
   options: FaceDetectorOptions
 ) : HybridFaceDetectorSpec() {
   private val context = NitroModules.applicationContext
-  private val orientationManager = FaceDetectorOrientation.get(context)
+  private val orientationManager = FaceDetectorOrientation.get(context?.applicationContext)
   private val autoMode = options.autoMode ?: false
   private val windowWidth = options.windowWidth ?: 1.0
   private val windowHeight = options.windowHeight ?: 1.0
-  private val cameraFacing: Position = options.cameraFacing
+  private val cameraFacing: CameraPosition = options.cameraFacing
   private val faceDetector = FaceDetection.getClient(
     options.toMLFaceDetectorOptions()
   )

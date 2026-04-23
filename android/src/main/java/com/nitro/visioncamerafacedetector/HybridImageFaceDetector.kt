@@ -1,12 +1,7 @@
 package com.nitro.visioncamerafacedetector
 
-import androidx.annotation.OptIn
-import androidx.camera.core.ExperimentalGetImage
-import com.google.android.gms.tasks.Tasks
-import com.google.mlkit.vision.face.FaceDetector
 import com.google.mlkit.vision.face.FaceDetection
 import com.margelo.nitro.camera.HybridFrameSpec
-import com.nitro.visioncamerafacedetector.extensions.toInputImage
 import com.nitro.visioncamerafacedetector.extensions.toMLFaceDetectorOptions
 import com.margelo.nitro.core.Promise
 import com.google.mlkit.vision.common.InputImage
