@@ -19,12 +19,12 @@ import type {
   Frame
 } from 'react-native-vision-camera'
 import type { FrameFaceDetectorOptions } from '../specs/FaceDetectorFactory.nitro'
-import type { FaceDetectorCallback } from '../specs/FaceDetectorCallback'
+import type { FaceDetectedCallback } from '../specs/FaceDetectedCallback'
 
 type ComponentType = ( {
   ref: RefObject<CameraRef | null>
-  faceDetectionOptions?: FrameFaceDetectorOptions
-  faceDetectionCallback: FaceDetectorCallback
+  faceDetectorOptions?: FrameFaceDetectorOptions
+  faceDetectorCallback: FaceDetectedCallback
 } & CameraProps )
 
 /**
@@ -35,8 +35,8 @@ type ComponentType = ( {
  */
 export function Camera( {
   ref,
-  faceDetectionOptions,
-  faceDetectionCallback,
+  faceDetectorOptions,
+  faceDetectorCallback,
   ...props
 }: ComponentType ) {
   const asyncRunner = useAsyncRunner()
@@ -44,7 +44,7 @@ export function Camera( {
   const {
     detectFaces,
     stopListeners
-  } = useFaceDetector( faceDetectionOptions )
+  } = useFaceDetector( faceDetectorOptions )
 
   useEffect( () => {
     return () => stopListeners()
@@ -67,8 +67,9 @@ export function Camera( {
   /**
    * Runs on detection callback on js thread
    */
-  const runOnJs = useRunInJS( faceDetectionCallback, [
-    faceDetectionCallback
+  const runOnJs = useRunInJS(
+    faceDetectorCallback, [
+    faceDetectorCallback
   ] )
 
   /**
@@ -78,8 +79,10 @@ export function Camera( {
     frame: Frame
   ) => {
     'worklet'
+
     const finished = asyncRunner.runAsync( () => {
       'worklet'
+
       try {
         faces.value = JSON.stringify(
           detectFaces( frame )
@@ -90,7 +93,7 @@ export function Camera( {
           frame
         )
       } catch ( error: any ) {
-        logOnJs( 'Execution error:', error )
+        logOnJs( 'Face detector execution error:', error )
       } finally {
         frame.dispose()
       }
