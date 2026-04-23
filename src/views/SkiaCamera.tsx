@@ -9,24 +9,21 @@ import useRunInJS from '../hooks/useRunInJs'
 import useWorklet from '../hooks/useWorklet'
 
 // types
-import type { ComponentProps } from 'react'
 import type { Frame } from 'react-native-vision-camera'
 import type { SkiaCameraProps } from 'react-native-vision-camera-skia'
 import type { Face } from '../specs/Face.nitro'
 import type { FaceDetectorOptions } from '../specs/FaceDetectorFactory.nitro'
 import type { FaceDetectedCallback } from '../specs/FaceDetectedCallback'
 
-type OnFrameType = ComponentProps<typeof SkiaCamera>[ 'onFrame' ]
 type ComponentType = ( {
   faceDetectorOptions?: FaceDetectorOptions
   faceDetectorCallback: FaceDetectedCallback
   skiaActions?: (
-    faces: Face[],
-    frame: Parameters<OnFrameType>[ 0 ],
-    render: Parameters<OnFrameType>[ 1 ]
+    frame: Frame,
+    render: Parameters<SkiaCameraProps[ 'onFrame' ]>[ 1 ],
+    faces: Face[]
   ) => void | Promise<void>
-} ) & SkiaCameraProps
-
+} ) & Omit<SkiaCameraProps, 'onFrame'>
 /**
  * Vision camera wrapper
  * 
@@ -117,9 +114,9 @@ export function SkiaCamera( {
       'worklet'
 
       skiaActions?.(
-        JSON.parse( faces.value ),
         frame,
-        render
+        render,
+        JSON.parse( faces.value )
       )
 
       runOnAsyncContext( frame )
@@ -127,3 +124,5 @@ export function SkiaCamera( {
     } }
   />
 }
+
+export default SkiaCamera

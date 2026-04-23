@@ -14,18 +14,18 @@ import useWorklet from '../hooks/useWorklet'
 // types
 import type { RefObject } from 'react'
 import type {
-  CameraProps,
+  CameraViewProps,
   CameraRef,
   Frame
 } from 'react-native-vision-camera'
 import type { FaceDetectorOptions } from '../specs/FaceDetectorFactory.nitro'
 import type { FaceDetectedCallback } from '../specs/FaceDetectedCallback'
 
-type ComponentType = ( {
-  ref: RefObject<CameraRef | null>
+type ComponentType = {
+  ref?: RefObject<CameraRef | null>
   faceDetectorOptions?: FaceDetectorOptions
   faceDetectorCallback: FaceDetectedCallback
-} & CameraProps )
+} & CameraViewProps
 
 /**
  * Vision camera wrapper
@@ -34,7 +34,6 @@ type ComponentType = ( {
  * @returns 
  */
 export function Camera( {
-  ref,
   faceDetectorOptions,
   faceDetectorCallback,
   ...props
@@ -120,7 +119,8 @@ export function Camera( {
 
   return <VisionCamera
     { ...props }
-    ref={ ref }
     outputs={ [ frameOutput ] }
   />
 }
+
+export default Camera
