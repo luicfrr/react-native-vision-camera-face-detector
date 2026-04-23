@@ -1,4 +1,4 @@
-package com.nitro.VisionCameraFaceDetector
+package com.nitro.visioncamerafacedetector
 
 import com.facebook.react.bridge.NativeModule
 import com.facebook.react.bridge.ReactApplicationContext
@@ -16,8 +16,6 @@ class VisionCameraFaceDetectorPackage : BaseReactPackage() {
   }
 
   companion object {
-    private var orientationManager: VisionCameraFaceDetectorOrientation? = null
-
     init {
       VisionCameraFaceDetectorOnLoad.initializeNative()
     }
