@@ -1,7 +1,9 @@
 import type { HybridObject } from 'react-native-nitro-modules'
 import type { Face } from './Face.nitro'
 
-type InputImage = number | string | { uri: string }
+type ImageUri = { uri: string }
+export type InputImage = string | ImageUri
+
 export interface ImageFaceDetector extends HybridObject<{
   ios: 'swift',
   android: 'kotlin'

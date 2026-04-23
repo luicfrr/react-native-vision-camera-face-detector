@@ -1,13 +1,15 @@
 import type { HybridObject } from 'react-native-nitro-modules'
 import type { ImageFaceDetector } from './ImageFaceDetector.nitro'
 
+type PerformanceMode = 'fast' | 'accurate'
+
 export interface ImageFaceDetectorOptions {
   /**
    * Favor speed or accuracy when detecting faces.
    *
    * @default 'fast'
    */
-  performanceMode?: 'fast' | 'accurate'
+  performanceMode?: PerformanceMode
 
   /**
    * Whether to attempt to identify facial 'landmarks': eyes, ears, nose, cheeks, mouth, and so on.
