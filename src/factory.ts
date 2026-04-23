@@ -2,13 +2,22 @@ import { NitroModules } from 'react-native-nitro-modules'
 import type { Frame } from 'react-native-vision-camera'
 import type { Face } from './specs/Face.nitro'
 import type { FaceDetector } from './specs/FaceDetector.nitro'
+import type { ImageFaceDetector } from './specs/ImageFaceDetector.nitro'
 import type {
   FaceDetectorFactory,
-  FrameFaceDetectorOptions
+  FaceDetectorOptions
 } from './specs/FaceDetectorFactory.nitro'
+import type {
+  ImageFaceDetectorFactory,
+  ImageFaceDetectorOptions
+} from './specs/ImageFaceDetectorFactory.nitro'
 
-const factory = NitroModules.createHybridObject<FaceDetectorFactory>(
-  'FaceDetectorFactory',
+const faceDetectorFactory = NitroModules.createHybridObject<FaceDetectorFactory>(
+  'FaceDetectorFactory'
+)
+
+const imageFaceDetectorFactory = NitroModules.createHybridObject<ImageFaceDetectorFactory>(
+  'ImageFaceDetectorFactory'
 )
 
 /**
@@ -18,7 +27,19 @@ const factory = NitroModules.createHybridObject<FaceDetectorFactory>(
  * scan {@linkcode Face}s in a {@linkcode Frame}.
  */
 export function createFaceDetector(
-  options?: FrameFaceDetectorOptions
+  options?: FaceDetectorOptions
 ): FaceDetector {
-  return factory.createFaceDetector( options )
+  return faceDetectorFactory.createFaceDetector( options )
+}
+
+/**
+ * Create a new image {@linkcode ImageFaceDetector}.
+ *
+ * The {@linkcode ImageFaceDetector} can be used to
+ * scan {@linkcode Face}s in a {@linkcode Frame}.
+ */
+export function createImageFaceDetector(
+  options?: ImageFaceDetectorOptions
+): ImageFaceDetector {
+  return imageFaceDetectorFactory.createImageFaceDetector( options )
 }
