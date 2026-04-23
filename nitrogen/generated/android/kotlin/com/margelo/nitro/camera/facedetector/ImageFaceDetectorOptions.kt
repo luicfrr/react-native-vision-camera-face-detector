@@ -9,6 +9,7 @@ package com.margelo.nitro.camera.facedetector
 
 import androidx.annotation.Keep
 import com.facebook.proguard.annotations.DoNotStrip
+import java.util.Objects
 
 
 /**
@@ -37,6 +38,28 @@ data class ImageFaceDetectorOptions(
   val trackingEnabled: Boolean?
 ) {
   /* primary constructor */
+
+  override fun equals(other: Any?): Boolean {
+    if (this === other) return true
+    if (other !is ImageFaceDetectorOptions) return false
+    return Objects.deepEquals(this.performanceMode, other.performanceMode)
+      && Objects.deepEquals(this.runLandmarks, other.runLandmarks)
+      && Objects.deepEquals(this.runContours, other.runContours)
+      && Objects.deepEquals(this.runClassifications, other.runClassifications)
+      && Objects.deepEquals(this.minFaceSize, other.minFaceSize)
+      && Objects.deepEquals(this.trackingEnabled, other.trackingEnabled)
+  }
+
+  override fun hashCode(): Int {
+    return arrayOf(
+      performanceMode,
+      runLandmarks,
+      runContours,
+      runClassifications,
+      minFaceSize,
+      trackingEnabled
+    ).contentDeepHashCode()
+  }
 
   companion object {
     /**

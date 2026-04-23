@@ -9,6 +9,7 @@ package com.margelo.nitro.camera.facedetector
 
 import androidx.annotation.Keep
 import com.facebook.proguard.annotations.DoNotStrip
+import java.util.Objects
 
 
 /**
@@ -64,6 +65,46 @@ data class Contours(
   val RIGHT_CHEEK: Array<Point>
 ) {
   /* primary constructor */
+
+  override fun equals(other: Any?): Boolean {
+    if (this === other) return true
+    if (other !is Contours) return false
+    return Objects.deepEquals(this.FACE, other.FACE)
+      && Objects.deepEquals(this.LEFT_EYEBROW_TOP, other.LEFT_EYEBROW_TOP)
+      && Objects.deepEquals(this.LEFT_EYEBROW_BOTTOM, other.LEFT_EYEBROW_BOTTOM)
+      && Objects.deepEquals(this.RIGHT_EYEBROW_TOP, other.RIGHT_EYEBROW_TOP)
+      && Objects.deepEquals(this.RIGHT_EYEBROW_BOTTOM, other.RIGHT_EYEBROW_BOTTOM)
+      && Objects.deepEquals(this.LEFT_EYE, other.LEFT_EYE)
+      && Objects.deepEquals(this.RIGHT_EYE, other.RIGHT_EYE)
+      && Objects.deepEquals(this.UPPER_LIP_TOP, other.UPPER_LIP_TOP)
+      && Objects.deepEquals(this.UPPER_LIP_BOTTOM, other.UPPER_LIP_BOTTOM)
+      && Objects.deepEquals(this.LOWER_LIP_TOP, other.LOWER_LIP_TOP)
+      && Objects.deepEquals(this.LOWER_LIP_BOTTOM, other.LOWER_LIP_BOTTOM)
+      && Objects.deepEquals(this.NOSE_BRIDGE, other.NOSE_BRIDGE)
+      && Objects.deepEquals(this.NOSE_BOTTOM, other.NOSE_BOTTOM)
+      && Objects.deepEquals(this.LEFT_CHEEK, other.LEFT_CHEEK)
+      && Objects.deepEquals(this.RIGHT_CHEEK, other.RIGHT_CHEEK)
+  }
+
+  override fun hashCode(): Int {
+    return arrayOf(
+      FACE,
+      LEFT_EYEBROW_TOP,
+      LEFT_EYEBROW_BOTTOM,
+      RIGHT_EYEBROW_TOP,
+      RIGHT_EYEBROW_BOTTOM,
+      LEFT_EYE,
+      RIGHT_EYE,
+      UPPER_LIP_TOP,
+      UPPER_LIP_BOTTOM,
+      LOWER_LIP_TOP,
+      LOWER_LIP_BOTTOM,
+      NOSE_BRIDGE,
+      NOSE_BOTTOM,
+      LEFT_CHEEK,
+      RIGHT_CHEEK
+    ).contentDeepHashCode()
+  }
 
   companion object {
     /**

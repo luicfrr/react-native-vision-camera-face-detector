@@ -9,6 +9,7 @@ package com.margelo.nitro.camera.facedetector
 
 import androidx.annotation.Keep
 import com.facebook.proguard.annotations.DoNotStrip
+import java.util.Objects
 
 
 /**
@@ -31,6 +32,24 @@ data class Bounds(
   val y: Double
 ) {
   /* primary constructor */
+
+  override fun equals(other: Any?): Boolean {
+    if (this === other) return true
+    if (other !is Bounds) return false
+    return Objects.deepEquals(this.width, other.width)
+      && Objects.deepEquals(this.height, other.height)
+      && Objects.deepEquals(this.x, other.x)
+      && Objects.deepEquals(this.y, other.y)
+  }
+
+  override fun hashCode(): Int {
+    return arrayOf(
+      width,
+      height,
+      x,
+      y
+    ).contentDeepHashCode()
+  }
 
   companion object {
     /**

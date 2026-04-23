@@ -9,6 +9,7 @@ package com.margelo.nitro.camera.facedetector
 
 import androidx.annotation.Keep
 import com.facebook.proguard.annotations.DoNotStrip
+import java.util.Objects
 
 
 /**
@@ -22,6 +23,18 @@ data class ImageUri(
   val uri: String
 ) {
   /* primary constructor */
+
+  override fun equals(other: Any?): Boolean {
+    if (this === other) return true
+    if (other !is ImageUri) return false
+    return Objects.deepEquals(this.uri, other.uri)
+  }
+
+  override fun hashCode(): Int {
+    return arrayOf(
+      uri
+    ).contentDeepHashCode()
+  }
 
   companion object {
     /**

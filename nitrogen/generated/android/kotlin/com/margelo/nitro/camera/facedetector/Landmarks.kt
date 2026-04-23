@@ -9,6 +9,7 @@ package com.margelo.nitro.camera.facedetector
 
 import androidx.annotation.Keep
 import com.facebook.proguard.annotations.DoNotStrip
+import java.util.Objects
 
 
 /**
@@ -49,6 +50,36 @@ data class Landmarks(
   val RIGHT_EYE: Point
 ) {
   /* primary constructor */
+
+  override fun equals(other: Any?): Boolean {
+    if (this === other) return true
+    if (other !is Landmarks) return false
+    return Objects.deepEquals(this.LEFT_CHEEK, other.LEFT_CHEEK)
+      && Objects.deepEquals(this.LEFT_EAR, other.LEFT_EAR)
+      && Objects.deepEquals(this.LEFT_EYE, other.LEFT_EYE)
+      && Objects.deepEquals(this.MOUTH_BOTTOM, other.MOUTH_BOTTOM)
+      && Objects.deepEquals(this.MOUTH_LEFT, other.MOUTH_LEFT)
+      && Objects.deepEquals(this.MOUTH_RIGHT, other.MOUTH_RIGHT)
+      && Objects.deepEquals(this.NOSE_BASE, other.NOSE_BASE)
+      && Objects.deepEquals(this.RIGHT_CHEEK, other.RIGHT_CHEEK)
+      && Objects.deepEquals(this.RIGHT_EAR, other.RIGHT_EAR)
+      && Objects.deepEquals(this.RIGHT_EYE, other.RIGHT_EYE)
+  }
+
+  override fun hashCode(): Int {
+    return arrayOf(
+      LEFT_CHEEK,
+      LEFT_EAR,
+      LEFT_EYE,
+      MOUTH_BOTTOM,
+      MOUTH_LEFT,
+      MOUTH_RIGHT,
+      NOSE_BASE,
+      RIGHT_CHEEK,
+      RIGHT_EAR,
+      RIGHT_EYE
+    ).contentDeepHashCode()
+  }
 
   companion object {
     /**
