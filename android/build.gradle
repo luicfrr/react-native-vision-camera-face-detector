@@ -1,3 +1,14 @@
+buildscript {
+  repositories {
+    google()
+    mavenCentral()
+  }
+
+  dependencies {
+    classpath "com.android.tools.build:gradle:9.1.0"
+  }
+}
+
 def reactNativeArchitectures() {
   def value = rootProject.getProperties().get("reactNativeArchitectures")
   return value ? value.split(",") : ["armeabi-v7a", "x86", "x86_64", "arm64-v8a"]
@@ -9,7 +20,7 @@ def isNewArchitectureEnabled() {
 
 apply plugin: "com.android.library"
 apply plugin: 'org.jetbrains.kotlin.android'
-apply from: '../nitrogen/generated/android/NitroFacedetector+autolinking.gradle'
+apply from: '../nitrogen/generated/android/VisionCameraFaceDetector+autolinking.gradle'
 apply from: "./fix-prefab.gradle"
 
 if (isNewArchitectureEnabled()) {
@@ -25,7 +36,7 @@ def getExtOrIntegerDefault(name) {
 }
 
 android {
-  namespace "com.visioncamerafacedetector"
+  namespace "com.nitro.visioncamerafacedetector"
 
   ndkVersion getExtOrDefault("ndkVersion")
   compileSdkVersion getExtOrIntegerDefault("compileSdkVersion")
@@ -113,33 +124,17 @@ android {
   }
 }
 
-buildscript {
-  repositories {
-    google()
-    mavenCentral()
-  }
-
-  dependencies {
-    classpath "com.android.tools.build:gradle:9.1.0"
-  }
-}
-
 repositories {
-  mavenLocal()
-  maven {
-    // All of React Native (JS, Obj-C sources, Android binaries) is installed from npm
-    url("$rootDir/../node_modules/react-native/android")
-  }
-  google()
   mavenCentral()
+  google()
 }
 
 dependencies {
   //noinspection GradleDynamicVersion
   implementation "com.facebook.react:react-native:+"  // From node_modules
-  api project(":react-native-vision-camera")
-  implementation project(":react-native-nitro-modules")
   implementation "androidx.annotation:annotation:1.9.1"
   implementation "androidx.camera:camera-core:1.5.1"
   implementation "com.google.mlkit:face-detection:16.1.7"
+  implementation project(":react-native-nitro-modules")
+  implementation project(":react-native-vision-camera")
 }
