@@ -18,12 +18,12 @@ import type {
   CameraRef,
   Frame
 } from 'react-native-vision-camera'
-import type { FrameFaceDetectorOptions } from '../specs/FaceDetectorFactory.nitro'
+import type { FaceDetectorOptions } from '../specs/FaceDetectorFactory.nitro'
 import type { FaceDetectedCallback } from '../specs/FaceDetectedCallback'
 
 type ComponentType = ( {
   ref: RefObject<CameraRef | null>
-  faceDetectorOptions?: FrameFaceDetectorOptions
+  faceDetectorOptions?: FaceDetectorOptions
   faceDetectorCallback: FaceDetectedCallback
 } & CameraProps )
 

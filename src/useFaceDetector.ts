@@ -5,7 +5,7 @@ import { createFaceDetector } from './factory'
 import type { Frame } from 'react-native-vision-camera'
 import type { Face } from './specs/Face.nitro'
 import type { FaceDetector } from './specs/FaceDetector.nitro'
-import type { FrameFaceDetectorOptions } from './specs/FaceDetectorFactory.nitro'
+import type { FaceDetectorOptions } from './specs/FaceDetectorFactory.nitro'
 
 /**
  * Use a {@linkcode FaceDetector}.
@@ -28,7 +28,7 @@ import type { FrameFaceDetectorOptions } from './specs/FaceDetectorFactory.nitro
  * ```
  */
 export function useFaceDetector(
-  options?: FrameFaceDetectorOptions
+  options?: FaceDetectorOptions
 ): FaceDetector {
   return useMemo(
     () => createFaceDetector( options ),
