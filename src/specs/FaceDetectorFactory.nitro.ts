@@ -4,10 +4,8 @@ import type {
   CameraPosition
 } from 'react-native-vision-camera'
 import type { FaceDetector } from './FaceDetector.nitro'
+import type { FaceDetectedCallback } from './FaceDetectedCallback'
 import type { FaceDetectorOutputResolution } from './FaceDetectorOutputResolution'
-
-import type { Face } from './Face.nitro'
-
 
 export interface CommonFaceDetectorOptions {
   /**
@@ -102,7 +100,7 @@ export interface FaceDetectorOutputOptions
   /**
    * Called whenever faces have been detected.
    */
-  onFaceDetected: ( face: Face[] ) => void
+  onFaceDetected: FaceDetectedCallback
   /**
    * Called when there was an error detecting faces.
    */
