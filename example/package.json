@@ -28,6 +28,8 @@
     "expo-image-picker": "~55.0.19",
     "react": "../node_modules/react",
     "react-native": "../node_modules/react-native",
+    "react-native-nitro-image": "../node_modules/react-native-nitro-image",
+    "react-native-nitro-modules": "../node_modules/react-native-nitro-modules",
     "react-native-reanimated": "../node_modules/react-native-reanimated",
     "react-native-safe-area-context": "5.7.0",
     "react-native-vision-camera": "../node_modules/react-native-vision-camera",
