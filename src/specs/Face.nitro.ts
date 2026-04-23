@@ -8,14 +8,14 @@ export interface Face
     ios: 'swift'
     android: 'kotlin'
   }> {
+  readonly landmarks?: Landmarks
+  readonly contours?: Contours
+  readonly bounds: Bounds
+  readonly leftEyeOpenProbability?: number
+  readonly rightEyeOpenProbability?: number
+  readonly smilingProbability?: number
+  readonly trackingId?: number
   readonly pitchAngle: number
   readonly rollAngle: number
   readonly yawAngle: number
-  readonly bounds: Bounds
-  readonly leftEyeOpenProbability: number
-  readonly rightEyeOpenProbability: number
-  readonly smilingProbability: number
-  readonly contours?: Contours
-  readonly landmarks?: Landmarks
-  readonly trackingId?: number
 }
