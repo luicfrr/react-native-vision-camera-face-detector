@@ -38,6 +38,14 @@ struct JHybridFaceDetectorFactorySpecImpl: public jni::JavaClass<JHybridFaceDete
     return javaPart->getJHybridFaceDetectorFactorySpec();
   }
 };
+struct JHybridImageFaceDetectorFactorySpecImpl: public jni::JavaClass<JHybridImageFaceDetectorFactorySpecImpl, JHybridImageFaceDetectorFactorySpec::JavaPart> {
+  static constexpr auto kJavaDescriptor = "Lcom/margelo/nitro/camera/facedetector/HybridImageFaceDetectorFactory;";
+  static std::shared_ptr<JHybridImageFaceDetectorFactorySpec> create() {
+    static const auto constructorFn = javaClassStatic()->getConstructor<JHybridImageFaceDetectorFactorySpecImpl::javaobject()>();
+    jni::local_ref<JHybridImageFaceDetectorFactorySpec::JavaPart> javaPart = javaClassStatic()->newObject(constructorFn);
+    return javaPart->getJHybridImageFaceDetectorFactorySpec();
+  }
+};
 
 void registerAllNatives() {
   using namespace margelo::nitro;
@@ -55,6 +63,12 @@ void registerAllNatives() {
     "FaceDetectorFactory",
     []() -> std::shared_ptr<HybridObject> {
       return JHybridFaceDetectorFactorySpecImpl::create();
+    }
+  );
+  HybridObjectRegistry::registerHybridObjectConstructor(
+    "ImageFaceDetectorFactory",
+    []() -> std::shared_ptr<HybridObject> {
+      return JHybridImageFaceDetectorFactorySpecImpl::create();
     }
   );
 }

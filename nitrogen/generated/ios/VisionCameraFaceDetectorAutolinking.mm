@@ -11,6 +11,7 @@
 #import <type_traits>
 
 #include "HybridFaceDetectorFactorySpecSwift.hpp"
+#include "HybridImageFaceDetectorFactorySpecSwift.hpp"
 
 @interface VisionCameraFaceDetectorAutolinking : NSObject
 @end
@@ -25,6 +26,13 @@
     "FaceDetectorFactory",
     []() -> std::shared_ptr<HybridObject> {
       std::shared_ptr<HybridFaceDetectorFactorySpec> hybridObject = VisionCameraFaceDetector::VisionCameraFaceDetectorAutolinking::createFaceDetectorFactory();
+      return hybridObject;
+    }
+  );
+  HybridObjectRegistry::registerHybridObjectConstructor(
+    "ImageFaceDetectorFactory",
+    []() -> std::shared_ptr<HybridObject> {
+      std::shared_ptr<HybridImageFaceDetectorFactorySpec> hybridObject = VisionCameraFaceDetector::VisionCameraFaceDetectorAutolinking::createImageFaceDetectorFactory();
       return hybridObject;
     }
   );
