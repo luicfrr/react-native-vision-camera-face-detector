@@ -20,6 +20,7 @@ include_directories(
 )
 
 find_library(LOG_LIB log)
+find_package(react-native-vision-camera REQUIRED)   # <-- for the HybridFrameSpec and HybridCameraOutputSpec
 
 # Link all libraries together
 target_link_libraries(
