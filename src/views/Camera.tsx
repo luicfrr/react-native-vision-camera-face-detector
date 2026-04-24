@@ -40,13 +40,10 @@ export function Camera( {
 }: ComponentType ) {
   const asyncRunner = useAsyncRunner()
   const faces = useSharedValue<string>( '[]' )
-  const {
-    detectFaces,
-    stopListeners
-  } = useFaceDetector( faceDetectorOptions )
+  const faceDetector = useFaceDetector( faceDetectorOptions )
 
   useEffect( () => {
-    return () => stopListeners()
+    return () => faceDetector.stopListeners()
   }, [] )
 
   /** 
@@ -84,7 +81,7 @@ export function Camera( {
 
       try {
         faces.value = JSON.stringify(
-          detectFaces( frame )
+          faceDetector.detectFaces( frame )
         )
 
         runOnJs(
@@ -102,7 +99,7 @@ export function Camera( {
       frame.dispose()
     }
   }, [
-    detectFaces,
+    faceDetector,
     runOnJs
   ] )
 
