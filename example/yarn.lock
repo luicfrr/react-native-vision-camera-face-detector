@@ -2682,10 +2682,8 @@
   dependencies:
     nanoid "^3.3.11"
 
-"@shopify/react-native-skia@^2.6.2":
+"@shopify/react-native-skia@../node_modules/@shopify/react-native-skia":
   version "2.6.2"
-  resolved "https://registry.yarnpkg.com/@shopify/react-native-skia/-/react-native-skia-2.6.2.tgz#30181907b373dd292cc23e1f9870151f07fb698f"
-  integrity sha512-NzZ3+MRedZAUhguWw9DTCpWFd09Bq+tdGWhimGfJLGckuyoWGyimTiNTmaO2DeeivHTnGdv+eXbw7j/AV3LkRQ==
   dependencies:
     canvaskit-wasm "0.41.0"
     react-native-skia-android "147.1.0"
@@ -3104,7 +3102,7 @@ babel-preset-current-node-syntax@^1.0.0:
     "@babel/plugin-syntax-private-property-in-object" "^7.14.5"
     "@babel/plugin-syntax-top-level-await" "^7.14.5"
 
-babel-preset-expo@~55.0.18:
+babel-preset-expo@^55.0.18, babel-preset-expo@~55.0.18:
   version "55.0.18"
   resolved "https://registry.yarnpkg.com/babel-preset-expo/-/babel-preset-expo-55.0.18.tgz#f78ca05cc8e1c729705477ec7e41ba3361d42dc3"
   integrity sha512-zmDwKxCFBTe4e/jQXuITRUZlbl8HTZOhsUlwcHGjwEUB0lKQfRdaSYXZckQ+jMOBC34MrOl3Cs7/6F6vNbj5Pw==
