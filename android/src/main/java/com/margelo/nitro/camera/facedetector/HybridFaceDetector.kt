@@ -5,13 +5,9 @@ import androidx.camera.core.ExperimentalGetImage
 import com.google.mlkit.vision.face.FaceDetection
 import com.margelo.nitro.NitroModules
 import com.margelo.nitro.camera.HybridFrameSpec
-import com.margelo.nitro.camera.facedetector.FaceDetectorOptions
-import com.nitro.visioncamerafacedetector.extensions.toMLFaceDetectorOptions
 import com.margelo.nitro.core.Promise
-import com.margelo.nitro.camera.facedetector.CameraPosition
-import com.margelo.nitro.camera.facedetector.HybridFaceDetectorSpec
-import com.margelo.nitro.camera.facedetector.HybridFaceSpec
-import com.nitro.visioncamerafacedetector.extensions.toInputImage
+import com.margelo.nitro.camera.facedetector.extensions.toMLFaceDetectorOptions
+import com.margelo.nitro.camera.facedetector.extensions.toInputImage
 
 class HybridFaceDetector(
   options: FaceDetectorOptions

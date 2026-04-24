@@ -1,23 +1,13 @@
 package com.margelo.nitro.camera.facedetector
 
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.net.Uri
 import androidx.annotation.OptIn
 import androidx.camera.core.ExperimentalGetImage
 import com.google.mlkit.vision.face.FaceDetection
-import com.margelo.nitro.camera.facedetector.InputImage
-import com.nitro.visioncamerafacedetector.extensions.toMLFaceDetectorOptions
+import com.margelo.nitro.camera.facedetector.extensions.toMLFaceDetectorOptions
 import com.margelo.nitro.core.Promise
 import com.google.mlkit.vision.common.InputImage as MLInputImage
 import com.margelo.nitro.NitroModules
-import com.margelo.nitro.camera.facedetector.FaceDetectorOptions
-import com.margelo.nitro.camera.facedetector.HybridImageFaceDetectorSpec
-import com.margelo.nitro.camera.facedetector.HybridFaceSpec
 import androidx.core.net.toUri
-import java.io.InputStream
-import java.net.HttpURLConnection
-import java.net.URL
 
 class HybridImageFaceDetector(
   options: FaceDetectorOptions

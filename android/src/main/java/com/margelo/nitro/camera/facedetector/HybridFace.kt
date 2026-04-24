@@ -6,12 +6,6 @@ import android.view.Surface
 import com.google.mlkit.vision.face.Face
 import com.google.mlkit.vision.face.FaceContour
 import com.google.mlkit.vision.face.FaceLandmark
-import com.margelo.nitro.camera.facedetector.CameraPosition
-import com.margelo.nitro.camera.facedetector.Bounds
-import com.margelo.nitro.camera.facedetector.Point
-import com.margelo.nitro.camera.facedetector.Contours
-import com.margelo.nitro.camera.facedetector.HybridFaceSpec
-import com.margelo.nitro.camera.facedetector.Landmarks
 
 data class FaceProcessConfig(
   val width: Double,
@@ -25,11 +19,6 @@ data class FaceProcessConfig(
   val autoMode: Boolean? = null,
   val cameraFacing: CameraPosition? = null,
   val orientation: Int? = null
-)
-
-data class Point(
-  val x: Double,
-  val y: Double
 )
 
 class HybridFace(

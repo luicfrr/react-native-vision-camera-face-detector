@@ -2,9 +2,6 @@ package com.margelo.nitro.camera.facedetector
 
 import androidx.annotation.Keep
 import com.facebook.proguard.annotations.DoNotStrip
-import com.margelo.nitro.camera.facedetector.FaceDetectorOptions
-import com.margelo.nitro.camera.facedetector.HybridImageFaceDetectorFactorySpec
-import com.margelo.nitro.camera.facedetector.HybridImageFaceDetectorSpec
 
 @DoNotStrip
 @Keep
