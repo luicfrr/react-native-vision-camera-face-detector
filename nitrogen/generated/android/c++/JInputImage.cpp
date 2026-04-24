@@ -9,16 +9,20 @@
 
 namespace margelo::nitro::camera::facedetector {
   /**
-   * Converts JInputImage to std::variant<std::string, ImageUri>
+   * Converts JInputImage to std::variant<std::string, double, ImageUri>
    */
-  std::variant<std::string, ImageUri> JInputImage::toCpp() const {
+  std::variant<std::string, double, ImageUri> JInputImage::toCpp() const {
     if (isInstanceOf(JInputImage_impl::First::javaClassStatic())) {
       // It's a `std::string`
       auto jniValue = static_cast<const JInputImage_impl::First*>(this)->getValue();
       return jniValue->toStdString();
     } else if (isInstanceOf(JInputImage_impl::Second::javaClassStatic())) {
-      // It's a `ImageUri`
+      // It's a `double`
       auto jniValue = static_cast<const JInputImage_impl::Second*>(this)->getValue();
+      return jniValue;
+    } else if (isInstanceOf(JInputImage_impl::Third::javaClassStatic())) {
+      // It's a `ImageUri`
+      auto jniValue = static_cast<const JInputImage_impl::Third*>(this)->getValue();
       return jniValue->toCpp();
     }
     throw std::invalid_argument("Variant is unknown Kotlin instance!");

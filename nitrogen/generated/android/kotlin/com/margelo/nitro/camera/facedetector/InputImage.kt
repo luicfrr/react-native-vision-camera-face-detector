@@ -11,7 +11,7 @@ import com.facebook.proguard.annotations.DoNotStrip
 
 
 /**
- * Represents the TypeScript variant "String | ImageUri".
+ * Represents the TypeScript variant "String | Double | ImageUri".
  */
 @Suppress("ClassName")
 @DoNotStrip
@@ -19,21 +19,25 @@ sealed class InputImage {
   @DoNotStrip
   data class First(@DoNotStrip val value: String): InputImage()
   @DoNotStrip
-  data class Second(@DoNotStrip val value: ImageUri): InputImage()
+  data class Second(@DoNotStrip val value: Double): InputImage()
+  @DoNotStrip
+  data class Third(@DoNotStrip val value: ImageUri): InputImage()
 
   inline fun <reified T> asType(): T? {
     return when (this) {
       is First -> (value) as? T
       is Second -> (value) as? T
+      is Third -> (value) as? T
     }
   }
   inline fun <reified T> isType(): Boolean {
     return asType<T>() != null
   }
-  inline fun <R> match(first: (String) -> R, second: (ImageUri) -> R): R {
+  inline fun <R> match(first: (String) -> R, second: (Double) -> R, third: (ImageUri) -> R): R {
     return when (this) {
       is First -> first(value)
       is Second -> second(value)
+      is Third -> third(value)
     }
   }
 
@@ -41,13 +45,19 @@ sealed class InputImage {
     get() = this is First
   val isSecond: Boolean
     get() = this is Second
+  val isThird: Boolean
+    get() = this is Third
 
   fun asFirstOrNull(): String? {
     val value = (this as? First)?.value ?: return null
     return value
   }
-  fun asSecondOrNull(): ImageUri? {
+  fun asSecondOrNull(): Double? {
     val value = (this as? Second)?.value ?: return null
+    return value
+  }
+  fun asThirdOrNull(): ImageUri? {
+    val value = (this as? Third)?.value ?: return null
     return value
   }
 
@@ -57,6 +67,9 @@ sealed class InputImage {
     fun create(value: String): InputImage = First(value)
     @JvmStatic
     @DoNotStrip
-    fun create(value: ImageUri): InputImage = Second(value)
+    fun create(value: Double): InputImage = Second(value)
+    @JvmStatic
+    @DoNotStrip
+    fun create(value: ImageUri): InputImage = Third(value)
   }
 }

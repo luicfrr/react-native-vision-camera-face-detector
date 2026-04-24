@@ -75,7 +75,7 @@ namespace margelo::nitro::camera::facedetector {
 
   public:
     // Methods
-    inline std::shared_ptr<Promise<std::vector<std::shared_ptr<HybridFaceSpec>>>> detectFaces(const std::variant<std::string, ImageUri>& image) override {
+    inline std::shared_ptr<Promise<std::vector<std::shared_ptr<HybridFaceSpec>>>> detectFaces(const std::variant<std::string, double, ImageUri>& image) override {
       auto __result = _swiftPart.detectFaces(image);
       if (__result.hasError()) [[unlikely]] {
         std::rethrow_exception(__result.error());

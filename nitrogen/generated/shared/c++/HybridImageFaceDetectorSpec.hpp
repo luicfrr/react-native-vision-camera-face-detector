@@ -57,7 +57,7 @@ namespace margelo::nitro::camera::facedetector {
 
     public:
       // Methods
-      virtual std::shared_ptr<Promise<std::vector<std::shared_ptr<HybridFaceSpec>>>> detectFaces(const std::variant<std::string, ImageUri>& image) = 0;
+      virtual std::shared_ptr<Promise<std::vector<std::shared_ptr<HybridFaceSpec>>>> detectFaces(const std::variant<std::string, double, ImageUri>& image) = 0;
 
     protected:
       // Hybrid Setup

@@ -30,20 +30,25 @@ namespace margelo::nitro::camera::facedetector {
       static const auto method = javaClassStatic()->getStaticMethod<JInputImage(jni::alias_ref<jni::JString>)>("create");
       return method(javaClassStatic(), value);
     }
-    static jni::local_ref<JInputImage> create_1(jni::alias_ref<JImageUri> value) {
+    static jni::local_ref<JInputImage> create_1(double value) {
+      static const auto method = javaClassStatic()->getStaticMethod<JInputImage(double)>("create");
+      return method(javaClassStatic(), value);
+    }
+    static jni::local_ref<JInputImage> create_2(jni::alias_ref<JImageUri> value) {
       static const auto method = javaClassStatic()->getStaticMethod<JInputImage(jni::alias_ref<JImageUri>)>("create");
       return method(javaClassStatic(), value);
     }
 
-    static jni::local_ref<JInputImage> fromCpp(const std::variant<std::string, ImageUri>& variant) {
+    static jni::local_ref<JInputImage> fromCpp(const std::variant<std::string, double, ImageUri>& variant) {
       switch (variant.index()) {
         case 0: return create_0(jni::make_jstring(std::get<0>(variant)));
-        case 1: return create_1(JImageUri::fromCpp(std::get<1>(variant)));
+        case 1: return create_1(std::get<1>(variant));
+        case 2: return create_2(JImageUri::fromCpp(std::get<2>(variant)));
         default: throw std::invalid_argument("Variant holds unknown index! (" + std::to_string(variant.index()) + ")");
       }
     }
 
-    [[nodiscard]] std::variant<std::string, ImageUri> toCpp() const;
+    [[nodiscard]] std::variant<std::string, double, ImageUri> toCpp() const;
   };
 
   namespace JInputImage_impl {
@@ -60,6 +65,16 @@ namespace margelo::nitro::camera::facedetector {
     class Second final: public jni::JavaClass<Second, JInputImage> {
     public:
       static constexpr auto kJavaDescriptor = "Lcom/margelo/nitro/camera/facedetector/InputImage$Second;";
+    
+      [[nodiscard]] double getValue() const {
+        static const auto field = javaClassStatic()->getField<double>("value");
+        return getFieldValue(field);
+      }
+    };
+    
+    class Third final: public jni::JavaClass<Third, JInputImage> {
+    public:
+      static constexpr auto kJavaDescriptor = "Lcom/margelo/nitro/camera/facedetector/InputImage$Third;";
     
       [[nodiscard]] jni::local_ref<JImageUri> getValue() const {
         static const auto field = javaClassStatic()->getField<JImageUri>("value");

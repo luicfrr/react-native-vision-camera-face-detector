@@ -9,12 +9,13 @@
 
 /**
  * An Swift enum with associated values representing a Variant/Union type.
- * JS type: `string | struct`
+ * JS type: `string | number | struct`
  */
 @frozen
 public indirect enum InputImage {
   case first(String)
-  case second(ImageUri)
+  case second(Double)
+  case third(ImageUri)
 }
 
 public extension InputImage {
@@ -22,6 +23,7 @@ public extension InputImage {
     switch self {
       case .first(let value): return value as? T
       case .second(let value): return value as? T
+      case .third(let value): return value as? T
     }
   }
   func isType<T>(_ type: T.Type = T.self) -> Bool {

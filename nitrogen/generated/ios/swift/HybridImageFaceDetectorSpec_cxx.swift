@@ -125,7 +125,7 @@ open class HybridImageFaceDetectorSpec_cxx {
 
   // Methods
   @inline(__always)
-  public final func detectFaces(image: bridge.std__variant_std__string__ImageUri_) -> bridge.Result_std__shared_ptr_Promise_std__vector_std__shared_ptr_HybridFaceSpec_____ {
+  public final func detectFaces(image: bridge.std__variant_std__string__double__ImageUri_) -> bridge.Result_std__shared_ptr_Promise_std__vector_std__shared_ptr_HybridFaceSpec_____ {
     do {
       let __result = try self.__implementation.detectFaces(image: { () -> InputImage in
         let __variant = image
@@ -136,6 +136,9 @@ open class HybridImageFaceDetectorSpec_cxx {
           case 1:
             let __actual = __variant.get_1()
             return .second(__actual)
+          case 2:
+            let __actual = __variant.get_2()
+            return .third(__actual)
           default:
             fatalError("Variant can never have index \(__variant.index())!")
         }

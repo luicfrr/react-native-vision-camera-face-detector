@@ -54,7 +54,7 @@ namespace margelo::nitro::camera::facedetector {
 
   public:
     // Methods
-    std::shared_ptr<Promise<std::vector<std::shared_ptr<HybridFaceSpec>>>> detectFaces(const std::variant<std::string, ImageUri>& image) override;
+    std::shared_ptr<Promise<std::vector<std::shared_ptr<HybridFaceSpec>>>> detectFaces(const std::variant<std::string, double, ImageUri>& image) override;
 
   private:
     jni::global_ref<JHybridImageFaceDetectorSpec::JavaPart> _javaPart;

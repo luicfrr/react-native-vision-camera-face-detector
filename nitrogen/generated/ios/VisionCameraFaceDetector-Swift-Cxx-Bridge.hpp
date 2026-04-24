@@ -385,16 +385,16 @@ namespace margelo::nitro::camera::facedetector::bridge::swift {
     return Result<std::shared_ptr<HybridFaceDetectorSpec>>::withError(error);
   }
   
-  // pragma MARK: std::variant<std::string, ImageUri>
+  // pragma MARK: std::variant<std::string, double, ImageUri>
   /**
-   * Wrapper struct for `std::variant<std::string, ImageUri>`.
+   * Wrapper struct for `std::variant<std::string, double, ImageUri>`.
    * std::variant cannot be used in Swift because of a Swift bug.
    * Not even specializing it works. So we create a wrapper struct.
    */
-  struct std__variant_std__string__ImageUri_ final {
-    std::variant<std::string, ImageUri> variant;
-    std__variant_std__string__ImageUri_(std::variant<std::string, ImageUri> variant): variant(variant) { }
-    operator std::variant<std::string, ImageUri>() const noexcept {
+  struct std__variant_std__string__double__ImageUri_ final {
+    std::variant<std::string, double, ImageUri> variant;
+    std__variant_std__string__double__ImageUri_(std::variant<std::string, double, ImageUri> variant): variant(variant) { }
+    operator std::variant<std::string, double, ImageUri>() const noexcept {
       return variant;
     }
     inline size_t index() const noexcept {
@@ -403,15 +403,21 @@ namespace margelo::nitro::camera::facedetector::bridge::swift {
     inline std::string get_0() const noexcept {
       return std::get<0>(variant);
     }
-    inline ImageUri get_1() const noexcept {
+    inline double get_1() const noexcept {
       return std::get<1>(variant);
     }
+    inline ImageUri get_2() const noexcept {
+      return std::get<2>(variant);
+    }
   };
-  inline std__variant_std__string__ImageUri_ create_std__variant_std__string__ImageUri_(const std::string& value) noexcept {
-    return std__variant_std__string__ImageUri_(value);
+  inline std__variant_std__string__double__ImageUri_ create_std__variant_std__string__double__ImageUri_(const std::string& value) noexcept {
+    return std__variant_std__string__double__ImageUri_(value);
   }
-  inline std__variant_std__string__ImageUri_ create_std__variant_std__string__ImageUri_(const ImageUri& value) noexcept {
-    return std__variant_std__string__ImageUri_(value);
+  inline std__variant_std__string__double__ImageUri_ create_std__variant_std__string__double__ImageUri_(double value) noexcept {
+    return std__variant_std__string__double__ImageUri_(value);
+  }
+  inline std__variant_std__string__double__ImageUri_ create_std__variant_std__string__double__ImageUri_(const ImageUri& value) noexcept {
+    return std__variant_std__string__double__ImageUri_(value);
   }
   
   // pragma MARK: std::shared_ptr<HybridImageFaceDetectorSpec>

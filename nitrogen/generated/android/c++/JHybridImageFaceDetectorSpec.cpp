@@ -57,7 +57,7 @@ namespace margelo::nitro::camera::facedetector {
   
 
   // Methods
-  std::shared_ptr<Promise<std::vector<std::shared_ptr<HybridFaceSpec>>>> JHybridImageFaceDetectorSpec::detectFaces(const std::variant<std::string, ImageUri>& image) {
+  std::shared_ptr<Promise<std::vector<std::shared_ptr<HybridFaceSpec>>>> JHybridImageFaceDetectorSpec::detectFaces(const std::variant<std::string, double, ImageUri>& image) {
     static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(jni::alias_ref<JInputImage> /* image */)>("detectFaces");
     auto __result = method(_javaPart, JInputImage::fromCpp(image));
     return [&]() {
