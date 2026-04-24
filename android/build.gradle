@@ -130,11 +130,18 @@ repositories {
 }
 
 dependencies {
+  // For < 0.71, this will be from the local maven repo
+  // For > 0.71, this will be replaced by `com.facebook.react:react-android:$version` by react gradle plugin
+  //noinspection GradleDynamicVersion
   //noinspection GradleDynamicVersion
   implementation "com.facebook.react:react-native:+"  // From node_modules
   implementation "androidx.annotation:annotation:1.9.1"
-  implementation "androidx.camera:camera-core:1.5.1"
+  // Add minimal dependency on CameraX to use ImageAnalysis
+  implementation "androidx.camera:camera-core:1.7.0-alpha01"
+  // Google MLKit library
   implementation "com.google.mlkit:face-detection:16.1.7"
+  // Add a dependency on NitroModules
   implementation project(":react-native-nitro-modules")
+  // Add a dependency on VisionCamera (for HybridFrameSpec and HybridCameraOutputSpec)
   implementation project(":react-native-vision-camera")
 }
