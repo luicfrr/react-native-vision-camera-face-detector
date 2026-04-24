@@ -6,7 +6,7 @@ import android.view.Surface
 import com.google.mlkit.vision.face.Face
 import com.google.mlkit.vision.face.FaceContour
 import com.google.mlkit.vision.face.FaceLandmark
-import com.margelo.nitro.camera.CameraPosition
+import com.margelo.nitro.camera.facedetector.CameraPosition
 import com.margelo.nitro.camera.facedetector.Bounds
 import com.margelo.nitro.camera.facedetector.Point
 import com.margelo.nitro.camera.facedetector.Contours
@@ -22,9 +22,9 @@ data class FaceProcessConfig(
   val runContours: Boolean,
   val runClassifications: Boolean,
   val trackingEnabled: Boolean,
-  val autoMode: Boolean?,
-  val cameraFacing: CameraPosition?,
-  val orientation: Int?
+  val autoMode: Boolean? = null,
+  val cameraFacing: CameraPosition? = null,
+  val orientation: Int? = null
 )
 
 data class Point(

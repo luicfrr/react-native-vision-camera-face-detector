@@ -7,10 +7,7 @@ import type {
   FaceDetectorFactory,
   FaceDetectorOptions
 } from './specs/FaceDetectorFactory.nitro'
-import type {
-  ImageFaceDetectorFactory,
-  ImageFaceDetectorOptions
-} from './specs/ImageFaceDetectorFactory.nitro'
+import type { ImageFaceDetectorFactory } from './specs/ImageFaceDetectorFactory.nitro'
 
 const faceDetectorFactory = NitroModules.createHybridObject<FaceDetectorFactory>(
   'FaceDetectorFactory'
@@ -29,7 +26,7 @@ const imageFaceDetectorFactory = NitroModules.createHybridObject<ImageFaceDetect
 export function createFaceDetector(
   options?: FaceDetectorOptions
 ): FaceDetector {
-  return faceDetectorFactory.createFaceDetector( options )
+  return faceDetectorFactory.createFaceDetector( options ?? {} )
 }
 
 /**
@@ -39,7 +36,7 @@ export function createFaceDetector(
  * scan {@linkcode Face}s in a {@linkcode Frame}.
  */
 export function createImageFaceDetector(
-  options?: ImageFaceDetectorOptions
+  options?: FaceDetectorOptions
 ): ImageFaceDetector {
-  return imageFaceDetectorFactory.createImageFaceDetector( options )
+  return imageFaceDetectorFactory.createImageFaceDetector( options ?? {} )
 }
