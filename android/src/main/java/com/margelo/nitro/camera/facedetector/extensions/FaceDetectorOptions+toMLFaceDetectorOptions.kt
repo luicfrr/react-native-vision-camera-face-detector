@@ -1,4 +1,4 @@
-package com.nitro.visioncamerafacedetector.extensions
+package com.margelo.nitro.camera.facedetector.extensions
 
 import com.google.mlkit.vision.face.FaceDetectorOptions as MLFaceDetectorOptions
 import com.margelo.nitro.camera.facedetector.FaceDetectorOptions

@@ -1,4 +1,4 @@
-package com.nitro.visioncamerafacedetector.extensions
+package com.margelo.nitro.camera.facedetector.extensions
 
 import androidx.annotation.OptIn
 import androidx.camera.core.ExperimentalGetImage

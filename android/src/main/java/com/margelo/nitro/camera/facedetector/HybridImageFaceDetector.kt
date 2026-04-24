@@ -1,4 +1,4 @@
-package com.nitro.visioncamerafacedetector
+package com.margelo.nitro.camera.facedetector
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory

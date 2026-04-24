@@ -1,4 +1,4 @@
-package com.nitro.visioncamerafacedetector
+package com.margelo.nitro.camera.facedetector
 
 import androidx.annotation.Keep
 import com.facebook.proguard.annotations.DoNotStrip
