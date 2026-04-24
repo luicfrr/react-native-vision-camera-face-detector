@@ -4,6 +4,6 @@
 
 JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM* vm, void*) {
   return facebook::jni::initialize(vm, []() {
-    VisionCameraFaceDetector::registerAllNatives();
+    margelo::nitro::camera::facedetector::registerAllNatives();
   });
 }
