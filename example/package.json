@@ -31,7 +31,7 @@
     "react-native-nitro-image": "../node_modules/react-native-nitro-image",
     "react-native-nitro-modules": "../node_modules/react-native-nitro-modules",
     "react-native-reanimated": "../node_modules/react-native-reanimated",
-    "react-native-safe-area-context": "5.7.0",
+    "react-native-safe-area-context": "~5.6.2",
     "react-native-vision-camera": "../node_modules/react-native-vision-camera",
     "react-native-vision-camera-face-detector": "link:../",
     "react-native-vision-camera-skia": "../node_modules/react-native-vision-camera-skia",
