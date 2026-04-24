@@ -12,10 +12,6 @@
 namespace margelo::nitro::camera::facedetector { enum class CameraPosition; }
 // Forward declaration of `Contours` to properly resolve imports.
 namespace margelo::nitro::camera::facedetector { struct Contours; }
-// Forward declaration of `FaceDetectorOptionsAutoModeDisabled` to properly resolve imports.
-namespace margelo::nitro::camera::facedetector { struct FaceDetectorOptionsAutoModeDisabled; }
-// Forward declaration of `FaceDetectorOptionsAutoModeEnabled` to properly resolve imports.
-namespace margelo::nitro::camera::facedetector { struct FaceDetectorOptionsAutoModeEnabled; }
 // Forward declaration of `HybridFaceDetectorFactorySpec` to properly resolve imports.
 namespace margelo::nitro::camera::facedetector { class HybridFaceDetectorFactorySpec; }
 // Forward declaration of `HybridFaceDetectorSpec` to properly resolve imports.
@@ -54,8 +50,6 @@ namespace VisionCameraFaceDetector { class HybridImageFaceDetectorSpec_cxx; }
 // Include C++ defined types
 #include "CameraPosition.hpp"
 #include "Contours.hpp"
-#include "FaceDetectorOptionsAutoModeDisabled.hpp"
-#include "FaceDetectorOptionsAutoModeEnabled.hpp"
 #include "HybridFaceDetectorFactorySpec.hpp"
 #include "HybridFaceDetectorSpec.hpp"
 #include "HybridFaceSpec.hpp"
@@ -290,21 +284,6 @@ namespace margelo::nitro::camera::facedetector::bridge::swift {
     return Result<void>::withError(error);
   }
   
-  // pragma MARK: std::optional<bool>
-  /**
-   * Specialized version of `std::optional<bool>`.
-   */
-  using std__optional_bool_ = std::optional<bool>;
-  inline std::optional<bool> create_std__optional_bool_(const bool& value) noexcept {
-    return std::optional<bool>(value);
-  }
-  inline bool has_value_std__optional_bool_(const std::optional<bool>& optional) noexcept {
-    return optional.has_value();
-  }
-  inline bool get_std__optional_bool_(const std::optional<bool>& optional) noexcept {
-    return optional.value();
-  }
-  
   // pragma MARK: std::optional<PerformanceMode>
   /**
    * Specialized version of `std::optional<PerformanceMode>`.
@@ -317,6 +296,21 @@ namespace margelo::nitro::camera::facedetector::bridge::swift {
     return optional.has_value();
   }
   inline PerformanceMode get_std__optional_PerformanceMode_(const std::optional<PerformanceMode>& optional) noexcept {
+    return optional.value();
+  }
+  
+  // pragma MARK: std::optional<bool>
+  /**
+   * Specialized version of `std::optional<bool>`.
+   */
+  using std__optional_bool_ = std::optional<bool>;
+  inline std::optional<bool> create_std__optional_bool_(const bool& value) noexcept {
+    return std::optional<bool>(value);
+  }
+  inline bool has_value_std__optional_bool_(const std::optional<bool>& optional) noexcept {
+    return optional.has_value();
+  }
+  inline bool get_std__optional_bool_(const std::optional<bool>& optional) noexcept {
     return optional.value();
   }
   
@@ -333,35 +327,6 @@ namespace margelo::nitro::camera::facedetector::bridge::swift {
   }
   inline CameraPosition get_std__optional_CameraPosition_(const std::optional<CameraPosition>& optional) noexcept {
     return optional.value();
-  }
-  
-  // pragma MARK: std::variant<FaceDetectorOptionsAutoModeDisabled, FaceDetectorOptionsAutoModeEnabled>
-  /**
-   * Wrapper struct for `std::variant<FaceDetectorOptionsAutoModeDisabled, FaceDetectorOptionsAutoModeEnabled>`.
-   * std::variant cannot be used in Swift because of a Swift bug.
-   * Not even specializing it works. So we create a wrapper struct.
-   */
-  struct std__variant_FaceDetectorOptionsAutoModeDisabled__FaceDetectorOptionsAutoModeEnabled_ final {
-    std::variant<FaceDetectorOptionsAutoModeDisabled, FaceDetectorOptionsAutoModeEnabled> variant;
-    std__variant_FaceDetectorOptionsAutoModeDisabled__FaceDetectorOptionsAutoModeEnabled_(std::variant<FaceDetectorOptionsAutoModeDisabled, FaceDetectorOptionsAutoModeEnabled> variant): variant(variant) { }
-    operator std::variant<FaceDetectorOptionsAutoModeDisabled, FaceDetectorOptionsAutoModeEnabled>() const noexcept {
-      return variant;
-    }
-    inline size_t index() const noexcept {
-      return variant.index();
-    }
-    inline FaceDetectorOptionsAutoModeDisabled get_0() const noexcept {
-      return std::get<0>(variant);
-    }
-    inline FaceDetectorOptionsAutoModeEnabled get_1() const noexcept {
-      return std::get<1>(variant);
-    }
-  };
-  inline std__variant_FaceDetectorOptionsAutoModeDisabled__FaceDetectorOptionsAutoModeEnabled_ create_std__variant_FaceDetectorOptionsAutoModeDisabled__FaceDetectorOptionsAutoModeEnabled_(const FaceDetectorOptionsAutoModeDisabled& value) noexcept {
-    return std__variant_FaceDetectorOptionsAutoModeDisabled__FaceDetectorOptionsAutoModeEnabled_(value);
-  }
-  inline std__variant_FaceDetectorOptionsAutoModeDisabled__FaceDetectorOptionsAutoModeEnabled_ create_std__variant_FaceDetectorOptionsAutoModeDisabled__FaceDetectorOptionsAutoModeEnabled_(const FaceDetectorOptionsAutoModeEnabled& value) noexcept {
-    return std__variant_FaceDetectorOptionsAutoModeDisabled__FaceDetectorOptionsAutoModeEnabled_(value);
   }
   
   // pragma MARK: std::shared_ptr<HybridFaceDetectorFactorySpec>

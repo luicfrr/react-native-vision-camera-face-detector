@@ -125,21 +125,9 @@ open class HybridFaceDetectorFactorySpec_cxx {
 
   // Methods
   @inline(__always)
-  public final func createFaceDetector(options: bridge.std__variant_FaceDetectorOptionsAutoModeDisabled__FaceDetectorOptionsAutoModeEnabled_) -> bridge.Result_std__shared_ptr_HybridFaceDetectorSpec__ {
+  public final func createFaceDetector(options: FaceDetectorOptions) -> bridge.Result_std__shared_ptr_HybridFaceDetectorSpec__ {
     do {
-      let __result = try self.__implementation.createFaceDetector(options: { () -> FaceDetectorOptions in
-        let __variant = options
-        switch __variant.index() {
-          case 0:
-            let __actual = __variant.get_0()
-            return .first(__actual)
-          case 1:
-            let __actual = __variant.get_1()
-            return .second(__actual)
-          default:
-            fatalError("Variant can never have index \(__variant.index())!")
-        }
-      }())
+      let __result = try self.__implementation.createFaceDetector(options: options)
       let __resultCpp = { () -> bridge.std__shared_ptr_HybridFaceDetectorSpec_ in
         let __cxxWrapped = __result.getCxxWrapper()
         return __cxxWrapped.getCxxPart()

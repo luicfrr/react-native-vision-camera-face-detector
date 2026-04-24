@@ -7,56 +7,90 @@
 
 package com.margelo.nitro.camera.facedetector
 
+import androidx.annotation.Keep
 import com.facebook.proguard.annotations.DoNotStrip
+import java.util.Objects
 
 
 /**
- * Represents the TypeScript variant "FaceDetectorOptionsAutoModeDisabled | FaceDetectorOptionsAutoModeEnabled".
+ * Represents the JavaScript object/struct "FaceDetectorOptions".
  */
-@Suppress("ClassName")
 @DoNotStrip
-sealed class FaceDetectorOptions {
+@Keep
+data class FaceDetectorOptions(
   @DoNotStrip
-  data class First(@DoNotStrip val value: FaceDetectorOptionsAutoModeDisabled): FaceDetectorOptions()
+  @Keep
+  val performanceMode: PerformanceMode?,
   @DoNotStrip
-  data class Second(@DoNotStrip val value: FaceDetectorOptionsAutoModeEnabled): FaceDetectorOptions()
+  @Keep
+  val runLandmarks: Boolean?,
+  @DoNotStrip
+  @Keep
+  val runContours: Boolean?,
+  @DoNotStrip
+  @Keep
+  val runClassifications: Boolean?,
+  @DoNotStrip
+  @Keep
+  val minFaceSize: Double?,
+  @DoNotStrip
+  @Keep
+  val trackingEnabled: Boolean?,
+  @DoNotStrip
+  @Keep
+  val cameraFacing: CameraPosition?,
+  @DoNotStrip
+  @Keep
+  val autoMode: Boolean?,
+  @DoNotStrip
+  @Keep
+  val windowWidth: Double?,
+  @DoNotStrip
+  @Keep
+  val windowHeight: Double?
+) {
+  /* primary constructor */
 
-  inline fun <reified T> asType(): T? {
-    return when (this) {
-      is First -> (value) as? T
-      is Second -> (value) as? T
-    }
-  }
-  inline fun <reified T> isType(): Boolean {
-    return asType<T>() != null
-  }
-  inline fun <R> match(first: (FaceDetectorOptionsAutoModeDisabled) -> R, second: (FaceDetectorOptionsAutoModeEnabled) -> R): R {
-    return when (this) {
-      is First -> first(value)
-      is Second -> second(value)
-    }
+  override fun equals(other: Any?): Boolean {
+    if (this === other) return true
+    if (other !is FaceDetectorOptions) return false
+    return Objects.deepEquals(this.performanceMode, other.performanceMode)
+      && Objects.deepEquals(this.runLandmarks, other.runLandmarks)
+      && Objects.deepEquals(this.runContours, other.runContours)
+      && Objects.deepEquals(this.runClassifications, other.runClassifications)
+      && Objects.deepEquals(this.minFaceSize, other.minFaceSize)
+      && Objects.deepEquals(this.trackingEnabled, other.trackingEnabled)
+      && Objects.deepEquals(this.cameraFacing, other.cameraFacing)
+      && Objects.deepEquals(this.autoMode, other.autoMode)
+      && Objects.deepEquals(this.windowWidth, other.windowWidth)
+      && Objects.deepEquals(this.windowHeight, other.windowHeight)
   }
 
-  val isFirst: Boolean
-    get() = this is First
-  val isSecond: Boolean
-    get() = this is Second
-
-  fun asFirstOrNull(): FaceDetectorOptionsAutoModeDisabled? {
-    val value = (this as? First)?.value ?: return null
-    return value
-  }
-  fun asSecondOrNull(): FaceDetectorOptionsAutoModeEnabled? {
-    val value = (this as? Second)?.value ?: return null
-    return value
+  override fun hashCode(): Int {
+    return arrayOf(
+      performanceMode,
+      runLandmarks,
+      runContours,
+      runClassifications,
+      minFaceSize,
+      trackingEnabled,
+      cameraFacing,
+      autoMode,
+      windowWidth,
+      windowHeight
+    ).contentDeepHashCode()
   }
 
   companion object {
-    @JvmStatic
+    /**
+     * Constructor called from C++
+     */
     @DoNotStrip
-    fun create(value: FaceDetectorOptionsAutoModeDisabled): FaceDetectorOptions = First(value)
+    @Keep
+    @Suppress("unused")
     @JvmStatic
-    @DoNotStrip
-    fun create(value: FaceDetectorOptionsAutoModeEnabled): FaceDetectorOptions = Second(value)
+    private fun fromCpp(performanceMode: PerformanceMode?, runLandmarks: Boolean?, runContours: Boolean?, runClassifications: Boolean?, minFaceSize: Double?, trackingEnabled: Boolean?, cameraFacing: CameraPosition?, autoMode: Boolean?, windowWidth: Double?, windowHeight: Double?): FaceDetectorOptions {
+      return FaceDetectorOptions(performanceMode, runLandmarks, runContours, runClassifications, minFaceSize, trackingEnabled, cameraFacing, autoMode, windowWidth, windowHeight)
+    }
   }
 }

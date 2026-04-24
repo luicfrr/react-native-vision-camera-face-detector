@@ -14,10 +14,8 @@ namespace VisionCameraFaceDetector { class HybridImageFaceDetectorFactorySpec_cx
 
 // Forward declaration of `HybridImageFaceDetectorSpec` to properly resolve imports.
 namespace margelo::nitro::camera::facedetector { class HybridImageFaceDetectorSpec; }
-// Forward declaration of `FaceDetectorOptionsAutoModeDisabled` to properly resolve imports.
-namespace margelo::nitro::camera::facedetector { struct FaceDetectorOptionsAutoModeDisabled; }
-// Forward declaration of `FaceDetectorOptionsAutoModeEnabled` to properly resolve imports.
-namespace margelo::nitro::camera::facedetector { struct FaceDetectorOptionsAutoModeEnabled; }
+// Forward declaration of `FaceDetectorOptions` to properly resolve imports.
+namespace margelo::nitro::camera::facedetector { struct FaceDetectorOptions; }
 // Forward declaration of `PerformanceMode` to properly resolve imports.
 namespace margelo::nitro::camera::facedetector { enum class PerformanceMode; }
 // Forward declaration of `CameraPosition` to properly resolve imports.
@@ -25,11 +23,9 @@ namespace margelo::nitro::camera::facedetector { enum class CameraPosition; }
 
 #include <memory>
 #include "HybridImageFaceDetectorSpec.hpp"
-#include "FaceDetectorOptionsAutoModeDisabled.hpp"
-#include "FaceDetectorOptionsAutoModeEnabled.hpp"
-#include <variant>
-#include <optional>
+#include "FaceDetectorOptions.hpp"
 #include "PerformanceMode.hpp"
+#include <optional>
 #include "CameraPosition.hpp"
 
 #include "VisionCameraFaceDetector-Swift-Cxx-Umbrella.hpp"
@@ -82,8 +78,8 @@ namespace margelo::nitro::camera::facedetector {
 
   public:
     // Methods
-    inline std::shared_ptr<HybridImageFaceDetectorSpec> createImageFaceDetector(const std::variant<FaceDetectorOptionsAutoModeDisabled, FaceDetectorOptionsAutoModeEnabled>& options) override {
-      auto __result = _swiftPart.createImageFaceDetector(options);
+    inline std::shared_ptr<HybridImageFaceDetectorSpec> createImageFaceDetector(const FaceDetectorOptions& options) override {
+      auto __result = _swiftPart.createImageFaceDetector(std::forward<decltype(options)>(options));
       if (__result.hasError()) [[unlikely]] {
         std::rethrow_exception(__result.error());
       }

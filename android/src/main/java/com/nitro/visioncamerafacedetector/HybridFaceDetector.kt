@@ -9,6 +9,8 @@ import com.margelo.nitro.camera.facedetector.FaceDetectorOptions
 import com.nitro.visioncamerafacedetector.extensions.toMLFaceDetectorOptions
 import com.margelo.nitro.core.Promise
 import com.margelo.nitro.camera.facedetector.CameraPosition
+import com.margelo.nitro.camera.facedetector.FaceDetectorOptionsAutoModeDisabled
+import com.margelo.nitro.camera.facedetector.FaceDetectorOptionsAutoModeEnabled
 import com.margelo.nitro.camera.facedetector.HybridFaceDetectorSpec
 import com.margelo.nitro.camera.facedetector.HybridFaceSpec
 import com.nitro.visioncamerafacedetector.extensions.toInputImage
@@ -16,6 +18,10 @@ import com.nitro.visioncamerafacedetector.extensions.toInputImage
 class HybridFaceDetector(
   options: FaceDetectorOptions
 ) : HybridFaceDetectorSpec() {
+  val opts = options.match(
+    { it }, // disabled
+    { it }  // enabled
+  )
   private val context = NitroModules.applicationContext ?: throw Error("Face Detector - No Context available!")
   private val orientationManager = FaceDetectorOrientation.get(context.applicationContext)
   private val runLandmarks = options.runLandmarks ?: false

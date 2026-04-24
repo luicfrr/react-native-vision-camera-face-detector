@@ -42,7 +42,6 @@ target_sources(
   ../nitrogen/generated/android/c++/JHybridFaceSpec.cpp
   ../nitrogen/generated/android/c++/JHybridFaceDetectorSpec.cpp
   ../nitrogen/generated/android/c++/JHybridFaceDetectorFactorySpec.cpp
-  ../nitrogen/generated/android/c++/JFaceDetectorOptions.cpp
   ../nitrogen/generated/android/c++/JHybridImageFaceDetectorSpec.cpp
   ../nitrogen/generated/android/c++/JInputImage.cpp
   ../nitrogen/generated/android/c++/JHybridImageFaceDetectorFactorySpec.cpp

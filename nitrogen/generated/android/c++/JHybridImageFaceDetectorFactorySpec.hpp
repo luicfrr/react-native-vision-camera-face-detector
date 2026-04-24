@@ -54,7 +54,7 @@ namespace margelo::nitro::camera::facedetector {
 
   public:
     // Methods
-    std::shared_ptr<HybridImageFaceDetectorSpec> createImageFaceDetector(const std::variant<FaceDetectorOptionsAutoModeDisabled, FaceDetectorOptionsAutoModeEnabled>& options) override;
+    std::shared_ptr<HybridImageFaceDetectorSpec> createImageFaceDetector(const FaceDetectorOptions& options) override;
 
   private:
     jni::global_ref<JHybridImageFaceDetectorFactorySpec::JavaPart> _javaPart;
