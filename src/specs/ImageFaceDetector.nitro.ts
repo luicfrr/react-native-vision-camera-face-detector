@@ -13,5 +13,5 @@ export interface ImageFaceDetector extends HybridObject<{
    * 
    * @param {InputImage} image Image source to detect faces
    */
-  detectFaces: ( image: InputImage ) => Promise<Face[]>
+  detectFaces( image: InputImage ): Promise<Face[]>
 }
