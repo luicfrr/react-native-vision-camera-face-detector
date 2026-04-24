@@ -12,11 +12,11 @@ import useWorklet from '../hooks/useWorklet'
 import type { Frame } from 'react-native-vision-camera'
 import type { SkiaCameraProps } from 'react-native-vision-camera-skia'
 import type { Face } from '../specs/Face.nitro'
-import type { FaceDetectorOptionsAutoModeDisabled } from '../specs/FaceDetectorFactory.nitro'
+import type { FaceDetectorOptions } from '../specs/FaceDetectorFactory.nitro'
 import type { FaceDetectedCallback } from '../specs/FaceDetectedCallback'
 
 type ComponentType = ( {
-  faceDetectorOptions?: FaceDetectorOptionsAutoModeDisabled
+  faceDetectorOptions?: FaceDetectorOptions
   faceDetectorCallback: FaceDetectedCallback
   skiaActions?: (
     frame: Frame,
@@ -41,7 +41,12 @@ export function SkiaCamera( {
   const {
     detectFaces,
     stopListeners
-  } = useFaceDetector( faceDetectorOptions )
+  } = useFaceDetector( {
+    ...faceDetectorOptions,
+    autoMode: undefined,
+    windowWidth: undefined,
+    windowHeight: undefined
+  } )
 
   useEffect( () => {
     return () => stopListeners()
