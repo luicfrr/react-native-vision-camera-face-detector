@@ -25,8 +25,11 @@ import {
 import { launchImageLibraryAsync } from 'expo-image-picker'
 import { useIsFocused } from '@react-navigation/core'
 import { useAppState } from '@react-native-community/hooks'
-import { SafeAreaProvider } from 'react-native-safe-area-context'
 import { NavigationContainer } from '@react-navigation/native'
+import {
+  SafeAreaProvider,
+  useSafeAreaInsets
+} from 'react-native-safe-area-context'
 import {
   Camera,
   SkiaCamera,
@@ -68,6 +71,7 @@ function Index(): ReactNode {
  * @return {ReactNode} Component
  */
 function FaceDetection(): ReactNode {
+  const insets = useSafeAreaInsets()
   const {
     width,
     height
@@ -427,7 +431,7 @@ function FaceDetection(): ReactNode {
     <View
       style={ {
         position: 'absolute',
-        bottom: 20,
+        bottom: 20 + + insets.bottom,
         left: 0,
         right: 0,
         display: 'flex',
