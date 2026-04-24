@@ -1,31 +1,32 @@
 package com.nitro.visioncamerafacedetector.extensions
 
-import com.google.mlkit.vision.face.FaceDetectorOptions
+import com.google.mlkit.vision.face.FaceDetectorOptions as MLFaceDetectorOptions
+import com.margelo.nitro.camera.facedetector.FaceDetectorOptions
 
-fun FaceDetectorOptions.toMLFaceDetectorOptions(): FaceDetectorOptions {
-  var performanceModeValue = FaceDetectorOptions.PERFORMANCE_MODE_FAST
-  var landmarkModeValue = FaceDetectorOptions.LANDMARK_MODE_NONE
-  var classificationModeValue = FaceDetectorOptions.CLASSIFICATION_MODE_NONE
-  var contourModeValue = FaceDetectorOptions.CONTOUR_MODE_NONE
+fun FaceDetectorOptions.toMLFaceDetectorOptions(): MLFaceDetectorOptions {
+  var performanceModeValue = MLFaceDetectorOptions.PERFORMANCE_MODE_FAST
+  var landmarkModeValue = MLFaceDetectorOptions.LANDMARK_MODE_NONE
+  var classificationModeValue = MLFaceDetectorOptions.CLASSIFICATION_MODE_NONE
+  var contourModeValue = MLFaceDetectorOptions.CONTOUR_MODE_NONE
 
   if (this.performanceMode.toString() == "accurate") {
-    performanceModeValue = FaceDetectorOptions.PERFORMANCE_MODE_ACCURATE
+    performanceModeValue = MLFaceDetectorOptions.PERFORMANCE_MODE_ACCURATE
   }
 
-  if (this.runLandmarks) {
-    landmarkModeValue = FaceDetectorOptions.LANDMARK_MODE_ALL
+  if (this.runLandmarks == true) {
+    landmarkModeValue = MLFaceDetectorOptions.LANDMARK_MODE_ALL
   }
 
-  if (this.runContours) {
-    contourModeValue = FaceDetectorOptions.CONTOUR_MODE_ALL
+  if (this.runContours == true) {
+    contourModeValue = MLFaceDetectorOptions.CONTOUR_MODE_ALL
   }
 
-  if (this.runClassifications) {
-    classificationModeValue = FaceDetectorOptions.CLASSIFICATION_MODE_ALL
+  if (this.runClassifications == true) {
+    classificationModeValue = MLFaceDetectorOptions.CLASSIFICATION_MODE_ALL
   }
 
-  val minFaceSize = (this.minFaceSize ?: 0.15) as Double
-  val optionsBuilder = FaceDetectorOptions
+  val minFaceSize = this.minFaceSize ?: 0.15
+  val optionsBuilder = MLFaceDetectorOptions
     .Builder()
     .setPerformanceMode(performanceModeValue)
     .setLandmarkMode(landmarkModeValue)
@@ -33,7 +34,7 @@ fun FaceDetectorOptions.toMLFaceDetectorOptions(): FaceDetectorOptions {
     .setClassificationMode(classificationModeValue)
     .setMinFaceSize(minFaceSize.toFloat())
 
-  if (this.trackingEnabled.toString() == "true") {
+  if (this.trackingEnabled == true) {
     optionsBuilder.enableTracking()
   }
 
