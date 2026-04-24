@@ -12,6 +12,7 @@
 
 #include "JPoint.hpp"
 #include "Point.hpp"
+#include <optional>
 
 namespace margelo::nitro::camera::facedetector {
 
@@ -53,16 +54,16 @@ namespace margelo::nitro::camera::facedetector {
       static const auto fieldRIGHT_EYE = clazz->getField<JPoint>("RIGHT_EYE");
       jni::local_ref<JPoint> RIGHT_EYE = this->getFieldValue(fieldRIGHT_EYE);
       return Landmarks(
-        LEFT_CHEEK->toCpp(),
-        LEFT_EAR->toCpp(),
-        LEFT_EYE->toCpp(),
-        MOUTH_BOTTOM->toCpp(),
-        MOUTH_LEFT->toCpp(),
-        MOUTH_RIGHT->toCpp(),
-        NOSE_BASE->toCpp(),
-        RIGHT_CHEEK->toCpp(),
-        RIGHT_EAR->toCpp(),
-        RIGHT_EYE->toCpp()
+        LEFT_CHEEK != nullptr ? std::make_optional(LEFT_CHEEK->toCpp()) : std::nullopt,
+        LEFT_EAR != nullptr ? std::make_optional(LEFT_EAR->toCpp()) : std::nullopt,
+        LEFT_EYE != nullptr ? std::make_optional(LEFT_EYE->toCpp()) : std::nullopt,
+        MOUTH_BOTTOM != nullptr ? std::make_optional(MOUTH_BOTTOM->toCpp()) : std::nullopt,
+        MOUTH_LEFT != nullptr ? std::make_optional(MOUTH_LEFT->toCpp()) : std::nullopt,
+        MOUTH_RIGHT != nullptr ? std::make_optional(MOUTH_RIGHT->toCpp()) : std::nullopt,
+        NOSE_BASE != nullptr ? std::make_optional(NOSE_BASE->toCpp()) : std::nullopt,
+        RIGHT_CHEEK != nullptr ? std::make_optional(RIGHT_CHEEK->toCpp()) : std::nullopt,
+        RIGHT_EAR != nullptr ? std::make_optional(RIGHT_EAR->toCpp()) : std::nullopt,
+        RIGHT_EYE != nullptr ? std::make_optional(RIGHT_EYE->toCpp()) : std::nullopt
       );
     }
 
@@ -77,16 +78,16 @@ namespace margelo::nitro::camera::facedetector {
       static const auto create = clazz->getStaticMethod<JSignature>("fromCpp");
       return create(
         clazz,
-        JPoint::fromCpp(value.LEFT_CHEEK),
-        JPoint::fromCpp(value.LEFT_EAR),
-        JPoint::fromCpp(value.LEFT_EYE),
-        JPoint::fromCpp(value.MOUTH_BOTTOM),
-        JPoint::fromCpp(value.MOUTH_LEFT),
-        JPoint::fromCpp(value.MOUTH_RIGHT),
-        JPoint::fromCpp(value.NOSE_BASE),
-        JPoint::fromCpp(value.RIGHT_CHEEK),
-        JPoint::fromCpp(value.RIGHT_EAR),
-        JPoint::fromCpp(value.RIGHT_EYE)
+        value.LEFT_CHEEK.has_value() ? JPoint::fromCpp(value.LEFT_CHEEK.value()) : nullptr,
+        value.LEFT_EAR.has_value() ? JPoint::fromCpp(value.LEFT_EAR.value()) : nullptr,
+        value.LEFT_EYE.has_value() ? JPoint::fromCpp(value.LEFT_EYE.value()) : nullptr,
+        value.MOUTH_BOTTOM.has_value() ? JPoint::fromCpp(value.MOUTH_BOTTOM.value()) : nullptr,
+        value.MOUTH_LEFT.has_value() ? JPoint::fromCpp(value.MOUTH_LEFT.value()) : nullptr,
+        value.MOUTH_RIGHT.has_value() ? JPoint::fromCpp(value.MOUTH_RIGHT.value()) : nullptr,
+        value.NOSE_BASE.has_value() ? JPoint::fromCpp(value.NOSE_BASE.value()) : nullptr,
+        value.RIGHT_CHEEK.has_value() ? JPoint::fromCpp(value.RIGHT_CHEEK.value()) : nullptr,
+        value.RIGHT_EAR.has_value() ? JPoint::fromCpp(value.RIGHT_EAR.value()) : nullptr,
+        value.RIGHT_EYE.has_value() ? JPoint::fromCpp(value.RIGHT_EYE.value()) : nullptr
       );
     }
   };

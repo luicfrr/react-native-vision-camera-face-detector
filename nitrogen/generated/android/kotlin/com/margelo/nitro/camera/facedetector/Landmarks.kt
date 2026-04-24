@@ -20,34 +20,34 @@ import java.util.Objects
 data class Landmarks(
   @DoNotStrip
   @Keep
-  val LEFT_CHEEK: Point,
+  val LEFT_CHEEK: Point?,
   @DoNotStrip
   @Keep
-  val LEFT_EAR: Point,
+  val LEFT_EAR: Point?,
   @DoNotStrip
   @Keep
-  val LEFT_EYE: Point,
+  val LEFT_EYE: Point?,
   @DoNotStrip
   @Keep
-  val MOUTH_BOTTOM: Point,
+  val MOUTH_BOTTOM: Point?,
   @DoNotStrip
   @Keep
-  val MOUTH_LEFT: Point,
+  val MOUTH_LEFT: Point?,
   @DoNotStrip
   @Keep
-  val MOUTH_RIGHT: Point,
+  val MOUTH_RIGHT: Point?,
   @DoNotStrip
   @Keep
-  val NOSE_BASE: Point,
+  val NOSE_BASE: Point?,
   @DoNotStrip
   @Keep
-  val RIGHT_CHEEK: Point,
+  val RIGHT_CHEEK: Point?,
   @DoNotStrip
   @Keep
-  val RIGHT_EAR: Point,
+  val RIGHT_EAR: Point?,
   @DoNotStrip
   @Keep
-  val RIGHT_EYE: Point
+  val RIGHT_EYE: Point?
 ) {
   /* primary constructor */
 
@@ -89,7 +89,7 @@ data class Landmarks(
     @Keep
     @Suppress("unused")
     @JvmStatic
-    private fun fromCpp(LEFT_CHEEK: Point, LEFT_EAR: Point, LEFT_EYE: Point, MOUTH_BOTTOM: Point, MOUTH_LEFT: Point, MOUTH_RIGHT: Point, NOSE_BASE: Point, RIGHT_CHEEK: Point, RIGHT_EAR: Point, RIGHT_EYE: Point): Landmarks {
+    private fun fromCpp(LEFT_CHEEK: Point?, LEFT_EAR: Point?, LEFT_EYE: Point?, MOUTH_BOTTOM: Point?, MOUTH_LEFT: Point?, MOUTH_RIGHT: Point?, NOSE_BASE: Point?, RIGHT_CHEEK: Point?, RIGHT_EAR: Point?, RIGHT_EYE: Point?): Landmarks {
       return Landmarks(LEFT_CHEEK, LEFT_EAR, LEFT_EYE, MOUTH_BOTTOM, MOUTH_LEFT, MOUTH_RIGHT, NOSE_BASE, RIGHT_CHEEK, RIGHT_EAR, RIGHT_EYE)
     }
   }

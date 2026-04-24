@@ -20,49 +20,49 @@ import java.util.Objects
 data class Contours(
   @DoNotStrip
   @Keep
-  val FACE: Array<Point>,
+  val FACE: Array<Point>?,
   @DoNotStrip
   @Keep
-  val LEFT_EYEBROW_TOP: Array<Point>,
+  val LEFT_EYEBROW_TOP: Array<Point>?,
   @DoNotStrip
   @Keep
-  val LEFT_EYEBROW_BOTTOM: Array<Point>,
+  val LEFT_EYEBROW_BOTTOM: Array<Point>?,
   @DoNotStrip
   @Keep
-  val RIGHT_EYEBROW_TOP: Array<Point>,
+  val RIGHT_EYEBROW_TOP: Array<Point>?,
   @DoNotStrip
   @Keep
-  val RIGHT_EYEBROW_BOTTOM: Array<Point>,
+  val RIGHT_EYEBROW_BOTTOM: Array<Point>?,
   @DoNotStrip
   @Keep
-  val LEFT_EYE: Array<Point>,
+  val LEFT_EYE: Array<Point>?,
   @DoNotStrip
   @Keep
-  val RIGHT_EYE: Array<Point>,
+  val RIGHT_EYE: Array<Point>?,
   @DoNotStrip
   @Keep
-  val UPPER_LIP_TOP: Array<Point>,
+  val UPPER_LIP_TOP: Array<Point>?,
   @DoNotStrip
   @Keep
-  val UPPER_LIP_BOTTOM: Array<Point>,
+  val UPPER_LIP_BOTTOM: Array<Point>?,
   @DoNotStrip
   @Keep
-  val LOWER_LIP_TOP: Array<Point>,
+  val LOWER_LIP_TOP: Array<Point>?,
   @DoNotStrip
   @Keep
-  val LOWER_LIP_BOTTOM: Array<Point>,
+  val LOWER_LIP_BOTTOM: Array<Point>?,
   @DoNotStrip
   @Keep
-  val NOSE_BRIDGE: Array<Point>,
+  val NOSE_BRIDGE: Array<Point>?,
   @DoNotStrip
   @Keep
-  val NOSE_BOTTOM: Array<Point>,
+  val NOSE_BOTTOM: Array<Point>?,
   @DoNotStrip
   @Keep
-  val LEFT_CHEEK: Array<Point>,
+  val LEFT_CHEEK: Array<Point>?,
   @DoNotStrip
   @Keep
-  val RIGHT_CHEEK: Array<Point>
+  val RIGHT_CHEEK: Array<Point>?
 ) {
   /* primary constructor */
 
@@ -114,7 +114,7 @@ data class Contours(
     @Keep
     @Suppress("unused")
     @JvmStatic
-    private fun fromCpp(FACE: Array<Point>, LEFT_EYEBROW_TOP: Array<Point>, LEFT_EYEBROW_BOTTOM: Array<Point>, RIGHT_EYEBROW_TOP: Array<Point>, RIGHT_EYEBROW_BOTTOM: Array<Point>, LEFT_EYE: Array<Point>, RIGHT_EYE: Array<Point>, UPPER_LIP_TOP: Array<Point>, UPPER_LIP_BOTTOM: Array<Point>, LOWER_LIP_TOP: Array<Point>, LOWER_LIP_BOTTOM: Array<Point>, NOSE_BRIDGE: Array<Point>, NOSE_BOTTOM: Array<Point>, LEFT_CHEEK: Array<Point>, RIGHT_CHEEK: Array<Point>): Contours {
+    private fun fromCpp(FACE: Array<Point>?, LEFT_EYEBROW_TOP: Array<Point>?, LEFT_EYEBROW_BOTTOM: Array<Point>?, RIGHT_EYEBROW_TOP: Array<Point>?, RIGHT_EYEBROW_BOTTOM: Array<Point>?, LEFT_EYE: Array<Point>?, RIGHT_EYE: Array<Point>?, UPPER_LIP_TOP: Array<Point>?, UPPER_LIP_BOTTOM: Array<Point>?, LOWER_LIP_TOP: Array<Point>?, LOWER_LIP_BOTTOM: Array<Point>?, NOSE_BRIDGE: Array<Point>?, NOSE_BOTTOM: Array<Point>?, LEFT_CHEEK: Array<Point>?, RIGHT_CHEEK: Array<Point>?): Contours {
       return Contours(FACE, LEFT_EYEBROW_TOP, LEFT_EYEBROW_BOTTOM, RIGHT_EYEBROW_TOP, RIGHT_EYEBROW_BOTTOM, LEFT_EYE, RIGHT_EYE, UPPER_LIP_TOP, UPPER_LIP_BOTTOM, LOWER_LIP_TOP, LOWER_LIP_BOTTOM, NOSE_BRIDGE, NOSE_BOTTOM, LEFT_CHEEK, RIGHT_CHEEK)
     }
   }

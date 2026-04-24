@@ -30,7 +30,7 @@ abstract class HybridImageFaceDetectorFactorySpec: HybridObject() {
   // Methods
   @DoNotStrip
   @Keep
-  abstract fun createImageFaceDetector(options: ImageFaceDetectorOptions?): HybridImageFaceDetectorSpec
+  abstract fun createImageFaceDetector(options: FaceDetectorOptions): HybridImageFaceDetectorSpec
 
   // Default implementation of `HybridObject.toString()`
   override fun toString(): String {

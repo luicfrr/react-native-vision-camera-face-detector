@@ -7,90 +7,56 @@
 
 package com.margelo.nitro.camera.facedetector
 
-import androidx.annotation.Keep
 import com.facebook.proguard.annotations.DoNotStrip
-import java.util.Objects
 
 
 /**
- * Represents the JavaScript object/struct "FaceDetectorOptions".
+ * Represents the TypeScript variant "FaceDetectorOptionsAutoModeDisabled | FaceDetectorOptionsAutoModeEnabled".
  */
+@Suppress("ClassName")
 @DoNotStrip
-@Keep
-data class FaceDetectorOptions(
+sealed class FaceDetectorOptions {
   @DoNotStrip
-  @Keep
-  val cameraFacing: CameraPosition?,
+  data class First(@DoNotStrip val value: FaceDetectorOptionsAutoModeDisabled): FaceDetectorOptions()
   @DoNotStrip
-  @Keep
-  val autoMode: Boolean?,
-  @DoNotStrip
-  @Keep
-  val windowWidth: Double?,
-  @DoNotStrip
-  @Keep
-  val windowHeight: Double?,
-  @DoNotStrip
-  @Keep
-  val performanceMode: PerformanceMode?,
-  @DoNotStrip
-  @Keep
-  val runLandmarks: Boolean?,
-  @DoNotStrip
-  @Keep
-  val runContours: Boolean?,
-  @DoNotStrip
-  @Keep
-  val runClassifications: Boolean?,
-  @DoNotStrip
-  @Keep
-  val minFaceSize: Double?,
-  @DoNotStrip
-  @Keep
-  val trackingEnabled: Boolean?
-) {
-  /* primary constructor */
+  data class Second(@DoNotStrip val value: FaceDetectorOptionsAutoModeEnabled): FaceDetectorOptions()
 
-  override fun equals(other: Any?): Boolean {
-    if (this === other) return true
-    if (other !is FaceDetectorOptions) return false
-    return Objects.deepEquals(this.cameraFacing, other.cameraFacing)
-      && Objects.deepEquals(this.autoMode, other.autoMode)
-      && Objects.deepEquals(this.windowWidth, other.windowWidth)
-      && Objects.deepEquals(this.windowHeight, other.windowHeight)
-      && Objects.deepEquals(this.performanceMode, other.performanceMode)
-      && Objects.deepEquals(this.runLandmarks, other.runLandmarks)
-      && Objects.deepEquals(this.runContours, other.runContours)
-      && Objects.deepEquals(this.runClassifications, other.runClassifications)
-      && Objects.deepEquals(this.minFaceSize, other.minFaceSize)
-      && Objects.deepEquals(this.trackingEnabled, other.trackingEnabled)
+  inline fun <reified T> asType(): T? {
+    return when (this) {
+      is First -> (value) as? T
+      is Second -> (value) as? T
+    }
+  }
+  inline fun <reified T> isType(): Boolean {
+    return asType<T>() != null
+  }
+  inline fun <R> match(first: (FaceDetectorOptionsAutoModeDisabled) -> R, second: (FaceDetectorOptionsAutoModeEnabled) -> R): R {
+    return when (this) {
+      is First -> first(value)
+      is Second -> second(value)
+    }
   }
 
-  override fun hashCode(): Int {
-    return arrayOf(
-      cameraFacing,
-      autoMode,
-      windowWidth,
-      windowHeight,
-      performanceMode,
-      runLandmarks,
-      runContours,
-      runClassifications,
-      minFaceSize,
-      trackingEnabled
-    ).contentDeepHashCode()
+  val isFirst: Boolean
+    get() = this is First
+  val isSecond: Boolean
+    get() = this is Second
+
+  fun asFirstOrNull(): FaceDetectorOptionsAutoModeDisabled? {
+    val value = (this as? First)?.value ?: return null
+    return value
+  }
+  fun asSecondOrNull(): FaceDetectorOptionsAutoModeEnabled? {
+    val value = (this as? Second)?.value ?: return null
+    return value
   }
 
   companion object {
-    /**
-     * Constructor called from C++
-     */
-    @DoNotStrip
-    @Keep
-    @Suppress("unused")
     @JvmStatic
-    private fun fromCpp(cameraFacing: CameraPosition?, autoMode: Boolean?, windowWidth: Double?, windowHeight: Double?, performanceMode: PerformanceMode?, runLandmarks: Boolean?, runContours: Boolean?, runClassifications: Boolean?, minFaceSize: Double?, trackingEnabled: Boolean?): FaceDetectorOptions {
-      return FaceDetectorOptions(cameraFacing, autoMode, windowWidth, windowHeight, performanceMode, runLandmarks, runContours, runClassifications, minFaceSize, trackingEnabled)
-    }
+    @DoNotStrip
+    fun create(value: FaceDetectorOptionsAutoModeDisabled): FaceDetectorOptions = First(value)
+    @JvmStatic
+    @DoNotStrip
+    fun create(value: FaceDetectorOptionsAutoModeEnabled): FaceDetectorOptions = Second(value)
   }
 }

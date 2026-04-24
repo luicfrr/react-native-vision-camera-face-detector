@@ -25,7 +25,6 @@ namespace margelo::nitro::camera::facedetector { struct ImageUri; }
 #include <string>
 #include "ImageUri.hpp"
 #include <variant>
-#include <functional>
 
 namespace margelo::nitro::camera::facedetector {
 
@@ -54,12 +53,11 @@ namespace margelo::nitro::camera::facedetector {
 
     public:
       // Properties
-      virtual std::function<std::shared_ptr<Promise<std::shared_ptr<Promise<std::vector<std::shared_ptr<HybridFaceSpec>>>>>>(const std::variant<std::string, ImageUri>& /* image */)> getDetectFaces() = 0;
-      virtual void setDetectFaces(const std::function<std::shared_ptr<Promise<std::shared_ptr<Promise<std::vector<std::shared_ptr<HybridFaceSpec>>>>>>(const std::variant<std::string, ImageUri>& /* image */)>& detectFaces) = 0;
+      
 
     public:
       // Methods
-      
+      virtual std::shared_ptr<Promise<std::vector<std::shared_ptr<HybridFaceSpec>>>> detectFaces(const std::variant<std::string, ImageUri>& image) = 0;
 
     protected:
       // Hybrid Setup

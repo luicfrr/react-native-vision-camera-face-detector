@@ -15,13 +15,16 @@
 
 // Forward declaration of `HybridImageFaceDetectorSpec` to properly resolve imports.
 namespace margelo::nitro::camera::facedetector { class HybridImageFaceDetectorSpec; }
-// Forward declaration of `ImageFaceDetectorOptions` to properly resolve imports.
-namespace margelo::nitro::camera::facedetector { struct ImageFaceDetectorOptions; }
+// Forward declaration of `FaceDetectorOptionsAutoModeDisabled` to properly resolve imports.
+namespace margelo::nitro::camera::facedetector { struct FaceDetectorOptionsAutoModeDisabled; }
+// Forward declaration of `FaceDetectorOptionsAutoModeEnabled` to properly resolve imports.
+namespace margelo::nitro::camera::facedetector { struct FaceDetectorOptionsAutoModeEnabled; }
 
 #include <memory>
 #include "HybridImageFaceDetectorSpec.hpp"
-#include "ImageFaceDetectorOptions.hpp"
-#include <optional>
+#include "FaceDetectorOptionsAutoModeDisabled.hpp"
+#include "FaceDetectorOptionsAutoModeEnabled.hpp"
+#include <variant>
 
 namespace margelo::nitro::camera::facedetector {
 
@@ -54,7 +57,7 @@ namespace margelo::nitro::camera::facedetector {
 
     public:
       // Methods
-      virtual std::shared_ptr<HybridImageFaceDetectorSpec> createImageFaceDetector(const std::optional<ImageFaceDetectorOptions>& options) = 0;
+      virtual std::shared_ptr<HybridImageFaceDetectorSpec> createImageFaceDetector(const std::variant<FaceDetectorOptionsAutoModeDisabled, FaceDetectorOptionsAutoModeEnabled>& options) = 0;
 
     protected:
       // Hybrid Setup

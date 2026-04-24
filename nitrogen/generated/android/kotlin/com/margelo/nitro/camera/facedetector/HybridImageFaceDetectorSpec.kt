@@ -26,22 +26,12 @@ import com.margelo.nitro.core.HybridObject
 )
 abstract class HybridImageFaceDetectorSpec: HybridObject() {
   // Properties
-  abstract var detectFaces: (image: InputImage) -> Promise<Promise<Array<HybridFaceSpec>>>
   
-  private var detectFaces_cxx: Func_std__shared_ptr_Promise_std__shared_ptr_Promise_std__vector_std__shared_ptr_HybridFaceSpec_______std__variant_std__string__ImageUri_
-    @Keep
-    @DoNotStrip
-    get() {
-      return Func_std__shared_ptr_Promise_std__shared_ptr_Promise_std__vector_std__shared_ptr_HybridFaceSpec_______std__variant_std__string__ImageUri__java(detectFaces)
-    }
-    @Keep
-    @DoNotStrip
-    set(value) {
-      detectFaces = value
-    }
 
   // Methods
-  
+  @DoNotStrip
+  @Keep
+  abstract fun detectFaces(image: InputImage): Promise<Array<HybridFaceSpec>>
 
   // Default implementation of `HybridObject.toString()`
   override fun toString(): String {

@@ -61,31 +61,6 @@ namespace margelo::nitro::camera::facedetector::bridge::swift {
     return margelo::nitro::camera::bridge::swift::get_std__shared_ptr_HybridFrameSpec_(cppType);
   }
   
-  // pragma MARK: std::function<std::shared_ptr<Promise<std::shared_ptr<Promise<std::vector<std::shared_ptr<HybridFaceSpec>>>>>>(const std::shared_ptr<margelo::nitro::camera::HybridFrameSpec>& /* frame */)>
-  Func_std__shared_ptr_Promise_std__shared_ptr_Promise_std__vector_std__shared_ptr_HybridFaceSpec_______std__shared_ptr_margelo__nitro__camera__HybridFrameSpec_ create_Func_std__shared_ptr_Promise_std__shared_ptr_Promise_std__vector_std__shared_ptr_HybridFaceSpec_______std__shared_ptr_margelo__nitro__camera__HybridFrameSpec_(void* NON_NULL swiftClosureWrapper) noexcept {
-    auto swiftClosure = VisionCameraFaceDetector::Func_std__shared_ptr_Promise_std__shared_ptr_Promise_std__vector_std__shared_ptr_HybridFaceSpec_______std__shared_ptr_margelo__nitro__camera__HybridFrameSpec_::fromUnsafe(swiftClosureWrapper);
-    return [swiftClosure = std::move(swiftClosure)](const std::shared_ptr<margelo::nitro::camera::HybridFrameSpec>& frame) mutable -> std::shared_ptr<Promise<std::shared_ptr<Promise<std::vector<std::shared_ptr<HybridFaceSpec>>>>>> {
-      auto __result = swiftClosure.call(frame);
-      return __result;
-    };
-  }
-  
-  // pragma MARK: std::function<void(const std::shared_ptr<Promise<std::vector<std::shared_ptr<HybridFaceSpec>>>>& /* result */)>
-  Func_void_std__shared_ptr_Promise_std__vector_std__shared_ptr_HybridFaceSpec____ create_Func_void_std__shared_ptr_Promise_std__vector_std__shared_ptr_HybridFaceSpec____(void* NON_NULL swiftClosureWrapper) noexcept {
-    auto swiftClosure = VisionCameraFaceDetector::Func_void_std__shared_ptr_Promise_std__vector_std__shared_ptr_HybridFaceSpec____::fromUnsafe(swiftClosureWrapper);
-    return [swiftClosure = std::move(swiftClosure)](const std::shared_ptr<Promise<std::vector<std::shared_ptr<HybridFaceSpec>>>>& result) mutable -> void {
-      swiftClosure.call(result);
-    };
-  }
-  
-  // pragma MARK: std::function<void()>
-  Func_void create_Func_void(void* NON_NULL swiftClosureWrapper) noexcept {
-    auto swiftClosure = VisionCameraFaceDetector::Func_void::fromUnsafe(swiftClosureWrapper);
-    return [swiftClosure = std::move(swiftClosure)]() mutable -> void {
-      swiftClosure.call();
-    };
-  }
-  
   // pragma MARK: std::shared_ptr<HybridFaceDetectorSpec>
   std::shared_ptr<HybridFaceDetectorSpec> create_std__shared_ptr_HybridFaceDetectorSpec_(void* NON_NULL swiftUnsafePointer) noexcept {
     VisionCameraFaceDetector::HybridFaceDetectorSpec_cxx swiftPart = VisionCameraFaceDetector::HybridFaceDetectorSpec_cxx::fromUnsafe(swiftUnsafePointer);
@@ -116,15 +91,6 @@ namespace margelo::nitro::camera::facedetector::bridge::swift {
     #endif
     VisionCameraFaceDetector::HybridFaceDetectorFactorySpec_cxx& swiftPart = swiftWrapper->getSwiftPart();
     return swiftPart.toUnsafe();
-  }
-  
-  // pragma MARK: std::function<std::shared_ptr<Promise<std::shared_ptr<Promise<std::vector<std::shared_ptr<HybridFaceSpec>>>>>>(const std::variant<std::string, ImageUri>& /* image */)>
-  Func_std__shared_ptr_Promise_std__shared_ptr_Promise_std__vector_std__shared_ptr_HybridFaceSpec_______std__variant_std__string__ImageUri_ create_Func_std__shared_ptr_Promise_std__shared_ptr_Promise_std__vector_std__shared_ptr_HybridFaceSpec_______std__variant_std__string__ImageUri_(void* NON_NULL swiftClosureWrapper) noexcept {
-    auto swiftClosure = VisionCameraFaceDetector::Func_std__shared_ptr_Promise_std__shared_ptr_Promise_std__vector_std__shared_ptr_HybridFaceSpec_______std__variant_std__string__ImageUri_::fromUnsafe(swiftClosureWrapper);
-    return [swiftClosure = std::move(swiftClosure)](const std::variant<std::string, ImageUri>& image) mutable -> std::shared_ptr<Promise<std::shared_ptr<Promise<std::vector<std::shared_ptr<HybridFaceSpec>>>>>> {
-      auto __result = swiftClosure.call(image);
-      return __result;
-    };
   }
   
   // pragma MARK: std::shared_ptr<HybridImageFaceDetectorSpec>

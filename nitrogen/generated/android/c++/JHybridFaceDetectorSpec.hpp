@@ -50,14 +50,12 @@ namespace margelo::nitro::camera::facedetector {
 
   public:
     // Properties
-    std::function<std::shared_ptr<Promise<std::shared_ptr<Promise<std::vector<std::shared_ptr<HybridFaceSpec>>>>>>(const std::shared_ptr<margelo::nitro::camera::HybridFrameSpec>& /* frame */)> getDetectFaces() override;
-    void setDetectFaces(const std::function<std::shared_ptr<Promise<std::shared_ptr<Promise<std::vector<std::shared_ptr<HybridFaceSpec>>>>>>(const std::shared_ptr<margelo::nitro::camera::HybridFrameSpec>& /* frame */)>& detectFaces) override;
-    std::function<void()> getStopListeners() override;
-    void setStopListeners(const std::function<void()>& stopListeners) override;
+    
 
   public:
     // Methods
-    
+    std::shared_ptr<Promise<std::vector<std::shared_ptr<HybridFaceSpec>>>> detectFaces(const std::shared_ptr<margelo::nitro::camera::HybridFrameSpec>& frame) override;
+    void stopListeners() override;
 
   private:
     jni::global_ref<JHybridFaceDetectorSpec::JavaPart> _javaPart;

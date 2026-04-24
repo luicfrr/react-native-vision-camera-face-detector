@@ -14,8 +14,10 @@ namespace margelo::nitro::camera::facedetector { struct Bounds; }
 namespace margelo::nitro::camera::facedetector { enum class CameraPosition; }
 // Forward declaration of `Contours` to properly resolve imports.
 namespace margelo::nitro::camera::facedetector { struct Contours; }
-// Forward declaration of `FaceDetectorOptions` to properly resolve imports.
-namespace margelo::nitro::camera::facedetector { struct FaceDetectorOptions; }
+// Forward declaration of `FaceDetectorOptionsAutoModeDisabled` to properly resolve imports.
+namespace margelo::nitro::camera::facedetector { struct FaceDetectorOptionsAutoModeDisabled; }
+// Forward declaration of `FaceDetectorOptionsAutoModeEnabled` to properly resolve imports.
+namespace margelo::nitro::camera::facedetector { struct FaceDetectorOptionsAutoModeEnabled; }
 // Forward declaration of `HybridFaceDetectorFactorySpec` to properly resolve imports.
 namespace margelo::nitro::camera::facedetector { class HybridFaceDetectorFactorySpec; }
 // Forward declaration of `HybridFaceDetectorSpec` to properly resolve imports.
@@ -28,8 +30,6 @@ namespace margelo::nitro::camera { class HybridFrameSpec; }
 namespace margelo::nitro::camera::facedetector { class HybridImageFaceDetectorFactorySpec; }
 // Forward declaration of `HybridImageFaceDetectorSpec` to properly resolve imports.
 namespace margelo::nitro::camera::facedetector { class HybridImageFaceDetectorSpec; }
-// Forward declaration of `ImageFaceDetectorOptions` to properly resolve imports.
-namespace margelo::nitro::camera::facedetector { struct ImageFaceDetectorOptions; }
 // Forward declaration of `ImageUri` to properly resolve imports.
 namespace margelo::nitro::camera::facedetector { struct ImageUri; }
 // Forward declaration of `Landmarks` to properly resolve imports.
@@ -43,13 +43,13 @@ namespace margelo::nitro::camera::facedetector { struct Point; }
 #include "Bounds.hpp"
 #include "CameraPosition.hpp"
 #include "Contours.hpp"
-#include "FaceDetectorOptions.hpp"
+#include "FaceDetectorOptionsAutoModeDisabled.hpp"
+#include "FaceDetectorOptionsAutoModeEnabled.hpp"
 #include "HybridFaceDetectorFactorySpec.hpp"
 #include "HybridFaceDetectorSpec.hpp"
 #include "HybridFaceSpec.hpp"
 #include "HybridImageFaceDetectorFactorySpec.hpp"
 #include "HybridImageFaceDetectorSpec.hpp"
-#include "ImageFaceDetectorOptions.hpp"
 #include "ImageUri.hpp"
 #include "Landmarks.hpp"
 #include "PerformanceMode.hpp"
@@ -58,7 +58,6 @@ namespace margelo::nitro::camera::facedetector { struct Point; }
 #include <NitroModules/Result.hpp>
 #include <VisionCamera/HybridFrameSpec.hpp>
 #include <exception>
-#include <functional>
 #include <memory>
 #include <optional>
 #include <string>

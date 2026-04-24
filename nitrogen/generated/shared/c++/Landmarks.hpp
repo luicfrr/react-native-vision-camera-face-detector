@@ -32,6 +32,7 @@
 namespace margelo::nitro::camera::facedetector { struct Point; }
 
 #include "Point.hpp"
+#include <optional>
 
 namespace margelo::nitro::camera::facedetector {
 
@@ -40,20 +41,20 @@ namespace margelo::nitro::camera::facedetector {
    */
   struct Landmarks final {
   public:
-    Point LEFT_CHEEK     SWIFT_PRIVATE;
-    Point LEFT_EAR     SWIFT_PRIVATE;
-    Point LEFT_EYE     SWIFT_PRIVATE;
-    Point MOUTH_BOTTOM     SWIFT_PRIVATE;
-    Point MOUTH_LEFT     SWIFT_PRIVATE;
-    Point MOUTH_RIGHT     SWIFT_PRIVATE;
-    Point NOSE_BASE     SWIFT_PRIVATE;
-    Point RIGHT_CHEEK     SWIFT_PRIVATE;
-    Point RIGHT_EAR     SWIFT_PRIVATE;
-    Point RIGHT_EYE     SWIFT_PRIVATE;
+    std::optional<Point> LEFT_CHEEK     SWIFT_PRIVATE;
+    std::optional<Point> LEFT_EAR     SWIFT_PRIVATE;
+    std::optional<Point> LEFT_EYE     SWIFT_PRIVATE;
+    std::optional<Point> MOUTH_BOTTOM     SWIFT_PRIVATE;
+    std::optional<Point> MOUTH_LEFT     SWIFT_PRIVATE;
+    std::optional<Point> MOUTH_RIGHT     SWIFT_PRIVATE;
+    std::optional<Point> NOSE_BASE     SWIFT_PRIVATE;
+    std::optional<Point> RIGHT_CHEEK     SWIFT_PRIVATE;
+    std::optional<Point> RIGHT_EAR     SWIFT_PRIVATE;
+    std::optional<Point> RIGHT_EYE     SWIFT_PRIVATE;
 
   public:
     Landmarks() = default;
-    explicit Landmarks(Point LEFT_CHEEK, Point LEFT_EAR, Point LEFT_EYE, Point MOUTH_BOTTOM, Point MOUTH_LEFT, Point MOUTH_RIGHT, Point NOSE_BASE, Point RIGHT_CHEEK, Point RIGHT_EAR, Point RIGHT_EYE): LEFT_CHEEK(LEFT_CHEEK), LEFT_EAR(LEFT_EAR), LEFT_EYE(LEFT_EYE), MOUTH_BOTTOM(MOUTH_BOTTOM), MOUTH_LEFT(MOUTH_LEFT), MOUTH_RIGHT(MOUTH_RIGHT), NOSE_BASE(NOSE_BASE), RIGHT_CHEEK(RIGHT_CHEEK), RIGHT_EAR(RIGHT_EAR), RIGHT_EYE(RIGHT_EYE) {}
+    explicit Landmarks(std::optional<Point> LEFT_CHEEK, std::optional<Point> LEFT_EAR, std::optional<Point> LEFT_EYE, std::optional<Point> MOUTH_BOTTOM, std::optional<Point> MOUTH_LEFT, std::optional<Point> MOUTH_RIGHT, std::optional<Point> NOSE_BASE, std::optional<Point> RIGHT_CHEEK, std::optional<Point> RIGHT_EAR, std::optional<Point> RIGHT_EYE): LEFT_CHEEK(LEFT_CHEEK), LEFT_EAR(LEFT_EAR), LEFT_EYE(LEFT_EYE), MOUTH_BOTTOM(MOUTH_BOTTOM), MOUTH_LEFT(MOUTH_LEFT), MOUTH_RIGHT(MOUTH_RIGHT), NOSE_BASE(NOSE_BASE), RIGHT_CHEEK(RIGHT_CHEEK), RIGHT_EAR(RIGHT_EAR), RIGHT_EYE(RIGHT_EYE) {}
 
   public:
     friend bool operator==(const Landmarks& lhs, const Landmarks& rhs) = default;
@@ -69,30 +70,30 @@ namespace margelo::nitro {
     static inline margelo::nitro::camera::facedetector::Landmarks fromJSI(jsi::Runtime& runtime, const jsi::Value& arg) {
       jsi::Object obj = arg.asObject(runtime);
       return margelo::nitro::camera::facedetector::Landmarks(
-        JSIConverter<margelo::nitro::camera::facedetector::Point>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "LEFT_CHEEK"))),
-        JSIConverter<margelo::nitro::camera::facedetector::Point>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "LEFT_EAR"))),
-        JSIConverter<margelo::nitro::camera::facedetector::Point>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "LEFT_EYE"))),
-        JSIConverter<margelo::nitro::camera::facedetector::Point>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "MOUTH_BOTTOM"))),
-        JSIConverter<margelo::nitro::camera::facedetector::Point>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "MOUTH_LEFT"))),
-        JSIConverter<margelo::nitro::camera::facedetector::Point>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "MOUTH_RIGHT"))),
-        JSIConverter<margelo::nitro::camera::facedetector::Point>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "NOSE_BASE"))),
-        JSIConverter<margelo::nitro::camera::facedetector::Point>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "RIGHT_CHEEK"))),
-        JSIConverter<margelo::nitro::camera::facedetector::Point>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "RIGHT_EAR"))),
-        JSIConverter<margelo::nitro::camera::facedetector::Point>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "RIGHT_EYE")))
+        JSIConverter<std::optional<margelo::nitro::camera::facedetector::Point>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "LEFT_CHEEK"))),
+        JSIConverter<std::optional<margelo::nitro::camera::facedetector::Point>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "LEFT_EAR"))),
+        JSIConverter<std::optional<margelo::nitro::camera::facedetector::Point>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "LEFT_EYE"))),
+        JSIConverter<std::optional<margelo::nitro::camera::facedetector::Point>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "MOUTH_BOTTOM"))),
+        JSIConverter<std::optional<margelo::nitro::camera::facedetector::Point>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "MOUTH_LEFT"))),
+        JSIConverter<std::optional<margelo::nitro::camera::facedetector::Point>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "MOUTH_RIGHT"))),
+        JSIConverter<std::optional<margelo::nitro::camera::facedetector::Point>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "NOSE_BASE"))),
+        JSIConverter<std::optional<margelo::nitro::camera::facedetector::Point>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "RIGHT_CHEEK"))),
+        JSIConverter<std::optional<margelo::nitro::camera::facedetector::Point>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "RIGHT_EAR"))),
+        JSIConverter<std::optional<margelo::nitro::camera::facedetector::Point>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "RIGHT_EYE")))
       );
     }
     static inline jsi::Value toJSI(jsi::Runtime& runtime, const margelo::nitro::camera::facedetector::Landmarks& arg) {
       jsi::Object obj(runtime);
-      obj.setProperty(runtime, PropNameIDCache::get(runtime, "LEFT_CHEEK"), JSIConverter<margelo::nitro::camera::facedetector::Point>::toJSI(runtime, arg.LEFT_CHEEK));
-      obj.setProperty(runtime, PropNameIDCache::get(runtime, "LEFT_EAR"), JSIConverter<margelo::nitro::camera::facedetector::Point>::toJSI(runtime, arg.LEFT_EAR));
-      obj.setProperty(runtime, PropNameIDCache::get(runtime, "LEFT_EYE"), JSIConverter<margelo::nitro::camera::facedetector::Point>::toJSI(runtime, arg.LEFT_EYE));
-      obj.setProperty(runtime, PropNameIDCache::get(runtime, "MOUTH_BOTTOM"), JSIConverter<margelo::nitro::camera::facedetector::Point>::toJSI(runtime, arg.MOUTH_BOTTOM));
-      obj.setProperty(runtime, PropNameIDCache::get(runtime, "MOUTH_LEFT"), JSIConverter<margelo::nitro::camera::facedetector::Point>::toJSI(runtime, arg.MOUTH_LEFT));
-      obj.setProperty(runtime, PropNameIDCache::get(runtime, "MOUTH_RIGHT"), JSIConverter<margelo::nitro::camera::facedetector::Point>::toJSI(runtime, arg.MOUTH_RIGHT));
-      obj.setProperty(runtime, PropNameIDCache::get(runtime, "NOSE_BASE"), JSIConverter<margelo::nitro::camera::facedetector::Point>::toJSI(runtime, arg.NOSE_BASE));
-      obj.setProperty(runtime, PropNameIDCache::get(runtime, "RIGHT_CHEEK"), JSIConverter<margelo::nitro::camera::facedetector::Point>::toJSI(runtime, arg.RIGHT_CHEEK));
-      obj.setProperty(runtime, PropNameIDCache::get(runtime, "RIGHT_EAR"), JSIConverter<margelo::nitro::camera::facedetector::Point>::toJSI(runtime, arg.RIGHT_EAR));
-      obj.setProperty(runtime, PropNameIDCache::get(runtime, "RIGHT_EYE"), JSIConverter<margelo::nitro::camera::facedetector::Point>::toJSI(runtime, arg.RIGHT_EYE));
+      obj.setProperty(runtime, PropNameIDCache::get(runtime, "LEFT_CHEEK"), JSIConverter<std::optional<margelo::nitro::camera::facedetector::Point>>::toJSI(runtime, arg.LEFT_CHEEK));
+      obj.setProperty(runtime, PropNameIDCache::get(runtime, "LEFT_EAR"), JSIConverter<std::optional<margelo::nitro::camera::facedetector::Point>>::toJSI(runtime, arg.LEFT_EAR));
+      obj.setProperty(runtime, PropNameIDCache::get(runtime, "LEFT_EYE"), JSIConverter<std::optional<margelo::nitro::camera::facedetector::Point>>::toJSI(runtime, arg.LEFT_EYE));
+      obj.setProperty(runtime, PropNameIDCache::get(runtime, "MOUTH_BOTTOM"), JSIConverter<std::optional<margelo::nitro::camera::facedetector::Point>>::toJSI(runtime, arg.MOUTH_BOTTOM));
+      obj.setProperty(runtime, PropNameIDCache::get(runtime, "MOUTH_LEFT"), JSIConverter<std::optional<margelo::nitro::camera::facedetector::Point>>::toJSI(runtime, arg.MOUTH_LEFT));
+      obj.setProperty(runtime, PropNameIDCache::get(runtime, "MOUTH_RIGHT"), JSIConverter<std::optional<margelo::nitro::camera::facedetector::Point>>::toJSI(runtime, arg.MOUTH_RIGHT));
+      obj.setProperty(runtime, PropNameIDCache::get(runtime, "NOSE_BASE"), JSIConverter<std::optional<margelo::nitro::camera::facedetector::Point>>::toJSI(runtime, arg.NOSE_BASE));
+      obj.setProperty(runtime, PropNameIDCache::get(runtime, "RIGHT_CHEEK"), JSIConverter<std::optional<margelo::nitro::camera::facedetector::Point>>::toJSI(runtime, arg.RIGHT_CHEEK));
+      obj.setProperty(runtime, PropNameIDCache::get(runtime, "RIGHT_EAR"), JSIConverter<std::optional<margelo::nitro::camera::facedetector::Point>>::toJSI(runtime, arg.RIGHT_EAR));
+      obj.setProperty(runtime, PropNameIDCache::get(runtime, "RIGHT_EYE"), JSIConverter<std::optional<margelo::nitro::camera::facedetector::Point>>::toJSI(runtime, arg.RIGHT_EYE));
       return obj;
     }
     static inline bool canConvert(jsi::Runtime& runtime, const jsi::Value& value) {
@@ -103,16 +104,16 @@ namespace margelo::nitro {
       if (!nitro::isPlainObject(runtime, obj)) {
         return false;
       }
-      if (!JSIConverter<margelo::nitro::camera::facedetector::Point>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "LEFT_CHEEK")))) return false;
-      if (!JSIConverter<margelo::nitro::camera::facedetector::Point>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "LEFT_EAR")))) return false;
-      if (!JSIConverter<margelo::nitro::camera::facedetector::Point>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "LEFT_EYE")))) return false;
-      if (!JSIConverter<margelo::nitro::camera::facedetector::Point>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "MOUTH_BOTTOM")))) return false;
-      if (!JSIConverter<margelo::nitro::camera::facedetector::Point>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "MOUTH_LEFT")))) return false;
-      if (!JSIConverter<margelo::nitro::camera::facedetector::Point>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "MOUTH_RIGHT")))) return false;
-      if (!JSIConverter<margelo::nitro::camera::facedetector::Point>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "NOSE_BASE")))) return false;
-      if (!JSIConverter<margelo::nitro::camera::facedetector::Point>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "RIGHT_CHEEK")))) return false;
-      if (!JSIConverter<margelo::nitro::camera::facedetector::Point>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "RIGHT_EAR")))) return false;
-      if (!JSIConverter<margelo::nitro::camera::facedetector::Point>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "RIGHT_EYE")))) return false;
+      if (!JSIConverter<std::optional<margelo::nitro::camera::facedetector::Point>>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "LEFT_CHEEK")))) return false;
+      if (!JSIConverter<std::optional<margelo::nitro::camera::facedetector::Point>>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "LEFT_EAR")))) return false;
+      if (!JSIConverter<std::optional<margelo::nitro::camera::facedetector::Point>>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "LEFT_EYE")))) return false;
+      if (!JSIConverter<std::optional<margelo::nitro::camera::facedetector::Point>>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "MOUTH_BOTTOM")))) return false;
+      if (!JSIConverter<std::optional<margelo::nitro::camera::facedetector::Point>>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "MOUTH_LEFT")))) return false;
+      if (!JSIConverter<std::optional<margelo::nitro::camera::facedetector::Point>>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "MOUTH_RIGHT")))) return false;
+      if (!JSIConverter<std::optional<margelo::nitro::camera::facedetector::Point>>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "NOSE_BASE")))) return false;
+      if (!JSIConverter<std::optional<margelo::nitro::camera::facedetector::Point>>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "RIGHT_CHEEK")))) return false;
+      if (!JSIConverter<std::optional<margelo::nitro::camera::facedetector::Point>>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "RIGHT_EAR")))) return false;
+      if (!JSIConverter<std::optional<margelo::nitro::camera::facedetector::Point>>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "RIGHT_EYE")))) return false;
       return true;
     }
   };

@@ -122,68 +122,49 @@ open class HybridFaceDetectorSpec_cxx {
   }
 
   // Properties
-  public final var detectFaces: bridge.Func_std__shared_ptr_Promise_std__shared_ptr_Promise_std__vector_std__shared_ptr_HybridFaceSpec_______std__shared_ptr_margelo__nitro__camera__HybridFrameSpec_ {
-    @inline(__always)
-    get {
-      return { () -> bridge.Func_std__shared_ptr_Promise_std__shared_ptr_Promise_std__vector_std__shared_ptr_HybridFaceSpec_______std__shared_ptr_margelo__nitro__camera__HybridFrameSpec_ in
-        let __closureWrapper = Func_std__shared_ptr_Promise_std__shared_ptr_Promise_std__vector_std__shared_ptr_HybridFaceSpec_______std__shared_ptr_margelo__nitro__camera__HybridFrameSpec_(self.__implementation.detectFaces)
-        return bridge.create_Func_std__shared_ptr_Promise_std__shared_ptr_Promise_std__vector_std__shared_ptr_HybridFaceSpec_______std__shared_ptr_margelo__nitro__camera__HybridFrameSpec_(__closureWrapper.toUnsafe())
-      }()
-    }
-    @inline(__always)
-    set {
-      self.__implementation.detectFaces = { () -> ((any HybridFrameSpec)) -> Promise<Promise<[(any HybridFaceSpec)]>> in
-        let __wrappedFunction = bridge.wrap_Func_std__shared_ptr_Promise_std__shared_ptr_Promise_std__vector_std__shared_ptr_HybridFaceSpec_______std__shared_ptr_margelo__nitro__camera__HybridFrameSpec_(newValue)
-        return { (__frame: (any HybridFrameSpec)) -> Promise<Promise<[(any HybridFaceSpec)]>> in
-          let __result = __wrappedFunction.call({ () -> bridge.std__shared_ptr_margelo__nitro__camera__HybridFrameSpec_ in
-            let __cxxWrapped = __frame.getCxxWrapper()
-            return __cxxWrapped.getCxxPart()
-          }())
-          return { () -> Promise<Promise<[(any HybridFaceSpec)]>> in
-            let __promise = Promise<Promise<[(any HybridFaceSpec)]>>()
-            let __resolver = { (__result: Promise<[(any HybridFaceSpec)]>) in
-              __promise.resolve(withResult: __result)
-            }
-            let __rejecter = { (__error: Error) in
-              __promise.reject(withError: __error)
-            }
-            let __resolverCpp = { () -> bridge.Func_void_std__shared_ptr_Promise_std__vector_std__shared_ptr_HybridFaceSpec____ in
-              let __closureWrapper = Func_void_std__shared_ptr_Promise_std__vector_std__shared_ptr_HybridFaceSpec____(__resolver)
-              return bridge.create_Func_void_std__shared_ptr_Promise_std__vector_std__shared_ptr_HybridFaceSpec____(__closureWrapper.toUnsafe())
-            }()
-            let __rejecterCpp = { () -> bridge.Func_void_std__exception_ptr in
-              let __closureWrapper = Func_void_std__exception_ptr(__rejecter)
-              return bridge.create_Func_void_std__exception_ptr(__closureWrapper.toUnsafe())
-            }()
-            let __promiseHolder = bridge.wrap_std__shared_ptr_Promise_std__shared_ptr_Promise_std__vector_std__shared_ptr_HybridFaceSpec______(__result)
-            __promiseHolder.addOnResolvedListener(__resolverCpp)
-            __promiseHolder.addOnRejectedListener(__rejecterCpp)
-            return __promise
-          }()
-        }
-      }()
-    }
-  }
   
-  public final var stopListeners: bridge.Func_void {
-    @inline(__always)
-    get {
-      return { () -> bridge.Func_void in
-        let __closureWrapper = Func_void(self.__implementation.stopListeners)
-        return bridge.create_Func_void(__closureWrapper.toUnsafe())
-      }()
-    }
-    @inline(__always)
-    set {
-      self.__implementation.stopListeners = { () -> () -> Void in
-        let __wrappedFunction = bridge.wrap_Func_void(newValue)
-        return { () -> Void in
-          __wrappedFunction.call()
-        }
-      }()
-    }
-  }
 
   // Methods
+  @inline(__always)
+  public final func detectFaces(frame: bridge.std__shared_ptr_margelo__nitro__camera__HybridFrameSpec_) -> bridge.Result_std__shared_ptr_Promise_std__vector_std__shared_ptr_HybridFaceSpec_____ {
+    do {
+      let __result = try self.__implementation.detectFaces(frame: { () -> any HybridFrameSpec in
+        let __unsafePointer = bridge.get_std__shared_ptr_margelo__nitro__camera__HybridFrameSpec_(frame)
+        let __instance = HybridFrameSpec_cxx.fromUnsafe(__unsafePointer)
+        return __instance.getHybridFrameSpec()
+      }())
+      let __resultCpp = { () -> bridge.std__shared_ptr_Promise_std__vector_std__shared_ptr_HybridFaceSpec____ in
+        let __promise = bridge.create_std__shared_ptr_Promise_std__vector_std__shared_ptr_HybridFaceSpec____()
+        let __promiseHolder = bridge.wrap_std__shared_ptr_Promise_std__vector_std__shared_ptr_HybridFaceSpec____(__promise)
+        __result
+          .then({ __result in __promiseHolder.resolve({ () -> bridge.std__vector_std__shared_ptr_HybridFaceSpec__ in
+              var __vector = bridge.create_std__vector_std__shared_ptr_HybridFaceSpec__(__result.count)
+              for __item in __result {
+                __vector.push_back({ () -> bridge.std__shared_ptr_HybridFaceSpec_ in
+                  let __cxxWrapped = __item.getCxxWrapper()
+                  return __cxxWrapped.getCxxPart()
+                }())
+              }
+              return __vector
+            }()) })
+          .catch({ __error in __promiseHolder.reject(__error.toCpp()) })
+        return __promise
+      }()
+      return bridge.create_Result_std__shared_ptr_Promise_std__vector_std__shared_ptr_HybridFaceSpec_____(__resultCpp)
+    } catch (let __error) {
+      let __exceptionPtr = __error.toCpp()
+      return bridge.create_Result_std__shared_ptr_Promise_std__vector_std__shared_ptr_HybridFaceSpec_____(__exceptionPtr)
+    }
+  }
   
+  @inline(__always)
+  public final func stopListeners() -> bridge.Result_void_ {
+    do {
+      try self.__implementation.stopListeners()
+      return bridge.create_Result_void_()
+    } catch (let __error) {
+      let __exceptionPtr = __error.toCpp()
+      return bridge.create_Result_void_(__exceptionPtr)
+    }
+  }
 }

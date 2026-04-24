@@ -27,36 +27,16 @@ import com.margelo.nitro.core.HybridObject
 )
 abstract class HybridFaceDetectorSpec: HybridObject() {
   // Properties
-  abstract var detectFaces: (frame: com.margelo.nitro.camera.HybridFrameSpec) -> Promise<Promise<Array<HybridFaceSpec>>>
   
-  private var detectFaces_cxx: Func_std__shared_ptr_Promise_std__shared_ptr_Promise_std__vector_std__shared_ptr_HybridFaceSpec_______std__shared_ptr_margelo__nitro__camera__HybridFrameSpec_
-    @Keep
-    @DoNotStrip
-    get() {
-      return Func_std__shared_ptr_Promise_std__shared_ptr_Promise_std__vector_std__shared_ptr_HybridFaceSpec_______std__shared_ptr_margelo__nitro__camera__HybridFrameSpec__java(detectFaces)
-    }
-    @Keep
-    @DoNotStrip
-    set(value) {
-      detectFaces = value
-    }
-  
-  abstract var stopListeners: () -> Unit
-  
-  private var stopListeners_cxx: Func_void
-    @Keep
-    @DoNotStrip
-    get() {
-      return Func_void_java(stopListeners)
-    }
-    @Keep
-    @DoNotStrip
-    set(value) {
-      stopListeners = value
-    }
 
   // Methods
+  @DoNotStrip
+  @Keep
+  abstract fun detectFaces(frame: com.margelo.nitro.camera.HybridFrameSpec): Promise<Array<HybridFaceSpec>>
   
+  @DoNotStrip
+  @Keep
+  abstract fun stopListeners(): Unit
 
   // Default implementation of `HybridObject.toString()`
   override fun toString(): String {

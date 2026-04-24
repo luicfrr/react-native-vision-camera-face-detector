@@ -10,10 +10,10 @@ import NitroModules
 /// See ``HybridImageFaceDetectorSpec``
 public protocol HybridImageFaceDetectorSpec_protocol: HybridObject {
   // Properties
-  var detectFaces: (_ image: InputImage) -> Promise<Promise<[(any HybridFaceSpec)]>> { get set }
+  
 
   // Methods
-  
+  func detectFaces(image: InputImage) throws -> Promise<[(any HybridFaceSpec)]>
 }
 
 public extension HybridImageFaceDetectorSpec_protocol {

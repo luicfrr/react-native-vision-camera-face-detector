@@ -16,14 +16,11 @@ namespace margelo::nitro::camera::facedetector { struct ImageUri; }
 #include "HybridFaceSpec.hpp"
 #include <vector>
 #include <NitroModules/Promise.hpp>
+#include <NitroModules/JPromise.hpp>
+#include "JHybridFaceSpec.hpp"
 #include <string>
 #include "ImageUri.hpp"
 #include <variant>
-#include <functional>
-#include "JFunc_std__shared_ptr_Promise_std__shared_ptr_Promise_std__vector_std__shared_ptr_HybridFaceSpec_______std__variant_std__string__ImageUri_.hpp"
-#include <NitroModules/JNICallable.hpp>
-#include <NitroModules/JPromise.hpp>
-#include "JHybridFaceSpec.hpp"
 #include "JInputImage.hpp"
 #include "JImageUri.hpp"
 
@@ -57,25 +54,33 @@ namespace margelo::nitro::camera::facedetector {
   }
 
   // Properties
-  std::function<std::shared_ptr<Promise<std::shared_ptr<Promise<std::vector<std::shared_ptr<HybridFaceSpec>>>>>>(const std::variant<std::string, ImageUri>& /* image */)> JHybridImageFaceDetectorSpec::getDetectFaces() {
-    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JFunc_std__shared_ptr_Promise_std__shared_ptr_Promise_std__vector_std__shared_ptr_HybridFaceSpec_______std__variant_std__string__ImageUri_::javaobject>()>("getDetectFaces_cxx");
-    auto __result = method(_javaPart);
-    return [&]() -> std::function<std::shared_ptr<Promise<std::shared_ptr<Promise<std::vector<std::shared_ptr<HybridFaceSpec>>>>>>(const std::variant<std::string, ImageUri>& /* image */)> {
-      if (__result->isInstanceOf(JFunc_std__shared_ptr_Promise_std__shared_ptr_Promise_std__vector_std__shared_ptr_HybridFaceSpec_______std__variant_std__string__ImageUri__cxx::javaClassStatic())) [[likely]] {
-        auto downcast = jni::static_ref_cast<JFunc_std__shared_ptr_Promise_std__shared_ptr_Promise_std__vector_std__shared_ptr_HybridFaceSpec_______std__variant_std__string__ImageUri__cxx::javaobject>(__result);
-        return downcast->cthis()->getFunction();
-      } else {
-        auto __resultRef = jni::make_global(__result);
-        return JNICallable<JFunc_std__shared_ptr_Promise_std__shared_ptr_Promise_std__vector_std__shared_ptr_HybridFaceSpec_______std__variant_std__string__ImageUri_, std::shared_ptr<Promise<std::shared_ptr<Promise<std::vector<std::shared_ptr<HybridFaceSpec>>>>>>(std::variant<std::string, ImageUri>)>(std::move(__resultRef));
-      }
-    }();
-  }
-  void JHybridImageFaceDetectorSpec::setDetectFaces(const std::function<std::shared_ptr<Promise<std::shared_ptr<Promise<std::vector<std::shared_ptr<HybridFaceSpec>>>>>>(const std::variant<std::string, ImageUri>& /* image */)>& detectFaces) {
-    static const auto method = _javaPart->javaClassStatic()->getMethod<void(jni::alias_ref<JFunc_std__shared_ptr_Promise_std__shared_ptr_Promise_std__vector_std__shared_ptr_HybridFaceSpec_______std__variant_std__string__ImageUri_::javaobject> /* detectFaces */)>("setDetectFaces_cxx");
-    method(_javaPart, JFunc_std__shared_ptr_Promise_std__shared_ptr_Promise_std__vector_std__shared_ptr_HybridFaceSpec_______std__variant_std__string__ImageUri__cxx::fromCpp(detectFaces));
-  }
+  
 
   // Methods
-  
+  std::shared_ptr<Promise<std::vector<std::shared_ptr<HybridFaceSpec>>>> JHybridImageFaceDetectorSpec::detectFaces(const std::variant<std::string, ImageUri>& image) {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(jni::alias_ref<JInputImage> /* image */)>("detectFaces");
+    auto __result = method(_javaPart, JInputImage::fromCpp(image));
+    return [&]() {
+      auto __promise = Promise<std::vector<std::shared_ptr<HybridFaceSpec>>>::create();
+      __result->cthis()->addOnResolvedListener([=](const jni::alias_ref<jni::JObject>& __boxedResult) {
+        auto __result = jni::static_ref_cast<jni::JArrayClass<JHybridFaceSpec::JavaPart>>(__boxedResult);
+        __promise->resolve([&]() {
+          size_t __size = __result->size();
+          std::vector<std::shared_ptr<HybridFaceSpec>> __vector;
+          __vector.reserve(__size);
+          for (size_t __i = 0; __i < __size; __i++) {
+            auto __element = __result->getElement(__i);
+            __vector.push_back(__element->getJHybridFaceSpec());
+          }
+          return __vector;
+        }());
+      });
+      __result->cthis()->addOnRejectedListener([=](const jni::alias_ref<jni::JThrowable>& __throwable) {
+        jni::JniException __jniError(__throwable);
+        __promise->reject(std::make_exception_ptr(__jniError));
+      });
+      return __promise;
+    }();
+  }
 
 } // namespace margelo::nitro::camera::facedetector

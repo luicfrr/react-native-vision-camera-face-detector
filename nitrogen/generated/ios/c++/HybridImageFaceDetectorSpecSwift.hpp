@@ -24,7 +24,6 @@ namespace margelo::nitro::camera::facedetector { struct ImageUri; }
 #include <string>
 #include "ImageUri.hpp"
 #include <variant>
-#include <functional>
 
 #include "VisionCameraFaceDetector-Swift-Cxx-Umbrella.hpp"
 
@@ -72,17 +71,18 @@ namespace margelo::nitro::camera::facedetector {
 
   public:
     // Properties
-    inline std::function<std::shared_ptr<Promise<std::shared_ptr<Promise<std::vector<std::shared_ptr<HybridFaceSpec>>>>>>(const std::variant<std::string, ImageUri>& /* image */)> getDetectFaces() noexcept override {
-      auto __result = _swiftPart.getDetectFaces();
-      return __result;
-    }
-    inline void setDetectFaces(const std::function<std::shared_ptr<Promise<std::shared_ptr<Promise<std::vector<std::shared_ptr<HybridFaceSpec>>>>>>(const std::variant<std::string, ImageUri>& /* image */)>& detectFaces) noexcept override {
-      _swiftPart.setDetectFaces(detectFaces);
-    }
+    
 
   public:
     // Methods
-    
+    inline std::shared_ptr<Promise<std::vector<std::shared_ptr<HybridFaceSpec>>>> detectFaces(const std::variant<std::string, ImageUri>& image) override {
+      auto __result = _swiftPart.detectFaces(image);
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
+      auto __value = std::move(__result.value());
+      return __value;
+    }
 
   private:
     VisionCameraFaceDetector::HybridImageFaceDetectorSpec_cxx _swiftPart;

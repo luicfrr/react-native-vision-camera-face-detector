@@ -22,7 +22,6 @@ namespace margelo::nitro::camera { class HybridFrameSpec; }
 #include <vector>
 #include <NitroModules/Promise.hpp>
 #include <VisionCamera/HybridFrameSpec.hpp>
-#include <functional>
 
 #include "VisionCameraFaceDetector-Swift-Cxx-Umbrella.hpp"
 
@@ -70,24 +69,24 @@ namespace margelo::nitro::camera::facedetector {
 
   public:
     // Properties
-    inline std::function<std::shared_ptr<Promise<std::shared_ptr<Promise<std::vector<std::shared_ptr<HybridFaceSpec>>>>>>(const std::shared_ptr<margelo::nitro::camera::HybridFrameSpec>& /* frame */)> getDetectFaces() noexcept override {
-      auto __result = _swiftPart.getDetectFaces();
-      return __result;
-    }
-    inline void setDetectFaces(const std::function<std::shared_ptr<Promise<std::shared_ptr<Promise<std::vector<std::shared_ptr<HybridFaceSpec>>>>>>(const std::shared_ptr<margelo::nitro::camera::HybridFrameSpec>& /* frame */)>& detectFaces) noexcept override {
-      _swiftPart.setDetectFaces(detectFaces);
-    }
-    inline std::function<void()> getStopListeners() noexcept override {
-      auto __result = _swiftPart.getStopListeners();
-      return __result;
-    }
-    inline void setStopListeners(const std::function<void()>& stopListeners) noexcept override {
-      _swiftPart.setStopListeners(stopListeners);
-    }
+    
 
   public:
     // Methods
-    
+    inline std::shared_ptr<Promise<std::vector<std::shared_ptr<HybridFaceSpec>>>> detectFaces(const std::shared_ptr<margelo::nitro::camera::HybridFrameSpec>& frame) override {
+      auto __result = _swiftPart.detectFaces(frame);
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
+      auto __value = std::move(__result.value());
+      return __value;
+    }
+    inline void stopListeners() override {
+      auto __result = _swiftPart.stopListeners();
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
+    }
 
   private:
     VisionCameraFaceDetector::HybridFaceDetectorSpec_cxx _swiftPart;

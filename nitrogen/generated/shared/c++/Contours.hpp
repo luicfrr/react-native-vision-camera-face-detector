@@ -33,6 +33,7 @@ namespace margelo::nitro::camera::facedetector { struct Point; }
 
 #include "Point.hpp"
 #include <vector>
+#include <optional>
 
 namespace margelo::nitro::camera::facedetector {
 
@@ -41,25 +42,25 @@ namespace margelo::nitro::camera::facedetector {
    */
   struct Contours final {
   public:
-    std::vector<Point> FACE     SWIFT_PRIVATE;
-    std::vector<Point> LEFT_EYEBROW_TOP     SWIFT_PRIVATE;
-    std::vector<Point> LEFT_EYEBROW_BOTTOM     SWIFT_PRIVATE;
-    std::vector<Point> RIGHT_EYEBROW_TOP     SWIFT_PRIVATE;
-    std::vector<Point> RIGHT_EYEBROW_BOTTOM     SWIFT_PRIVATE;
-    std::vector<Point> LEFT_EYE     SWIFT_PRIVATE;
-    std::vector<Point> RIGHT_EYE     SWIFT_PRIVATE;
-    std::vector<Point> UPPER_LIP_TOP     SWIFT_PRIVATE;
-    std::vector<Point> UPPER_LIP_BOTTOM     SWIFT_PRIVATE;
-    std::vector<Point> LOWER_LIP_TOP     SWIFT_PRIVATE;
-    std::vector<Point> LOWER_LIP_BOTTOM     SWIFT_PRIVATE;
-    std::vector<Point> NOSE_BRIDGE     SWIFT_PRIVATE;
-    std::vector<Point> NOSE_BOTTOM     SWIFT_PRIVATE;
-    std::vector<Point> LEFT_CHEEK     SWIFT_PRIVATE;
-    std::vector<Point> RIGHT_CHEEK     SWIFT_PRIVATE;
+    std::optional<std::vector<Point>> FACE     SWIFT_PRIVATE;
+    std::optional<std::vector<Point>> LEFT_EYEBROW_TOP     SWIFT_PRIVATE;
+    std::optional<std::vector<Point>> LEFT_EYEBROW_BOTTOM     SWIFT_PRIVATE;
+    std::optional<std::vector<Point>> RIGHT_EYEBROW_TOP     SWIFT_PRIVATE;
+    std::optional<std::vector<Point>> RIGHT_EYEBROW_BOTTOM     SWIFT_PRIVATE;
+    std::optional<std::vector<Point>> LEFT_EYE     SWIFT_PRIVATE;
+    std::optional<std::vector<Point>> RIGHT_EYE     SWIFT_PRIVATE;
+    std::optional<std::vector<Point>> UPPER_LIP_TOP     SWIFT_PRIVATE;
+    std::optional<std::vector<Point>> UPPER_LIP_BOTTOM     SWIFT_PRIVATE;
+    std::optional<std::vector<Point>> LOWER_LIP_TOP     SWIFT_PRIVATE;
+    std::optional<std::vector<Point>> LOWER_LIP_BOTTOM     SWIFT_PRIVATE;
+    std::optional<std::vector<Point>> NOSE_BRIDGE     SWIFT_PRIVATE;
+    std::optional<std::vector<Point>> NOSE_BOTTOM     SWIFT_PRIVATE;
+    std::optional<std::vector<Point>> LEFT_CHEEK     SWIFT_PRIVATE;
+    std::optional<std::vector<Point>> RIGHT_CHEEK     SWIFT_PRIVATE;
 
   public:
     Contours() = default;
-    explicit Contours(std::vector<Point> FACE, std::vector<Point> LEFT_EYEBROW_TOP, std::vector<Point> LEFT_EYEBROW_BOTTOM, std::vector<Point> RIGHT_EYEBROW_TOP, std::vector<Point> RIGHT_EYEBROW_BOTTOM, std::vector<Point> LEFT_EYE, std::vector<Point> RIGHT_EYE, std::vector<Point> UPPER_LIP_TOP, std::vector<Point> UPPER_LIP_BOTTOM, std::vector<Point> LOWER_LIP_TOP, std::vector<Point> LOWER_LIP_BOTTOM, std::vector<Point> NOSE_BRIDGE, std::vector<Point> NOSE_BOTTOM, std::vector<Point> LEFT_CHEEK, std::vector<Point> RIGHT_CHEEK): FACE(FACE), LEFT_EYEBROW_TOP(LEFT_EYEBROW_TOP), LEFT_EYEBROW_BOTTOM(LEFT_EYEBROW_BOTTOM), RIGHT_EYEBROW_TOP(RIGHT_EYEBROW_TOP), RIGHT_EYEBROW_BOTTOM(RIGHT_EYEBROW_BOTTOM), LEFT_EYE(LEFT_EYE), RIGHT_EYE(RIGHT_EYE), UPPER_LIP_TOP(UPPER_LIP_TOP), UPPER_LIP_BOTTOM(UPPER_LIP_BOTTOM), LOWER_LIP_TOP(LOWER_LIP_TOP), LOWER_LIP_BOTTOM(LOWER_LIP_BOTTOM), NOSE_BRIDGE(NOSE_BRIDGE), NOSE_BOTTOM(NOSE_BOTTOM), LEFT_CHEEK(LEFT_CHEEK), RIGHT_CHEEK(RIGHT_CHEEK) {}
+    explicit Contours(std::optional<std::vector<Point>> FACE, std::optional<std::vector<Point>> LEFT_EYEBROW_TOP, std::optional<std::vector<Point>> LEFT_EYEBROW_BOTTOM, std::optional<std::vector<Point>> RIGHT_EYEBROW_TOP, std::optional<std::vector<Point>> RIGHT_EYEBROW_BOTTOM, std::optional<std::vector<Point>> LEFT_EYE, std::optional<std::vector<Point>> RIGHT_EYE, std::optional<std::vector<Point>> UPPER_LIP_TOP, std::optional<std::vector<Point>> UPPER_LIP_BOTTOM, std::optional<std::vector<Point>> LOWER_LIP_TOP, std::optional<std::vector<Point>> LOWER_LIP_BOTTOM, std::optional<std::vector<Point>> NOSE_BRIDGE, std::optional<std::vector<Point>> NOSE_BOTTOM, std::optional<std::vector<Point>> LEFT_CHEEK, std::optional<std::vector<Point>> RIGHT_CHEEK): FACE(FACE), LEFT_EYEBROW_TOP(LEFT_EYEBROW_TOP), LEFT_EYEBROW_BOTTOM(LEFT_EYEBROW_BOTTOM), RIGHT_EYEBROW_TOP(RIGHT_EYEBROW_TOP), RIGHT_EYEBROW_BOTTOM(RIGHT_EYEBROW_BOTTOM), LEFT_EYE(LEFT_EYE), RIGHT_EYE(RIGHT_EYE), UPPER_LIP_TOP(UPPER_LIP_TOP), UPPER_LIP_BOTTOM(UPPER_LIP_BOTTOM), LOWER_LIP_TOP(LOWER_LIP_TOP), LOWER_LIP_BOTTOM(LOWER_LIP_BOTTOM), NOSE_BRIDGE(NOSE_BRIDGE), NOSE_BOTTOM(NOSE_BOTTOM), LEFT_CHEEK(LEFT_CHEEK), RIGHT_CHEEK(RIGHT_CHEEK) {}
 
   public:
     friend bool operator==(const Contours& lhs, const Contours& rhs) = default;
@@ -75,40 +76,40 @@ namespace margelo::nitro {
     static inline margelo::nitro::camera::facedetector::Contours fromJSI(jsi::Runtime& runtime, const jsi::Value& arg) {
       jsi::Object obj = arg.asObject(runtime);
       return margelo::nitro::camera::facedetector::Contours(
-        JSIConverter<std::vector<margelo::nitro::camera::facedetector::Point>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "FACE"))),
-        JSIConverter<std::vector<margelo::nitro::camera::facedetector::Point>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "LEFT_EYEBROW_TOP"))),
-        JSIConverter<std::vector<margelo::nitro::camera::facedetector::Point>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "LEFT_EYEBROW_BOTTOM"))),
-        JSIConverter<std::vector<margelo::nitro::camera::facedetector::Point>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "RIGHT_EYEBROW_TOP"))),
-        JSIConverter<std::vector<margelo::nitro::camera::facedetector::Point>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "RIGHT_EYEBROW_BOTTOM"))),
-        JSIConverter<std::vector<margelo::nitro::camera::facedetector::Point>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "LEFT_EYE"))),
-        JSIConverter<std::vector<margelo::nitro::camera::facedetector::Point>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "RIGHT_EYE"))),
-        JSIConverter<std::vector<margelo::nitro::camera::facedetector::Point>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "UPPER_LIP_TOP"))),
-        JSIConverter<std::vector<margelo::nitro::camera::facedetector::Point>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "UPPER_LIP_BOTTOM"))),
-        JSIConverter<std::vector<margelo::nitro::camera::facedetector::Point>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "LOWER_LIP_TOP"))),
-        JSIConverter<std::vector<margelo::nitro::camera::facedetector::Point>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "LOWER_LIP_BOTTOM"))),
-        JSIConverter<std::vector<margelo::nitro::camera::facedetector::Point>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "NOSE_BRIDGE"))),
-        JSIConverter<std::vector<margelo::nitro::camera::facedetector::Point>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "NOSE_BOTTOM"))),
-        JSIConverter<std::vector<margelo::nitro::camera::facedetector::Point>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "LEFT_CHEEK"))),
-        JSIConverter<std::vector<margelo::nitro::camera::facedetector::Point>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "RIGHT_CHEEK")))
+        JSIConverter<std::optional<std::vector<margelo::nitro::camera::facedetector::Point>>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "FACE"))),
+        JSIConverter<std::optional<std::vector<margelo::nitro::camera::facedetector::Point>>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "LEFT_EYEBROW_TOP"))),
+        JSIConverter<std::optional<std::vector<margelo::nitro::camera::facedetector::Point>>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "LEFT_EYEBROW_BOTTOM"))),
+        JSIConverter<std::optional<std::vector<margelo::nitro::camera::facedetector::Point>>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "RIGHT_EYEBROW_TOP"))),
+        JSIConverter<std::optional<std::vector<margelo::nitro::camera::facedetector::Point>>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "RIGHT_EYEBROW_BOTTOM"))),
+        JSIConverter<std::optional<std::vector<margelo::nitro::camera::facedetector::Point>>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "LEFT_EYE"))),
+        JSIConverter<std::optional<std::vector<margelo::nitro::camera::facedetector::Point>>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "RIGHT_EYE"))),
+        JSIConverter<std::optional<std::vector<margelo::nitro::camera::facedetector::Point>>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "UPPER_LIP_TOP"))),
+        JSIConverter<std::optional<std::vector<margelo::nitro::camera::facedetector::Point>>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "UPPER_LIP_BOTTOM"))),
+        JSIConverter<std::optional<std::vector<margelo::nitro::camera::facedetector::Point>>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "LOWER_LIP_TOP"))),
+        JSIConverter<std::optional<std::vector<margelo::nitro::camera::facedetector::Point>>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "LOWER_LIP_BOTTOM"))),
+        JSIConverter<std::optional<std::vector<margelo::nitro::camera::facedetector::Point>>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "NOSE_BRIDGE"))),
+        JSIConverter<std::optional<std::vector<margelo::nitro::camera::facedetector::Point>>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "NOSE_BOTTOM"))),
+        JSIConverter<std::optional<std::vector<margelo::nitro::camera::facedetector::Point>>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "LEFT_CHEEK"))),
+        JSIConverter<std::optional<std::vector<margelo::nitro::camera::facedetector::Point>>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "RIGHT_CHEEK")))
       );
     }
     static inline jsi::Value toJSI(jsi::Runtime& runtime, const margelo::nitro::camera::facedetector::Contours& arg) {
       jsi::Object obj(runtime);
-      obj.setProperty(runtime, PropNameIDCache::get(runtime, "FACE"), JSIConverter<std::vector<margelo::nitro::camera::facedetector::Point>>::toJSI(runtime, arg.FACE));
-      obj.setProperty(runtime, PropNameIDCache::get(runtime, "LEFT_EYEBROW_TOP"), JSIConverter<std::vector<margelo::nitro::camera::facedetector::Point>>::toJSI(runtime, arg.LEFT_EYEBROW_TOP));
-      obj.setProperty(runtime, PropNameIDCache::get(runtime, "LEFT_EYEBROW_BOTTOM"), JSIConverter<std::vector<margelo::nitro::camera::facedetector::Point>>::toJSI(runtime, arg.LEFT_EYEBROW_BOTTOM));
-      obj.setProperty(runtime, PropNameIDCache::get(runtime, "RIGHT_EYEBROW_TOP"), JSIConverter<std::vector<margelo::nitro::camera::facedetector::Point>>::toJSI(runtime, arg.RIGHT_EYEBROW_TOP));
-      obj.setProperty(runtime, PropNameIDCache::get(runtime, "RIGHT_EYEBROW_BOTTOM"), JSIConverter<std::vector<margelo::nitro::camera::facedetector::Point>>::toJSI(runtime, arg.RIGHT_EYEBROW_BOTTOM));
-      obj.setProperty(runtime, PropNameIDCache::get(runtime, "LEFT_EYE"), JSIConverter<std::vector<margelo::nitro::camera::facedetector::Point>>::toJSI(runtime, arg.LEFT_EYE));
-      obj.setProperty(runtime, PropNameIDCache::get(runtime, "RIGHT_EYE"), JSIConverter<std::vector<margelo::nitro::camera::facedetector::Point>>::toJSI(runtime, arg.RIGHT_EYE));
-      obj.setProperty(runtime, PropNameIDCache::get(runtime, "UPPER_LIP_TOP"), JSIConverter<std::vector<margelo::nitro::camera::facedetector::Point>>::toJSI(runtime, arg.UPPER_LIP_TOP));
-      obj.setProperty(runtime, PropNameIDCache::get(runtime, "UPPER_LIP_BOTTOM"), JSIConverter<std::vector<margelo::nitro::camera::facedetector::Point>>::toJSI(runtime, arg.UPPER_LIP_BOTTOM));
-      obj.setProperty(runtime, PropNameIDCache::get(runtime, "LOWER_LIP_TOP"), JSIConverter<std::vector<margelo::nitro::camera::facedetector::Point>>::toJSI(runtime, arg.LOWER_LIP_TOP));
-      obj.setProperty(runtime, PropNameIDCache::get(runtime, "LOWER_LIP_BOTTOM"), JSIConverter<std::vector<margelo::nitro::camera::facedetector::Point>>::toJSI(runtime, arg.LOWER_LIP_BOTTOM));
-      obj.setProperty(runtime, PropNameIDCache::get(runtime, "NOSE_BRIDGE"), JSIConverter<std::vector<margelo::nitro::camera::facedetector::Point>>::toJSI(runtime, arg.NOSE_BRIDGE));
-      obj.setProperty(runtime, PropNameIDCache::get(runtime, "NOSE_BOTTOM"), JSIConverter<std::vector<margelo::nitro::camera::facedetector::Point>>::toJSI(runtime, arg.NOSE_BOTTOM));
-      obj.setProperty(runtime, PropNameIDCache::get(runtime, "LEFT_CHEEK"), JSIConverter<std::vector<margelo::nitro::camera::facedetector::Point>>::toJSI(runtime, arg.LEFT_CHEEK));
-      obj.setProperty(runtime, PropNameIDCache::get(runtime, "RIGHT_CHEEK"), JSIConverter<std::vector<margelo::nitro::camera::facedetector::Point>>::toJSI(runtime, arg.RIGHT_CHEEK));
+      obj.setProperty(runtime, PropNameIDCache::get(runtime, "FACE"), JSIConverter<std::optional<std::vector<margelo::nitro::camera::facedetector::Point>>>::toJSI(runtime, arg.FACE));
+      obj.setProperty(runtime, PropNameIDCache::get(runtime, "LEFT_EYEBROW_TOP"), JSIConverter<std::optional<std::vector<margelo::nitro::camera::facedetector::Point>>>::toJSI(runtime, arg.LEFT_EYEBROW_TOP));
+      obj.setProperty(runtime, PropNameIDCache::get(runtime, "LEFT_EYEBROW_BOTTOM"), JSIConverter<std::optional<std::vector<margelo::nitro::camera::facedetector::Point>>>::toJSI(runtime, arg.LEFT_EYEBROW_BOTTOM));
+      obj.setProperty(runtime, PropNameIDCache::get(runtime, "RIGHT_EYEBROW_TOP"), JSIConverter<std::optional<std::vector<margelo::nitro::camera::facedetector::Point>>>::toJSI(runtime, arg.RIGHT_EYEBROW_TOP));
+      obj.setProperty(runtime, PropNameIDCache::get(runtime, "RIGHT_EYEBROW_BOTTOM"), JSIConverter<std::optional<std::vector<margelo::nitro::camera::facedetector::Point>>>::toJSI(runtime, arg.RIGHT_EYEBROW_BOTTOM));
+      obj.setProperty(runtime, PropNameIDCache::get(runtime, "LEFT_EYE"), JSIConverter<std::optional<std::vector<margelo::nitro::camera::facedetector::Point>>>::toJSI(runtime, arg.LEFT_EYE));
+      obj.setProperty(runtime, PropNameIDCache::get(runtime, "RIGHT_EYE"), JSIConverter<std::optional<std::vector<margelo::nitro::camera::facedetector::Point>>>::toJSI(runtime, arg.RIGHT_EYE));
+      obj.setProperty(runtime, PropNameIDCache::get(runtime, "UPPER_LIP_TOP"), JSIConverter<std::optional<std::vector<margelo::nitro::camera::facedetector::Point>>>::toJSI(runtime, arg.UPPER_LIP_TOP));
+      obj.setProperty(runtime, PropNameIDCache::get(runtime, "UPPER_LIP_BOTTOM"), JSIConverter<std::optional<std::vector<margelo::nitro::camera::facedetector::Point>>>::toJSI(runtime, arg.UPPER_LIP_BOTTOM));
+      obj.setProperty(runtime, PropNameIDCache::get(runtime, "LOWER_LIP_TOP"), JSIConverter<std::optional<std::vector<margelo::nitro::camera::facedetector::Point>>>::toJSI(runtime, arg.LOWER_LIP_TOP));
+      obj.setProperty(runtime, PropNameIDCache::get(runtime, "LOWER_LIP_BOTTOM"), JSIConverter<std::optional<std::vector<margelo::nitro::camera::facedetector::Point>>>::toJSI(runtime, arg.LOWER_LIP_BOTTOM));
+      obj.setProperty(runtime, PropNameIDCache::get(runtime, "NOSE_BRIDGE"), JSIConverter<std::optional<std::vector<margelo::nitro::camera::facedetector::Point>>>::toJSI(runtime, arg.NOSE_BRIDGE));
+      obj.setProperty(runtime, PropNameIDCache::get(runtime, "NOSE_BOTTOM"), JSIConverter<std::optional<std::vector<margelo::nitro::camera::facedetector::Point>>>::toJSI(runtime, arg.NOSE_BOTTOM));
+      obj.setProperty(runtime, PropNameIDCache::get(runtime, "LEFT_CHEEK"), JSIConverter<std::optional<std::vector<margelo::nitro::camera::facedetector::Point>>>::toJSI(runtime, arg.LEFT_CHEEK));
+      obj.setProperty(runtime, PropNameIDCache::get(runtime, "RIGHT_CHEEK"), JSIConverter<std::optional<std::vector<margelo::nitro::camera::facedetector::Point>>>::toJSI(runtime, arg.RIGHT_CHEEK));
       return obj;
     }
     static inline bool canConvert(jsi::Runtime& runtime, const jsi::Value& value) {
@@ -119,21 +120,21 @@ namespace margelo::nitro {
       if (!nitro::isPlainObject(runtime, obj)) {
         return false;
       }
-      if (!JSIConverter<std::vector<margelo::nitro::camera::facedetector::Point>>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "FACE")))) return false;
-      if (!JSIConverter<std::vector<margelo::nitro::camera::facedetector::Point>>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "LEFT_EYEBROW_TOP")))) return false;
-      if (!JSIConverter<std::vector<margelo::nitro::camera::facedetector::Point>>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "LEFT_EYEBROW_BOTTOM")))) return false;
-      if (!JSIConverter<std::vector<margelo::nitro::camera::facedetector::Point>>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "RIGHT_EYEBROW_TOP")))) return false;
-      if (!JSIConverter<std::vector<margelo::nitro::camera::facedetector::Point>>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "RIGHT_EYEBROW_BOTTOM")))) return false;
-      if (!JSIConverter<std::vector<margelo::nitro::camera::facedetector::Point>>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "LEFT_EYE")))) return false;
-      if (!JSIConverter<std::vector<margelo::nitro::camera::facedetector::Point>>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "RIGHT_EYE")))) return false;
-      if (!JSIConverter<std::vector<margelo::nitro::camera::facedetector::Point>>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "UPPER_LIP_TOP")))) return false;
-      if (!JSIConverter<std::vector<margelo::nitro::camera::facedetector::Point>>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "UPPER_LIP_BOTTOM")))) return false;
-      if (!JSIConverter<std::vector<margelo::nitro::camera::facedetector::Point>>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "LOWER_LIP_TOP")))) return false;
-      if (!JSIConverter<std::vector<margelo::nitro::camera::facedetector::Point>>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "LOWER_LIP_BOTTOM")))) return false;
-      if (!JSIConverter<std::vector<margelo::nitro::camera::facedetector::Point>>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "NOSE_BRIDGE")))) return false;
-      if (!JSIConverter<std::vector<margelo::nitro::camera::facedetector::Point>>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "NOSE_BOTTOM")))) return false;
-      if (!JSIConverter<std::vector<margelo::nitro::camera::facedetector::Point>>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "LEFT_CHEEK")))) return false;
-      if (!JSIConverter<std::vector<margelo::nitro::camera::facedetector::Point>>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "RIGHT_CHEEK")))) return false;
+      if (!JSIConverter<std::optional<std::vector<margelo::nitro::camera::facedetector::Point>>>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "FACE")))) return false;
+      if (!JSIConverter<std::optional<std::vector<margelo::nitro::camera::facedetector::Point>>>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "LEFT_EYEBROW_TOP")))) return false;
+      if (!JSIConverter<std::optional<std::vector<margelo::nitro::camera::facedetector::Point>>>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "LEFT_EYEBROW_BOTTOM")))) return false;
+      if (!JSIConverter<std::optional<std::vector<margelo::nitro::camera::facedetector::Point>>>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "RIGHT_EYEBROW_TOP")))) return false;
+      if (!JSIConverter<std::optional<std::vector<margelo::nitro::camera::facedetector::Point>>>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "RIGHT_EYEBROW_BOTTOM")))) return false;
+      if (!JSIConverter<std::optional<std::vector<margelo::nitro::camera::facedetector::Point>>>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "LEFT_EYE")))) return false;
+      if (!JSIConverter<std::optional<std::vector<margelo::nitro::camera::facedetector::Point>>>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "RIGHT_EYE")))) return false;
+      if (!JSIConverter<std::optional<std::vector<margelo::nitro::camera::facedetector::Point>>>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "UPPER_LIP_TOP")))) return false;
+      if (!JSIConverter<std::optional<std::vector<margelo::nitro::camera::facedetector::Point>>>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "UPPER_LIP_BOTTOM")))) return false;
+      if (!JSIConverter<std::optional<std::vector<margelo::nitro::camera::facedetector::Point>>>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "LOWER_LIP_TOP")))) return false;
+      if (!JSIConverter<std::optional<std::vector<margelo::nitro::camera::facedetector::Point>>>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "LOWER_LIP_BOTTOM")))) return false;
+      if (!JSIConverter<std::optional<std::vector<margelo::nitro::camera::facedetector::Point>>>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "NOSE_BRIDGE")))) return false;
+      if (!JSIConverter<std::optional<std::vector<margelo::nitro::camera::facedetector::Point>>>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "NOSE_BOTTOM")))) return false;
+      if (!JSIConverter<std::optional<std::vector<margelo::nitro::camera::facedetector::Point>>>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "LEFT_CHEEK")))) return false;
+      if (!JSIConverter<std::optional<std::vector<margelo::nitro::camera::facedetector::Point>>>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "RIGHT_CHEEK")))) return false;
       return true;
     }
   };

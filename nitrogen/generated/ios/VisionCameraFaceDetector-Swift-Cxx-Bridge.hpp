@@ -12,8 +12,10 @@
 namespace margelo::nitro::camera::facedetector { enum class CameraPosition; }
 // Forward declaration of `Contours` to properly resolve imports.
 namespace margelo::nitro::camera::facedetector { struct Contours; }
-// Forward declaration of `FaceDetectorOptions` to properly resolve imports.
-namespace margelo::nitro::camera::facedetector { struct FaceDetectorOptions; }
+// Forward declaration of `FaceDetectorOptionsAutoModeDisabled` to properly resolve imports.
+namespace margelo::nitro::camera::facedetector { struct FaceDetectorOptionsAutoModeDisabled; }
+// Forward declaration of `FaceDetectorOptionsAutoModeEnabled` to properly resolve imports.
+namespace margelo::nitro::camera::facedetector { struct FaceDetectorOptionsAutoModeEnabled; }
 // Forward declaration of `HybridFaceDetectorFactorySpec` to properly resolve imports.
 namespace margelo::nitro::camera::facedetector { class HybridFaceDetectorFactorySpec; }
 // Forward declaration of `HybridFaceDetectorSpec` to properly resolve imports.
@@ -26,8 +28,6 @@ namespace margelo::nitro::camera { class HybridFrameSpec; }
 namespace margelo::nitro::camera::facedetector { class HybridImageFaceDetectorFactorySpec; }
 // Forward declaration of `HybridImageFaceDetectorSpec` to properly resolve imports.
 namespace margelo::nitro::camera::facedetector { class HybridImageFaceDetectorSpec; }
-// Forward declaration of `ImageFaceDetectorOptions` to properly resolve imports.
-namespace margelo::nitro::camera::facedetector { struct ImageFaceDetectorOptions; }
 // Forward declaration of `ImageUri` to properly resolve imports.
 namespace margelo::nitro::camera::facedetector { struct ImageUri; }
 // Forward declaration of `Landmarks` to properly resolve imports.
@@ -54,13 +54,13 @@ namespace VisionCameraFaceDetector { class HybridImageFaceDetectorSpec_cxx; }
 // Include C++ defined types
 #include "CameraPosition.hpp"
 #include "Contours.hpp"
-#include "FaceDetectorOptions.hpp"
+#include "FaceDetectorOptionsAutoModeDisabled.hpp"
+#include "FaceDetectorOptionsAutoModeEnabled.hpp"
 #include "HybridFaceDetectorFactorySpec.hpp"
 #include "HybridFaceDetectorSpec.hpp"
 #include "HybridFaceSpec.hpp"
 #include "HybridImageFaceDetectorFactorySpec.hpp"
 #include "HybridImageFaceDetectorSpec.hpp"
-#include "ImageFaceDetectorOptions.hpp"
 #include "ImageUri.hpp"
 #include "Landmarks.hpp"
 #include "PerformanceMode.hpp"
@@ -83,6 +83,21 @@ namespace VisionCameraFaceDetector { class HybridImageFaceDetectorSpec_cxx; }
  */
 namespace margelo::nitro::camera::facedetector::bridge::swift {
 
+  // pragma MARK: std::optional<Point>
+  /**
+   * Specialized version of `std::optional<Point>`.
+   */
+  using std__optional_Point_ = std::optional<Point>;
+  inline std::optional<Point> create_std__optional_Point_(const Point& value) noexcept {
+    return std::optional<Point>(value);
+  }
+  inline bool has_value_std__optional_Point_(const std::optional<Point>& optional) noexcept {
+    return optional.has_value();
+  }
+  inline Point get_std__optional_Point_(const std::optional<Point>& optional) noexcept {
+    return optional.value();
+  }
+  
   // pragma MARK: std::optional<Landmarks>
   /**
    * Specialized version of `std::optional<Landmarks>`.
@@ -107,6 +122,21 @@ namespace margelo::nitro::camera::facedetector::bridge::swift {
     std::vector<Point> vector;
     vector.reserve(size);
     return vector;
+  }
+  
+  // pragma MARK: std::optional<std::vector<Point>>
+  /**
+   * Specialized version of `std::optional<std::vector<Point>>`.
+   */
+  using std__optional_std__vector_Point__ = std::optional<std::vector<Point>>;
+  inline std::optional<std::vector<Point>> create_std__optional_std__vector_Point__(const std::vector<Point>& value) noexcept {
+    return std::optional<std::vector<Point>>(value);
+  }
+  inline bool has_value_std__optional_std__vector_Point__(const std::optional<std::vector<Point>>& optional) noexcept {
+    return optional.has_value();
+  }
+  inline std::vector<Point> get_std__optional_std__vector_Point__(const std::optional<std::vector<Point>>& optional) noexcept {
+    return optional.value();
   }
   
   // pragma MARK: std::optional<Contours>
@@ -230,85 +260,6 @@ namespace margelo::nitro::camera::facedetector::bridge::swift {
   using std__weak_ptr_margelo__nitro__camera__HybridFrameSpec_ = std::weak_ptr<margelo::nitro::camera::HybridFrameSpec>;
   inline std__weak_ptr_margelo__nitro__camera__HybridFrameSpec_ weakify_std__shared_ptr_margelo__nitro__camera__HybridFrameSpec_(const std::shared_ptr<margelo::nitro::camera::HybridFrameSpec>& strong) noexcept { return strong; }
   
-  // pragma MARK: std::function<std::shared_ptr<Promise<std::shared_ptr<Promise<std::vector<std::shared_ptr<HybridFaceSpec>>>>>>(const std::shared_ptr<margelo::nitro::camera::HybridFrameSpec>& /* frame */)>
-  /**
-   * Specialized version of `std::function<std::shared_ptr<Promise<std::shared_ptr<Promise<std::vector<std::shared_ptr<HybridFaceSpec>>>>>>(const std::shared_ptr<margelo::nitro::camera::HybridFrameSpec>&)>`.
-   */
-  using Func_std__shared_ptr_Promise_std__shared_ptr_Promise_std__vector_std__shared_ptr_HybridFaceSpec_______std__shared_ptr_margelo__nitro__camera__HybridFrameSpec_ = std::function<std::shared_ptr<Promise<std::shared_ptr<Promise<std::vector<std::shared_ptr<HybridFaceSpec>>>>>>(const std::shared_ptr<margelo::nitro::camera::HybridFrameSpec>& /* frame */)>;
-  /**
-   * Wrapper class for a `std::function<std::shared_ptr<Promise<std::shared_ptr<Promise<std::vector<std::shared_ptr<HybridFaceSpec>>>>>>(const std::shared_ptr<margelo::nitro::camera::HybridFrameSpec>& / * frame * /)>`, this can be used from Swift.
-   */
-  class Func_std__shared_ptr_Promise_std__shared_ptr_Promise_std__vector_std__shared_ptr_HybridFaceSpec_______std__shared_ptr_margelo__nitro__camera__HybridFrameSpec__Wrapper final {
-  public:
-    explicit Func_std__shared_ptr_Promise_std__shared_ptr_Promise_std__vector_std__shared_ptr_HybridFaceSpec_______std__shared_ptr_margelo__nitro__camera__HybridFrameSpec__Wrapper(std::function<std::shared_ptr<Promise<std::shared_ptr<Promise<std::vector<std::shared_ptr<HybridFaceSpec>>>>>>(const std::shared_ptr<margelo::nitro::camera::HybridFrameSpec>& /* frame */)>&& func): _function(std::make_unique<std::function<std::shared_ptr<Promise<std::shared_ptr<Promise<std::vector<std::shared_ptr<HybridFaceSpec>>>>>>(const std::shared_ptr<margelo::nitro::camera::HybridFrameSpec>& /* frame */)>>(std::move(func))) {}
-    inline std::shared_ptr<Promise<std::shared_ptr<Promise<std::vector<std::shared_ptr<HybridFaceSpec>>>>>> call(std::shared_ptr<margelo::nitro::camera::HybridFrameSpec> frame) const noexcept {
-      auto __result = _function->operator()(frame);
-      return __result;
-    }
-  private:
-    std::unique_ptr<std::function<std::shared_ptr<Promise<std::shared_ptr<Promise<std::vector<std::shared_ptr<HybridFaceSpec>>>>>>(const std::shared_ptr<margelo::nitro::camera::HybridFrameSpec>& /* frame */)>> _function;
-  } SWIFT_NONCOPYABLE;
-  Func_std__shared_ptr_Promise_std__shared_ptr_Promise_std__vector_std__shared_ptr_HybridFaceSpec_______std__shared_ptr_margelo__nitro__camera__HybridFrameSpec_ create_Func_std__shared_ptr_Promise_std__shared_ptr_Promise_std__vector_std__shared_ptr_HybridFaceSpec_______std__shared_ptr_margelo__nitro__camera__HybridFrameSpec_(void* NON_NULL swiftClosureWrapper) noexcept;
-  inline Func_std__shared_ptr_Promise_std__shared_ptr_Promise_std__vector_std__shared_ptr_HybridFaceSpec_______std__shared_ptr_margelo__nitro__camera__HybridFrameSpec__Wrapper wrap_Func_std__shared_ptr_Promise_std__shared_ptr_Promise_std__vector_std__shared_ptr_HybridFaceSpec_______std__shared_ptr_margelo__nitro__camera__HybridFrameSpec_(Func_std__shared_ptr_Promise_std__shared_ptr_Promise_std__vector_std__shared_ptr_HybridFaceSpec_______std__shared_ptr_margelo__nitro__camera__HybridFrameSpec_ value) noexcept {
-    return Func_std__shared_ptr_Promise_std__shared_ptr_Promise_std__vector_std__shared_ptr_HybridFaceSpec_______std__shared_ptr_margelo__nitro__camera__HybridFrameSpec__Wrapper(std::move(value));
-  }
-  
-  // pragma MARK: std::shared_ptr<Promise<std::shared_ptr<Promise<std::vector<std::shared_ptr<HybridFaceSpec>>>>>>
-  /**
-   * Specialized version of `std::shared_ptr<Promise<std::shared_ptr<Promise<std::vector<std::shared_ptr<HybridFaceSpec>>>>>>`.
-   */
-  using std__shared_ptr_Promise_std__shared_ptr_Promise_std__vector_std__shared_ptr_HybridFaceSpec______ = std::shared_ptr<Promise<std::shared_ptr<Promise<std::vector<std::shared_ptr<HybridFaceSpec>>>>>>;
-  inline std::shared_ptr<Promise<std::shared_ptr<Promise<std::vector<std::shared_ptr<HybridFaceSpec>>>>>> create_std__shared_ptr_Promise_std__shared_ptr_Promise_std__vector_std__shared_ptr_HybridFaceSpec______() noexcept {
-    return Promise<std::shared_ptr<Promise<std::vector<std::shared_ptr<HybridFaceSpec>>>>>::create();
-  }
-  inline PromiseHolder<std::shared_ptr<Promise<std::vector<std::shared_ptr<HybridFaceSpec>>>>> wrap_std__shared_ptr_Promise_std__shared_ptr_Promise_std__vector_std__shared_ptr_HybridFaceSpec______(std::shared_ptr<Promise<std::shared_ptr<Promise<std::vector<std::shared_ptr<HybridFaceSpec>>>>>> promise) noexcept {
-    return PromiseHolder<std::shared_ptr<Promise<std::vector<std::shared_ptr<HybridFaceSpec>>>>>(std::move(promise));
-  }
-  
-  // pragma MARK: std::function<void(const std::shared_ptr<Promise<std::vector<std::shared_ptr<HybridFaceSpec>>>>& /* result */)>
-  /**
-   * Specialized version of `std::function<void(const std::shared_ptr<Promise<std::vector<std::shared_ptr<HybridFaceSpec>>>>&)>`.
-   */
-  using Func_void_std__shared_ptr_Promise_std__vector_std__shared_ptr_HybridFaceSpec____ = std::function<void(const std::shared_ptr<Promise<std::vector<std::shared_ptr<HybridFaceSpec>>>>& /* result */)>;
-  /**
-   * Wrapper class for a `std::function<void(const std::shared_ptr<Promise<std::vector<std::shared_ptr<HybridFaceSpec>>>>& / * result * /)>`, this can be used from Swift.
-   */
-  class Func_void_std__shared_ptr_Promise_std__vector_std__shared_ptr_HybridFaceSpec_____Wrapper final {
-  public:
-    explicit Func_void_std__shared_ptr_Promise_std__vector_std__shared_ptr_HybridFaceSpec_____Wrapper(std::function<void(const std::shared_ptr<Promise<std::vector<std::shared_ptr<HybridFaceSpec>>>>& /* result */)>&& func): _function(std::make_unique<std::function<void(const std::shared_ptr<Promise<std::vector<std::shared_ptr<HybridFaceSpec>>>>& /* result */)>>(std::move(func))) {}
-    inline void call(std::shared_ptr<Promise<std::vector<std::shared_ptr<HybridFaceSpec>>>> result) const noexcept {
-      _function->operator()(result);
-    }
-  private:
-    std::unique_ptr<std::function<void(const std::shared_ptr<Promise<std::vector<std::shared_ptr<HybridFaceSpec>>>>& /* result */)>> _function;
-  } SWIFT_NONCOPYABLE;
-  Func_void_std__shared_ptr_Promise_std__vector_std__shared_ptr_HybridFaceSpec____ create_Func_void_std__shared_ptr_Promise_std__vector_std__shared_ptr_HybridFaceSpec____(void* NON_NULL swiftClosureWrapper) noexcept;
-  inline Func_void_std__shared_ptr_Promise_std__vector_std__shared_ptr_HybridFaceSpec_____Wrapper wrap_Func_void_std__shared_ptr_Promise_std__vector_std__shared_ptr_HybridFaceSpec____(Func_void_std__shared_ptr_Promise_std__vector_std__shared_ptr_HybridFaceSpec____ value) noexcept {
-    return Func_void_std__shared_ptr_Promise_std__vector_std__shared_ptr_HybridFaceSpec_____Wrapper(std::move(value));
-  }
-  
-  // pragma MARK: std::function<void()>
-  /**
-   * Specialized version of `std::function<void()>`.
-   */
-  using Func_void = std::function<void()>;
-  /**
-   * Wrapper class for a `std::function<void()>`, this can be used from Swift.
-   */
-  class Func_void_Wrapper final {
-  public:
-    explicit Func_void_Wrapper(std::function<void()>&& func): _function(std::make_unique<std::function<void()>>(std::move(func))) {}
-    inline void call() const noexcept {
-      _function->operator()();
-    }
-  private:
-    std::unique_ptr<std::function<void()>> _function;
-  } SWIFT_NONCOPYABLE;
-  Func_void create_Func_void(void* NON_NULL swiftClosureWrapper) noexcept;
-  inline Func_void_Wrapper wrap_Func_void(Func_void value) noexcept {
-    return Func_void_Wrapper(std::move(value));
-  }
-  
   // pragma MARK: std::shared_ptr<HybridFaceDetectorSpec>
   /**
    * Specialized version of `std::shared_ptr<HybridFaceDetectorSpec>`.
@@ -321,19 +272,22 @@ namespace margelo::nitro::camera::facedetector::bridge::swift {
   using std__weak_ptr_HybridFaceDetectorSpec_ = std::weak_ptr<HybridFaceDetectorSpec>;
   inline std__weak_ptr_HybridFaceDetectorSpec_ weakify_std__shared_ptr_HybridFaceDetectorSpec_(const std::shared_ptr<HybridFaceDetectorSpec>& strong) noexcept { return strong; }
   
-  // pragma MARK: std::optional<CameraPosition>
-  /**
-   * Specialized version of `std::optional<CameraPosition>`.
-   */
-  using std__optional_CameraPosition_ = std::optional<CameraPosition>;
-  inline std::optional<CameraPosition> create_std__optional_CameraPosition_(const CameraPosition& value) noexcept {
-    return std::optional<CameraPosition>(value);
+  // pragma MARK: Result<std::shared_ptr<Promise<std::vector<std::shared_ptr<HybridFaceSpec>>>>>
+  using Result_std__shared_ptr_Promise_std__vector_std__shared_ptr_HybridFaceSpec_____ = Result<std::shared_ptr<Promise<std::vector<std::shared_ptr<HybridFaceSpec>>>>>;
+  inline Result_std__shared_ptr_Promise_std__vector_std__shared_ptr_HybridFaceSpec_____ create_Result_std__shared_ptr_Promise_std__vector_std__shared_ptr_HybridFaceSpec_____(const std::shared_ptr<Promise<std::vector<std::shared_ptr<HybridFaceSpec>>>>& value) noexcept {
+    return Result<std::shared_ptr<Promise<std::vector<std::shared_ptr<HybridFaceSpec>>>>>::withValue(value);
   }
-  inline bool has_value_std__optional_CameraPosition_(const std::optional<CameraPosition>& optional) noexcept {
-    return optional.has_value();
+  inline Result_std__shared_ptr_Promise_std__vector_std__shared_ptr_HybridFaceSpec_____ create_Result_std__shared_ptr_Promise_std__vector_std__shared_ptr_HybridFaceSpec_____(const std::exception_ptr& error) noexcept {
+    return Result<std::shared_ptr<Promise<std::vector<std::shared_ptr<HybridFaceSpec>>>>>::withError(error);
   }
-  inline CameraPosition get_std__optional_CameraPosition_(const std::optional<CameraPosition>& optional) noexcept {
-    return optional.value();
+  
+  // pragma MARK: Result<void>
+  using Result_void_ = Result<void>;
+  inline Result_void_ create_Result_void_() noexcept {
+    return Result<void>::withValue();
+  }
+  inline Result_void_ create_Result_void_(const std::exception_ptr& error) noexcept {
+    return Result<void>::withError(error);
   }
   
   // pragma MARK: std::optional<bool>
@@ -366,19 +320,48 @@ namespace margelo::nitro::camera::facedetector::bridge::swift {
     return optional.value();
   }
   
-  // pragma MARK: std::optional<FaceDetectorOptions>
+  // pragma MARK: std::optional<CameraPosition>
   /**
-   * Specialized version of `std::optional<FaceDetectorOptions>`.
+   * Specialized version of `std::optional<CameraPosition>`.
    */
-  using std__optional_FaceDetectorOptions_ = std::optional<FaceDetectorOptions>;
-  inline std::optional<FaceDetectorOptions> create_std__optional_FaceDetectorOptions_(const FaceDetectorOptions& value) noexcept {
-    return std::optional<FaceDetectorOptions>(value);
+  using std__optional_CameraPosition_ = std::optional<CameraPosition>;
+  inline std::optional<CameraPosition> create_std__optional_CameraPosition_(const CameraPosition& value) noexcept {
+    return std::optional<CameraPosition>(value);
   }
-  inline bool has_value_std__optional_FaceDetectorOptions_(const std::optional<FaceDetectorOptions>& optional) noexcept {
+  inline bool has_value_std__optional_CameraPosition_(const std::optional<CameraPosition>& optional) noexcept {
     return optional.has_value();
   }
-  inline FaceDetectorOptions get_std__optional_FaceDetectorOptions_(const std::optional<FaceDetectorOptions>& optional) noexcept {
+  inline CameraPosition get_std__optional_CameraPosition_(const std::optional<CameraPosition>& optional) noexcept {
     return optional.value();
+  }
+  
+  // pragma MARK: std::variant<FaceDetectorOptionsAutoModeDisabled, FaceDetectorOptionsAutoModeEnabled>
+  /**
+   * Wrapper struct for `std::variant<FaceDetectorOptionsAutoModeDisabled, FaceDetectorOptionsAutoModeEnabled>`.
+   * std::variant cannot be used in Swift because of a Swift bug.
+   * Not even specializing it works. So we create a wrapper struct.
+   */
+  struct std__variant_FaceDetectorOptionsAutoModeDisabled__FaceDetectorOptionsAutoModeEnabled_ final {
+    std::variant<FaceDetectorOptionsAutoModeDisabled, FaceDetectorOptionsAutoModeEnabled> variant;
+    std__variant_FaceDetectorOptionsAutoModeDisabled__FaceDetectorOptionsAutoModeEnabled_(std::variant<FaceDetectorOptionsAutoModeDisabled, FaceDetectorOptionsAutoModeEnabled> variant): variant(variant) { }
+    operator std::variant<FaceDetectorOptionsAutoModeDisabled, FaceDetectorOptionsAutoModeEnabled>() const noexcept {
+      return variant;
+    }
+    inline size_t index() const noexcept {
+      return variant.index();
+    }
+    inline FaceDetectorOptionsAutoModeDisabled get_0() const noexcept {
+      return std::get<0>(variant);
+    }
+    inline FaceDetectorOptionsAutoModeEnabled get_1() const noexcept {
+      return std::get<1>(variant);
+    }
+  };
+  inline std__variant_FaceDetectorOptionsAutoModeDisabled__FaceDetectorOptionsAutoModeEnabled_ create_std__variant_FaceDetectorOptionsAutoModeDisabled__FaceDetectorOptionsAutoModeEnabled_(const FaceDetectorOptionsAutoModeDisabled& value) noexcept {
+    return std__variant_FaceDetectorOptionsAutoModeDisabled__FaceDetectorOptionsAutoModeEnabled_(value);
+  }
+  inline std__variant_FaceDetectorOptionsAutoModeDisabled__FaceDetectorOptionsAutoModeEnabled_ create_std__variant_FaceDetectorOptionsAutoModeDisabled__FaceDetectorOptionsAutoModeEnabled_(const FaceDetectorOptionsAutoModeEnabled& value) noexcept {
+    return std__variant_FaceDetectorOptionsAutoModeDisabled__FaceDetectorOptionsAutoModeEnabled_(value);
   }
   
   // pragma MARK: std::shared_ptr<HybridFaceDetectorFactorySpec>
@@ -431,29 +414,6 @@ namespace margelo::nitro::camera::facedetector::bridge::swift {
     return std__variant_std__string__ImageUri_(value);
   }
   
-  // pragma MARK: std::function<std::shared_ptr<Promise<std::shared_ptr<Promise<std::vector<std::shared_ptr<HybridFaceSpec>>>>>>(const std::variant<std::string, ImageUri>& /* image */)>
-  /**
-   * Specialized version of `std::function<std::shared_ptr<Promise<std::shared_ptr<Promise<std::vector<std::shared_ptr<HybridFaceSpec>>>>>>(const std::variant<std::string, ImageUri>&)>`.
-   */
-  using Func_std__shared_ptr_Promise_std__shared_ptr_Promise_std__vector_std__shared_ptr_HybridFaceSpec_______std__variant_std__string__ImageUri_ = std::function<std::shared_ptr<Promise<std::shared_ptr<Promise<std::vector<std::shared_ptr<HybridFaceSpec>>>>>>(const std::variant<std::string, ImageUri>& /* image */)>;
-  /**
-   * Wrapper class for a `std::function<std::shared_ptr<Promise<std::shared_ptr<Promise<std::vector<std::shared_ptr<HybridFaceSpec>>>>>>(const std::variant<std::string, ImageUri>& / * image * /)>`, this can be used from Swift.
-   */
-  class Func_std__shared_ptr_Promise_std__shared_ptr_Promise_std__vector_std__shared_ptr_HybridFaceSpec_______std__variant_std__string__ImageUri__Wrapper final {
-  public:
-    explicit Func_std__shared_ptr_Promise_std__shared_ptr_Promise_std__vector_std__shared_ptr_HybridFaceSpec_______std__variant_std__string__ImageUri__Wrapper(std::function<std::shared_ptr<Promise<std::shared_ptr<Promise<std::vector<std::shared_ptr<HybridFaceSpec>>>>>>(const std::variant<std::string, ImageUri>& /* image */)>&& func): _function(std::make_unique<std::function<std::shared_ptr<Promise<std::shared_ptr<Promise<std::vector<std::shared_ptr<HybridFaceSpec>>>>>>(const std::variant<std::string, ImageUri>& /* image */)>>(std::move(func))) {}
-    inline std::shared_ptr<Promise<std::shared_ptr<Promise<std::vector<std::shared_ptr<HybridFaceSpec>>>>>> call(std::variant<std::string, ImageUri> image) const noexcept {
-      auto __result = _function->operator()(image);
-      return __result;
-    }
-  private:
-    std::unique_ptr<std::function<std::shared_ptr<Promise<std::shared_ptr<Promise<std::vector<std::shared_ptr<HybridFaceSpec>>>>>>(const std::variant<std::string, ImageUri>& /* image */)>> _function;
-  } SWIFT_NONCOPYABLE;
-  Func_std__shared_ptr_Promise_std__shared_ptr_Promise_std__vector_std__shared_ptr_HybridFaceSpec_______std__variant_std__string__ImageUri_ create_Func_std__shared_ptr_Promise_std__shared_ptr_Promise_std__vector_std__shared_ptr_HybridFaceSpec_______std__variant_std__string__ImageUri_(void* NON_NULL swiftClosureWrapper) noexcept;
-  inline Func_std__shared_ptr_Promise_std__shared_ptr_Promise_std__vector_std__shared_ptr_HybridFaceSpec_______std__variant_std__string__ImageUri__Wrapper wrap_Func_std__shared_ptr_Promise_std__shared_ptr_Promise_std__vector_std__shared_ptr_HybridFaceSpec_______std__variant_std__string__ImageUri_(Func_std__shared_ptr_Promise_std__shared_ptr_Promise_std__vector_std__shared_ptr_HybridFaceSpec_______std__variant_std__string__ImageUri_ value) noexcept {
-    return Func_std__shared_ptr_Promise_std__shared_ptr_Promise_std__vector_std__shared_ptr_HybridFaceSpec_______std__variant_std__string__ImageUri__Wrapper(std::move(value));
-  }
-  
   // pragma MARK: std::shared_ptr<HybridImageFaceDetectorSpec>
   /**
    * Specialized version of `std::shared_ptr<HybridImageFaceDetectorSpec>`.
@@ -465,21 +425,6 @@ namespace margelo::nitro::camera::facedetector::bridge::swift {
   // pragma MARK: std::weak_ptr<HybridImageFaceDetectorSpec>
   using std__weak_ptr_HybridImageFaceDetectorSpec_ = std::weak_ptr<HybridImageFaceDetectorSpec>;
   inline std__weak_ptr_HybridImageFaceDetectorSpec_ weakify_std__shared_ptr_HybridImageFaceDetectorSpec_(const std::shared_ptr<HybridImageFaceDetectorSpec>& strong) noexcept { return strong; }
-  
-  // pragma MARK: std::optional<ImageFaceDetectorOptions>
-  /**
-   * Specialized version of `std::optional<ImageFaceDetectorOptions>`.
-   */
-  using std__optional_ImageFaceDetectorOptions_ = std::optional<ImageFaceDetectorOptions>;
-  inline std::optional<ImageFaceDetectorOptions> create_std__optional_ImageFaceDetectorOptions_(const ImageFaceDetectorOptions& value) noexcept {
-    return std::optional<ImageFaceDetectorOptions>(value);
-  }
-  inline bool has_value_std__optional_ImageFaceDetectorOptions_(const std::optional<ImageFaceDetectorOptions>& optional) noexcept {
-    return optional.has_value();
-  }
-  inline ImageFaceDetectorOptions get_std__optional_ImageFaceDetectorOptions_(const std::optional<ImageFaceDetectorOptions>& optional) noexcept {
-    return optional.value();
-  }
   
   // pragma MARK: std::shared_ptr<HybridImageFaceDetectorFactorySpec>
   /**

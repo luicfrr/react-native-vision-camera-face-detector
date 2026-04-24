@@ -9,23 +9,29 @@
 
 // Forward declaration of `HybridFaceDetectorSpec` to properly resolve imports.
 namespace margelo::nitro::camera::facedetector { class HybridFaceDetectorSpec; }
-// Forward declaration of `FaceDetectorOptions` to properly resolve imports.
-namespace margelo::nitro::camera::facedetector { struct FaceDetectorOptions; }
-// Forward declaration of `CameraPosition` to properly resolve imports.
-namespace margelo::nitro::camera::facedetector { enum class CameraPosition; }
+// Forward declaration of `FaceDetectorOptionsAutoModeDisabled` to properly resolve imports.
+namespace margelo::nitro::camera::facedetector { struct FaceDetectorOptionsAutoModeDisabled; }
+// Forward declaration of `FaceDetectorOptionsAutoModeEnabled` to properly resolve imports.
+namespace margelo::nitro::camera::facedetector { struct FaceDetectorOptionsAutoModeEnabled; }
 // Forward declaration of `PerformanceMode` to properly resolve imports.
 namespace margelo::nitro::camera::facedetector { enum class PerformanceMode; }
+// Forward declaration of `CameraPosition` to properly resolve imports.
+namespace margelo::nitro::camera::facedetector { enum class CameraPosition; }
 
 #include <memory>
 #include "HybridFaceDetectorSpec.hpp"
 #include "JHybridFaceDetectorSpec.hpp"
-#include "FaceDetectorOptions.hpp"
-#include <optional>
+#include "FaceDetectorOptionsAutoModeDisabled.hpp"
+#include "FaceDetectorOptionsAutoModeEnabled.hpp"
+#include <variant>
 #include "JFaceDetectorOptions.hpp"
-#include "CameraPosition.hpp"
-#include "JCameraPosition.hpp"
+#include "JFaceDetectorOptionsAutoModeDisabled.hpp"
+#include <optional>
 #include "PerformanceMode.hpp"
 #include "JPerformanceMode.hpp"
+#include "CameraPosition.hpp"
+#include "JCameraPosition.hpp"
+#include "JFaceDetectorOptionsAutoModeEnabled.hpp"
 
 namespace margelo::nitro::camera::facedetector {
 
@@ -60,9 +66,9 @@ namespace margelo::nitro::camera::facedetector {
   
 
   // Methods
-  std::shared_ptr<HybridFaceDetectorSpec> JHybridFaceDetectorFactorySpec::createFaceDetector(const std::optional<FaceDetectorOptions>& options) {
+  std::shared_ptr<HybridFaceDetectorSpec> JHybridFaceDetectorFactorySpec::createFaceDetector(const std::variant<FaceDetectorOptionsAutoModeDisabled, FaceDetectorOptionsAutoModeEnabled>& options) {
     static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JHybridFaceDetectorSpec::JavaPart>(jni::alias_ref<JFaceDetectorOptions> /* options */)>("createFaceDetector");
-    auto __result = method(_javaPart, options.has_value() ? JFaceDetectorOptions::fromCpp(options.value()) : nullptr);
+    auto __result = method(_javaPart, JFaceDetectorOptions::fromCpp(options));
     return __result->getJHybridFaceDetectorSpec();
   }
 

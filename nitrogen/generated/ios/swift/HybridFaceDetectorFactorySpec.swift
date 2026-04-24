@@ -13,7 +13,7 @@ public protocol HybridFaceDetectorFactorySpec_protocol: HybridObject {
   
 
   // Methods
-  func createFaceDetector(options: FaceDetectorOptions?) throws -> (any HybridFaceDetectorSpec)
+  func createFaceDetector(options: FaceDetectorOptions) throws -> (any HybridFaceDetectorSpec)
 }
 
 public extension HybridFaceDetectorFactorySpec_protocol {

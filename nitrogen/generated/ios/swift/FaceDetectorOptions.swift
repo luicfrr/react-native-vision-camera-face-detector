@@ -5,186 +5,26 @@
 /// Copyright © Marc Rousavy @ Margelo
 ///
 
-import NitroModules
+
 
 /**
- * Represents an instance of `FaceDetectorOptions`, backed by a C++ struct.
+ * An Swift enum with associated values representing a Variant/Union type.
+ * JS type: `struct | struct`
  */
-public typealias FaceDetectorOptions = margelo.nitro.camera.facedetector.FaceDetectorOptions
+@frozen
+public indirect enum FaceDetectorOptions {
+  case first(FaceDetectorOptionsAutoModeDisabled)
+  case second(FaceDetectorOptionsAutoModeEnabled)
+}
 
 public extension FaceDetectorOptions {
-  private typealias bridge = margelo.nitro.camera.facedetector.bridge.swift
-
-  /**
-   * Create a new instance of `FaceDetectorOptions`.
-   */
-  init(cameraFacing: CameraPosition?, autoMode: Bool?, windowWidth: Double?, windowHeight: Double?, performanceMode: PerformanceMode?, runLandmarks: Bool?, runContours: Bool?, runClassifications: Bool?, minFaceSize: Double?, trackingEnabled: Bool?) {
-    self.init({ () -> bridge.std__optional_CameraPosition_ in
-      if let __unwrappedValue = cameraFacing {
-        return bridge.create_std__optional_CameraPosition_(__unwrappedValue)
-      } else {
-        return .init()
-      }
-    }(), { () -> bridge.std__optional_bool_ in
-      if let __unwrappedValue = autoMode {
-        return bridge.create_std__optional_bool_(__unwrappedValue)
-      } else {
-        return .init()
-      }
-    }(), { () -> bridge.std__optional_double_ in
-      if let __unwrappedValue = windowWidth {
-        return bridge.create_std__optional_double_(__unwrappedValue)
-      } else {
-        return .init()
-      }
-    }(), { () -> bridge.std__optional_double_ in
-      if let __unwrappedValue = windowHeight {
-        return bridge.create_std__optional_double_(__unwrappedValue)
-      } else {
-        return .init()
-      }
-    }(), { () -> bridge.std__optional_PerformanceMode_ in
-      if let __unwrappedValue = performanceMode {
-        return bridge.create_std__optional_PerformanceMode_(__unwrappedValue)
-      } else {
-        return .init()
-      }
-    }(), { () -> bridge.std__optional_bool_ in
-      if let __unwrappedValue = runLandmarks {
-        return bridge.create_std__optional_bool_(__unwrappedValue)
-      } else {
-        return .init()
-      }
-    }(), { () -> bridge.std__optional_bool_ in
-      if let __unwrappedValue = runContours {
-        return bridge.create_std__optional_bool_(__unwrappedValue)
-      } else {
-        return .init()
-      }
-    }(), { () -> bridge.std__optional_bool_ in
-      if let __unwrappedValue = runClassifications {
-        return bridge.create_std__optional_bool_(__unwrappedValue)
-      } else {
-        return .init()
-      }
-    }(), { () -> bridge.std__optional_double_ in
-      if let __unwrappedValue = minFaceSize {
-        return bridge.create_std__optional_double_(__unwrappedValue)
-      } else {
-        return .init()
-      }
-    }(), { () -> bridge.std__optional_bool_ in
-      if let __unwrappedValue = trackingEnabled {
-        return bridge.create_std__optional_bool_(__unwrappedValue)
-      } else {
-        return .init()
-      }
-    }())
+  func asType<T>(_ type: T.Type = T.self) -> T? {
+    switch self {
+      case .first(let value): return value as? T
+      case .second(let value): return value as? T
+    }
   }
-
-  @inline(__always)
-  var cameraFacing: CameraPosition? {
-    return self.__cameraFacing.value
-  }
-  
-  @inline(__always)
-  var autoMode: Bool? {
-    return { () -> Bool? in
-      if bridge.has_value_std__optional_bool_(self.__autoMode) {
-        let __unwrapped = bridge.get_std__optional_bool_(self.__autoMode)
-        return __unwrapped
-      } else {
-        return nil
-      }
-    }()
-  }
-  
-  @inline(__always)
-  var windowWidth: Double? {
-    return { () -> Double? in
-      if bridge.has_value_std__optional_double_(self.__windowWidth) {
-        let __unwrapped = bridge.get_std__optional_double_(self.__windowWidth)
-        return __unwrapped
-      } else {
-        return nil
-      }
-    }()
-  }
-  
-  @inline(__always)
-  var windowHeight: Double? {
-    return { () -> Double? in
-      if bridge.has_value_std__optional_double_(self.__windowHeight) {
-        let __unwrapped = bridge.get_std__optional_double_(self.__windowHeight)
-        return __unwrapped
-      } else {
-        return nil
-      }
-    }()
-  }
-  
-  @inline(__always)
-  var performanceMode: PerformanceMode? {
-    return self.__performanceMode.value
-  }
-  
-  @inline(__always)
-  var runLandmarks: Bool? {
-    return { () -> Bool? in
-      if bridge.has_value_std__optional_bool_(self.__runLandmarks) {
-        let __unwrapped = bridge.get_std__optional_bool_(self.__runLandmarks)
-        return __unwrapped
-      } else {
-        return nil
-      }
-    }()
-  }
-  
-  @inline(__always)
-  var runContours: Bool? {
-    return { () -> Bool? in
-      if bridge.has_value_std__optional_bool_(self.__runContours) {
-        let __unwrapped = bridge.get_std__optional_bool_(self.__runContours)
-        return __unwrapped
-      } else {
-        return nil
-      }
-    }()
-  }
-  
-  @inline(__always)
-  var runClassifications: Bool? {
-    return { () -> Bool? in
-      if bridge.has_value_std__optional_bool_(self.__runClassifications) {
-        let __unwrapped = bridge.get_std__optional_bool_(self.__runClassifications)
-        return __unwrapped
-      } else {
-        return nil
-      }
-    }()
-  }
-  
-  @inline(__always)
-  var minFaceSize: Double? {
-    return { () -> Double? in
-      if bridge.has_value_std__optional_double_(self.__minFaceSize) {
-        let __unwrapped = bridge.get_std__optional_double_(self.__minFaceSize)
-        return __unwrapped
-      } else {
-        return nil
-      }
-    }()
-  }
-  
-  @inline(__always)
-  var trackingEnabled: Bool? {
-    return { () -> Bool? in
-      if bridge.has_value_std__optional_bool_(self.__trackingEnabled) {
-        let __unwrapped = bridge.get_std__optional_bool_(self.__trackingEnabled)
-        return __unwrapped
-      } else {
-        return nil
-      }
-    }()
+  func isType<T>(_ type: T.Type = T.self) -> Bool {
+    return self.asType(type) != nil
   }
 }

@@ -12,6 +12,7 @@
 
 #include "JPoint.hpp"
 #include "Point.hpp"
+#include <optional>
 #include <vector>
 
 namespace margelo::nitro::camera::facedetector {
@@ -64,7 +65,7 @@ namespace margelo::nitro::camera::facedetector {
       static const auto fieldRIGHT_CHEEK = clazz->getField<jni::JArrayClass<JPoint>>("RIGHT_CHEEK");
       jni::local_ref<jni::JArrayClass<JPoint>> RIGHT_CHEEK = this->getFieldValue(fieldRIGHT_CHEEK);
       return Contours(
-        [&]() {
+        FACE != nullptr ? std::make_optional([&]() {
           size_t __size = FACE->size();
           std::vector<Point> __vector;
           __vector.reserve(__size);
@@ -73,8 +74,8 @@ namespace margelo::nitro::camera::facedetector {
             __vector.push_back(__element->toCpp());
           }
           return __vector;
-        }(),
-        [&]() {
+        }()) : std::nullopt,
+        LEFT_EYEBROW_TOP != nullptr ? std::make_optional([&]() {
           size_t __size = LEFT_EYEBROW_TOP->size();
           std::vector<Point> __vector;
           __vector.reserve(__size);
@@ -83,8 +84,8 @@ namespace margelo::nitro::camera::facedetector {
             __vector.push_back(__element->toCpp());
           }
           return __vector;
-        }(),
-        [&]() {
+        }()) : std::nullopt,
+        LEFT_EYEBROW_BOTTOM != nullptr ? std::make_optional([&]() {
           size_t __size = LEFT_EYEBROW_BOTTOM->size();
           std::vector<Point> __vector;
           __vector.reserve(__size);
@@ -93,8 +94,8 @@ namespace margelo::nitro::camera::facedetector {
             __vector.push_back(__element->toCpp());
           }
           return __vector;
-        }(),
-        [&]() {
+        }()) : std::nullopt,
+        RIGHT_EYEBROW_TOP != nullptr ? std::make_optional([&]() {
           size_t __size = RIGHT_EYEBROW_TOP->size();
           std::vector<Point> __vector;
           __vector.reserve(__size);
@@ -103,8 +104,8 @@ namespace margelo::nitro::camera::facedetector {
             __vector.push_back(__element->toCpp());
           }
           return __vector;
-        }(),
-        [&]() {
+        }()) : std::nullopt,
+        RIGHT_EYEBROW_BOTTOM != nullptr ? std::make_optional([&]() {
           size_t __size = RIGHT_EYEBROW_BOTTOM->size();
           std::vector<Point> __vector;
           __vector.reserve(__size);
@@ -113,8 +114,8 @@ namespace margelo::nitro::camera::facedetector {
             __vector.push_back(__element->toCpp());
           }
           return __vector;
-        }(),
-        [&]() {
+        }()) : std::nullopt,
+        LEFT_EYE != nullptr ? std::make_optional([&]() {
           size_t __size = LEFT_EYE->size();
           std::vector<Point> __vector;
           __vector.reserve(__size);
@@ -123,8 +124,8 @@ namespace margelo::nitro::camera::facedetector {
             __vector.push_back(__element->toCpp());
           }
           return __vector;
-        }(),
-        [&]() {
+        }()) : std::nullopt,
+        RIGHT_EYE != nullptr ? std::make_optional([&]() {
           size_t __size = RIGHT_EYE->size();
           std::vector<Point> __vector;
           __vector.reserve(__size);
@@ -133,8 +134,8 @@ namespace margelo::nitro::camera::facedetector {
             __vector.push_back(__element->toCpp());
           }
           return __vector;
-        }(),
-        [&]() {
+        }()) : std::nullopt,
+        UPPER_LIP_TOP != nullptr ? std::make_optional([&]() {
           size_t __size = UPPER_LIP_TOP->size();
           std::vector<Point> __vector;
           __vector.reserve(__size);
@@ -143,8 +144,8 @@ namespace margelo::nitro::camera::facedetector {
             __vector.push_back(__element->toCpp());
           }
           return __vector;
-        }(),
-        [&]() {
+        }()) : std::nullopt,
+        UPPER_LIP_BOTTOM != nullptr ? std::make_optional([&]() {
           size_t __size = UPPER_LIP_BOTTOM->size();
           std::vector<Point> __vector;
           __vector.reserve(__size);
@@ -153,8 +154,8 @@ namespace margelo::nitro::camera::facedetector {
             __vector.push_back(__element->toCpp());
           }
           return __vector;
-        }(),
-        [&]() {
+        }()) : std::nullopt,
+        LOWER_LIP_TOP != nullptr ? std::make_optional([&]() {
           size_t __size = LOWER_LIP_TOP->size();
           std::vector<Point> __vector;
           __vector.reserve(__size);
@@ -163,8 +164,8 @@ namespace margelo::nitro::camera::facedetector {
             __vector.push_back(__element->toCpp());
           }
           return __vector;
-        }(),
-        [&]() {
+        }()) : std::nullopt,
+        LOWER_LIP_BOTTOM != nullptr ? std::make_optional([&]() {
           size_t __size = LOWER_LIP_BOTTOM->size();
           std::vector<Point> __vector;
           __vector.reserve(__size);
@@ -173,8 +174,8 @@ namespace margelo::nitro::camera::facedetector {
             __vector.push_back(__element->toCpp());
           }
           return __vector;
-        }(),
-        [&]() {
+        }()) : std::nullopt,
+        NOSE_BRIDGE != nullptr ? std::make_optional([&]() {
           size_t __size = NOSE_BRIDGE->size();
           std::vector<Point> __vector;
           __vector.reserve(__size);
@@ -183,8 +184,8 @@ namespace margelo::nitro::camera::facedetector {
             __vector.push_back(__element->toCpp());
           }
           return __vector;
-        }(),
-        [&]() {
+        }()) : std::nullopt,
+        NOSE_BOTTOM != nullptr ? std::make_optional([&]() {
           size_t __size = NOSE_BOTTOM->size();
           std::vector<Point> __vector;
           __vector.reserve(__size);
@@ -193,8 +194,8 @@ namespace margelo::nitro::camera::facedetector {
             __vector.push_back(__element->toCpp());
           }
           return __vector;
-        }(),
-        [&]() {
+        }()) : std::nullopt,
+        LEFT_CHEEK != nullptr ? std::make_optional([&]() {
           size_t __size = LEFT_CHEEK->size();
           std::vector<Point> __vector;
           __vector.reserve(__size);
@@ -203,8 +204,8 @@ namespace margelo::nitro::camera::facedetector {
             __vector.push_back(__element->toCpp());
           }
           return __vector;
-        }(),
-        [&]() {
+        }()) : std::nullopt,
+        RIGHT_CHEEK != nullptr ? std::make_optional([&]() {
           size_t __size = RIGHT_CHEEK->size();
           std::vector<Point> __vector;
           __vector.reserve(__size);
@@ -213,7 +214,7 @@ namespace margelo::nitro::camera::facedetector {
             __vector.push_back(__element->toCpp());
           }
           return __vector;
-        }()
+        }()) : std::nullopt
       );
     }
 
@@ -228,156 +229,156 @@ namespace margelo::nitro::camera::facedetector {
       static const auto create = clazz->getStaticMethod<JSignature>("fromCpp");
       return create(
         clazz,
-        [&]() {
-          size_t __size = value.FACE.size();
+        value.FACE.has_value() ? [&]() {
+          size_t __size = value.FACE.value().size();
           jni::local_ref<jni::JArrayClass<JPoint>> __array = jni::JArrayClass<JPoint>::newArray(__size);
           for (size_t __i = 0; __i < __size; __i++) {
-            const auto& __element = value.FACE[__i];
+            const auto& __element = value.FACE.value()[__i];
             auto __elementJni = JPoint::fromCpp(__element);
             __array->setElement(__i, *__elementJni);
           }
           return __array;
-        }(),
-        [&]() {
-          size_t __size = value.LEFT_EYEBROW_TOP.size();
+        }() : nullptr,
+        value.LEFT_EYEBROW_TOP.has_value() ? [&]() {
+          size_t __size = value.LEFT_EYEBROW_TOP.value().size();
           jni::local_ref<jni::JArrayClass<JPoint>> __array = jni::JArrayClass<JPoint>::newArray(__size);
           for (size_t __i = 0; __i < __size; __i++) {
-            const auto& __element = value.LEFT_EYEBROW_TOP[__i];
+            const auto& __element = value.LEFT_EYEBROW_TOP.value()[__i];
             auto __elementJni = JPoint::fromCpp(__element);
             __array->setElement(__i, *__elementJni);
           }
           return __array;
-        }(),
-        [&]() {
-          size_t __size = value.LEFT_EYEBROW_BOTTOM.size();
+        }() : nullptr,
+        value.LEFT_EYEBROW_BOTTOM.has_value() ? [&]() {
+          size_t __size = value.LEFT_EYEBROW_BOTTOM.value().size();
           jni::local_ref<jni::JArrayClass<JPoint>> __array = jni::JArrayClass<JPoint>::newArray(__size);
           for (size_t __i = 0; __i < __size; __i++) {
-            const auto& __element = value.LEFT_EYEBROW_BOTTOM[__i];
+            const auto& __element = value.LEFT_EYEBROW_BOTTOM.value()[__i];
             auto __elementJni = JPoint::fromCpp(__element);
             __array->setElement(__i, *__elementJni);
           }
           return __array;
-        }(),
-        [&]() {
-          size_t __size = value.RIGHT_EYEBROW_TOP.size();
+        }() : nullptr,
+        value.RIGHT_EYEBROW_TOP.has_value() ? [&]() {
+          size_t __size = value.RIGHT_EYEBROW_TOP.value().size();
           jni::local_ref<jni::JArrayClass<JPoint>> __array = jni::JArrayClass<JPoint>::newArray(__size);
           for (size_t __i = 0; __i < __size; __i++) {
-            const auto& __element = value.RIGHT_EYEBROW_TOP[__i];
+            const auto& __element = value.RIGHT_EYEBROW_TOP.value()[__i];
             auto __elementJni = JPoint::fromCpp(__element);
             __array->setElement(__i, *__elementJni);
           }
           return __array;
-        }(),
-        [&]() {
-          size_t __size = value.RIGHT_EYEBROW_BOTTOM.size();
+        }() : nullptr,
+        value.RIGHT_EYEBROW_BOTTOM.has_value() ? [&]() {
+          size_t __size = value.RIGHT_EYEBROW_BOTTOM.value().size();
           jni::local_ref<jni::JArrayClass<JPoint>> __array = jni::JArrayClass<JPoint>::newArray(__size);
           for (size_t __i = 0; __i < __size; __i++) {
-            const auto& __element = value.RIGHT_EYEBROW_BOTTOM[__i];
+            const auto& __element = value.RIGHT_EYEBROW_BOTTOM.value()[__i];
             auto __elementJni = JPoint::fromCpp(__element);
             __array->setElement(__i, *__elementJni);
           }
           return __array;
-        }(),
-        [&]() {
-          size_t __size = value.LEFT_EYE.size();
+        }() : nullptr,
+        value.LEFT_EYE.has_value() ? [&]() {
+          size_t __size = value.LEFT_EYE.value().size();
           jni::local_ref<jni::JArrayClass<JPoint>> __array = jni::JArrayClass<JPoint>::newArray(__size);
           for (size_t __i = 0; __i < __size; __i++) {
-            const auto& __element = value.LEFT_EYE[__i];
+            const auto& __element = value.LEFT_EYE.value()[__i];
             auto __elementJni = JPoint::fromCpp(__element);
             __array->setElement(__i, *__elementJni);
           }
           return __array;
-        }(),
-        [&]() {
-          size_t __size = value.RIGHT_EYE.size();
+        }() : nullptr,
+        value.RIGHT_EYE.has_value() ? [&]() {
+          size_t __size = value.RIGHT_EYE.value().size();
           jni::local_ref<jni::JArrayClass<JPoint>> __array = jni::JArrayClass<JPoint>::newArray(__size);
           for (size_t __i = 0; __i < __size; __i++) {
-            const auto& __element = value.RIGHT_EYE[__i];
+            const auto& __element = value.RIGHT_EYE.value()[__i];
             auto __elementJni = JPoint::fromCpp(__element);
             __array->setElement(__i, *__elementJni);
           }
           return __array;
-        }(),
-        [&]() {
-          size_t __size = value.UPPER_LIP_TOP.size();
+        }() : nullptr,
+        value.UPPER_LIP_TOP.has_value() ? [&]() {
+          size_t __size = value.UPPER_LIP_TOP.value().size();
           jni::local_ref<jni::JArrayClass<JPoint>> __array = jni::JArrayClass<JPoint>::newArray(__size);
           for (size_t __i = 0; __i < __size; __i++) {
-            const auto& __element = value.UPPER_LIP_TOP[__i];
+            const auto& __element = value.UPPER_LIP_TOP.value()[__i];
             auto __elementJni = JPoint::fromCpp(__element);
             __array->setElement(__i, *__elementJni);
           }
           return __array;
-        }(),
-        [&]() {
-          size_t __size = value.UPPER_LIP_BOTTOM.size();
+        }() : nullptr,
+        value.UPPER_LIP_BOTTOM.has_value() ? [&]() {
+          size_t __size = value.UPPER_LIP_BOTTOM.value().size();
           jni::local_ref<jni::JArrayClass<JPoint>> __array = jni::JArrayClass<JPoint>::newArray(__size);
           for (size_t __i = 0; __i < __size; __i++) {
-            const auto& __element = value.UPPER_LIP_BOTTOM[__i];
+            const auto& __element = value.UPPER_LIP_BOTTOM.value()[__i];
             auto __elementJni = JPoint::fromCpp(__element);
             __array->setElement(__i, *__elementJni);
           }
           return __array;
-        }(),
-        [&]() {
-          size_t __size = value.LOWER_LIP_TOP.size();
+        }() : nullptr,
+        value.LOWER_LIP_TOP.has_value() ? [&]() {
+          size_t __size = value.LOWER_LIP_TOP.value().size();
           jni::local_ref<jni::JArrayClass<JPoint>> __array = jni::JArrayClass<JPoint>::newArray(__size);
           for (size_t __i = 0; __i < __size; __i++) {
-            const auto& __element = value.LOWER_LIP_TOP[__i];
+            const auto& __element = value.LOWER_LIP_TOP.value()[__i];
             auto __elementJni = JPoint::fromCpp(__element);
             __array->setElement(__i, *__elementJni);
           }
           return __array;
-        }(),
-        [&]() {
-          size_t __size = value.LOWER_LIP_BOTTOM.size();
+        }() : nullptr,
+        value.LOWER_LIP_BOTTOM.has_value() ? [&]() {
+          size_t __size = value.LOWER_LIP_BOTTOM.value().size();
           jni::local_ref<jni::JArrayClass<JPoint>> __array = jni::JArrayClass<JPoint>::newArray(__size);
           for (size_t __i = 0; __i < __size; __i++) {
-            const auto& __element = value.LOWER_LIP_BOTTOM[__i];
+            const auto& __element = value.LOWER_LIP_BOTTOM.value()[__i];
             auto __elementJni = JPoint::fromCpp(__element);
             __array->setElement(__i, *__elementJni);
           }
           return __array;
-        }(),
-        [&]() {
-          size_t __size = value.NOSE_BRIDGE.size();
+        }() : nullptr,
+        value.NOSE_BRIDGE.has_value() ? [&]() {
+          size_t __size = value.NOSE_BRIDGE.value().size();
           jni::local_ref<jni::JArrayClass<JPoint>> __array = jni::JArrayClass<JPoint>::newArray(__size);
           for (size_t __i = 0; __i < __size; __i++) {
-            const auto& __element = value.NOSE_BRIDGE[__i];
+            const auto& __element = value.NOSE_BRIDGE.value()[__i];
             auto __elementJni = JPoint::fromCpp(__element);
             __array->setElement(__i, *__elementJni);
           }
           return __array;
-        }(),
-        [&]() {
-          size_t __size = value.NOSE_BOTTOM.size();
+        }() : nullptr,
+        value.NOSE_BOTTOM.has_value() ? [&]() {
+          size_t __size = value.NOSE_BOTTOM.value().size();
           jni::local_ref<jni::JArrayClass<JPoint>> __array = jni::JArrayClass<JPoint>::newArray(__size);
           for (size_t __i = 0; __i < __size; __i++) {
-            const auto& __element = value.NOSE_BOTTOM[__i];
+            const auto& __element = value.NOSE_BOTTOM.value()[__i];
             auto __elementJni = JPoint::fromCpp(__element);
             __array->setElement(__i, *__elementJni);
           }
           return __array;
-        }(),
-        [&]() {
-          size_t __size = value.LEFT_CHEEK.size();
+        }() : nullptr,
+        value.LEFT_CHEEK.has_value() ? [&]() {
+          size_t __size = value.LEFT_CHEEK.value().size();
           jni::local_ref<jni::JArrayClass<JPoint>> __array = jni::JArrayClass<JPoint>::newArray(__size);
           for (size_t __i = 0; __i < __size; __i++) {
-            const auto& __element = value.LEFT_CHEEK[__i];
+            const auto& __element = value.LEFT_CHEEK.value()[__i];
             auto __elementJni = JPoint::fromCpp(__element);
             __array->setElement(__i, *__elementJni);
           }
           return __array;
-        }(),
-        [&]() {
-          size_t __size = value.RIGHT_CHEEK.size();
+        }() : nullptr,
+        value.RIGHT_CHEEK.has_value() ? [&]() {
+          size_t __size = value.RIGHT_CHEEK.value().size();
           jni::local_ref<jni::JArrayClass<JPoint>> __array = jni::JArrayClass<JPoint>::newArray(__size);
           for (size_t __i = 0; __i < __size; __i++) {
-            const auto& __element = value.RIGHT_CHEEK[__i];
+            const auto& __element = value.RIGHT_CHEEK.value()[__i];
             auto __elementJni = JPoint::fromCpp(__element);
             __array->setElement(__i, *__elementJni);
           }
           return __array;
-        }()
+        }() : nullptr
       );
     }
   };

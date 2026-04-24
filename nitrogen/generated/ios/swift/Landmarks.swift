@@ -18,57 +18,117 @@ public extension Landmarks {
   /**
    * Create a new instance of `Landmarks`.
    */
-  init(LEFT_CHEEK: Point, LEFT_EAR: Point, LEFT_EYE: Point, MOUTH_BOTTOM: Point, MOUTH_LEFT: Point, MOUTH_RIGHT: Point, NOSE_BASE: Point, RIGHT_CHEEK: Point, RIGHT_EAR: Point, RIGHT_EYE: Point) {
-    self.init(LEFT_CHEEK, LEFT_EAR, LEFT_EYE, MOUTH_BOTTOM, MOUTH_LEFT, MOUTH_RIGHT, NOSE_BASE, RIGHT_CHEEK, RIGHT_EAR, RIGHT_EYE)
+  init(LEFT_CHEEK: Point?, LEFT_EAR: Point?, LEFT_EYE: Point?, MOUTH_BOTTOM: Point?, MOUTH_LEFT: Point?, MOUTH_RIGHT: Point?, NOSE_BASE: Point?, RIGHT_CHEEK: Point?, RIGHT_EAR: Point?, RIGHT_EYE: Point?) {
+    self.init({ () -> bridge.std__optional_Point_ in
+      if let __unwrappedValue = LEFT_CHEEK {
+        return bridge.create_std__optional_Point_(__unwrappedValue)
+      } else {
+        return .init()
+      }
+    }(), { () -> bridge.std__optional_Point_ in
+      if let __unwrappedValue = LEFT_EAR {
+        return bridge.create_std__optional_Point_(__unwrappedValue)
+      } else {
+        return .init()
+      }
+    }(), { () -> bridge.std__optional_Point_ in
+      if let __unwrappedValue = LEFT_EYE {
+        return bridge.create_std__optional_Point_(__unwrappedValue)
+      } else {
+        return .init()
+      }
+    }(), { () -> bridge.std__optional_Point_ in
+      if let __unwrappedValue = MOUTH_BOTTOM {
+        return bridge.create_std__optional_Point_(__unwrappedValue)
+      } else {
+        return .init()
+      }
+    }(), { () -> bridge.std__optional_Point_ in
+      if let __unwrappedValue = MOUTH_LEFT {
+        return bridge.create_std__optional_Point_(__unwrappedValue)
+      } else {
+        return .init()
+      }
+    }(), { () -> bridge.std__optional_Point_ in
+      if let __unwrappedValue = MOUTH_RIGHT {
+        return bridge.create_std__optional_Point_(__unwrappedValue)
+      } else {
+        return .init()
+      }
+    }(), { () -> bridge.std__optional_Point_ in
+      if let __unwrappedValue = NOSE_BASE {
+        return bridge.create_std__optional_Point_(__unwrappedValue)
+      } else {
+        return .init()
+      }
+    }(), { () -> bridge.std__optional_Point_ in
+      if let __unwrappedValue = RIGHT_CHEEK {
+        return bridge.create_std__optional_Point_(__unwrappedValue)
+      } else {
+        return .init()
+      }
+    }(), { () -> bridge.std__optional_Point_ in
+      if let __unwrappedValue = RIGHT_EAR {
+        return bridge.create_std__optional_Point_(__unwrappedValue)
+      } else {
+        return .init()
+      }
+    }(), { () -> bridge.std__optional_Point_ in
+      if let __unwrappedValue = RIGHT_EYE {
+        return bridge.create_std__optional_Point_(__unwrappedValue)
+      } else {
+        return .init()
+      }
+    }())
   }
 
   @inline(__always)
-  var LEFT_CHEEK: Point {
-    return self.__LEFT_CHEEK
+  var LEFT_CHEEK: Point? {
+    return self.__LEFT_CHEEK.value
   }
   
   @inline(__always)
-  var LEFT_EAR: Point {
-    return self.__LEFT_EAR
+  var LEFT_EAR: Point? {
+    return self.__LEFT_EAR.value
   }
   
   @inline(__always)
-  var LEFT_EYE: Point {
-    return self.__LEFT_EYE
+  var LEFT_EYE: Point? {
+    return self.__LEFT_EYE.value
   }
   
   @inline(__always)
-  var MOUTH_BOTTOM: Point {
-    return self.__MOUTH_BOTTOM
+  var MOUTH_BOTTOM: Point? {
+    return self.__MOUTH_BOTTOM.value
   }
   
   @inline(__always)
-  var MOUTH_LEFT: Point {
-    return self.__MOUTH_LEFT
+  var MOUTH_LEFT: Point? {
+    return self.__MOUTH_LEFT.value
   }
   
   @inline(__always)
-  var MOUTH_RIGHT: Point {
-    return self.__MOUTH_RIGHT
+  var MOUTH_RIGHT: Point? {
+    return self.__MOUTH_RIGHT.value
   }
   
   @inline(__always)
-  var NOSE_BASE: Point {
-    return self.__NOSE_BASE
+  var NOSE_BASE: Point? {
+    return self.__NOSE_BASE.value
   }
   
   @inline(__always)
-  var RIGHT_CHEEK: Point {
-    return self.__RIGHT_CHEEK
+  var RIGHT_CHEEK: Point? {
+    return self.__RIGHT_CHEEK.value
   }
   
   @inline(__always)
-  var RIGHT_EAR: Point {
-    return self.__RIGHT_EAR
+  var RIGHT_EAR: Point? {
+    return self.__RIGHT_EAR.value
   }
   
   @inline(__always)
-  var RIGHT_EYE: Point {
-    return self.__RIGHT_EYE
+  var RIGHT_EYE: Point? {
+    return self.__RIGHT_EYE.value
   }
 }

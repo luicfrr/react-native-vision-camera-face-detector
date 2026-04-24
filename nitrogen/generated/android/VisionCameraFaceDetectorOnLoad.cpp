@@ -17,11 +17,8 @@
 
 #include "JHybridFaceSpec.hpp"
 #include "JHybridFaceDetectorSpec.hpp"
-#include "JFunc_std__shared_ptr_Promise_std__shared_ptr_Promise_std__vector_std__shared_ptr_HybridFaceSpec_______std__shared_ptr_margelo__nitro__camera__HybridFrameSpec_.hpp"
-#include "JFunc_void.hpp"
 #include "JHybridFaceDetectorFactorySpec.hpp"
 #include "JHybridImageFaceDetectorSpec.hpp"
-#include "JFunc_std__shared_ptr_Promise_std__shared_ptr_Promise_std__vector_std__shared_ptr_HybridFaceSpec_______std__variant_std__string__ImageUri_.hpp"
 #include "JHybridImageFaceDetectorFactorySpec.hpp"
 #include <NitroModules/DefaultConstructableObject.hpp>
 
@@ -49,11 +46,8 @@ void registerAllNatives() {
   // Register native JNI methods
   margelo::nitro::camera::facedetector::JHybridFaceSpec::CxxPart::registerNatives();
   margelo::nitro::camera::facedetector::JHybridFaceDetectorSpec::CxxPart::registerNatives();
-  margelo::nitro::camera::facedetector::JFunc_std__shared_ptr_Promise_std__shared_ptr_Promise_std__vector_std__shared_ptr_HybridFaceSpec_______std__shared_ptr_margelo__nitro__camera__HybridFrameSpec__cxx::registerNatives();
-  margelo::nitro::camera::facedetector::JFunc_void_cxx::registerNatives();
   margelo::nitro::camera::facedetector::JHybridFaceDetectorFactorySpec::CxxPart::registerNatives();
   margelo::nitro::camera::facedetector::JHybridImageFaceDetectorSpec::CxxPart::registerNatives();
-  margelo::nitro::camera::facedetector::JFunc_std__shared_ptr_Promise_std__shared_ptr_Promise_std__vector_std__shared_ptr_HybridFaceSpec_______std__variant_std__string__ImageUri__cxx::registerNatives();
   margelo::nitro::camera::facedetector::JHybridImageFaceDetectorFactorySpec::CxxPart::registerNatives();
 
   // Register Nitro Hybrid Objects

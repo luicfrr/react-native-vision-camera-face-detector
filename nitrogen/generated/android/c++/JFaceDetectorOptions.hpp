@@ -8,90 +8,69 @@
 #pragma once
 
 #include <fbjni/fbjni.h>
-#include "FaceDetectorOptions.hpp"
+#include <variant>
 
+#include "FaceDetectorOptionsAutoModeDisabled.hpp"
+#include "FaceDetectorOptionsAutoModeEnabled.hpp"
+#include <variant>
+#include "JFaceDetectorOptionsAutoModeDisabled.hpp"
+#include <optional>
+#include "PerformanceMode.hpp"
+#include "JPerformanceMode.hpp"
 #include "CameraPosition.hpp"
 #include "JCameraPosition.hpp"
-#include "JPerformanceMode.hpp"
-#include "PerformanceMode.hpp"
-#include <optional>
+#include "JFaceDetectorOptionsAutoModeEnabled.hpp"
 
 namespace margelo::nitro::camera::facedetector {
 
   using namespace facebook;
 
   /**
-   * The C++ JNI bridge between the C++ struct "FaceDetectorOptions" and the the Kotlin data class "FaceDetectorOptions".
+   * The C++ JNI bridge between the C++ std::variant and the Java class "FaceDetectorOptions".
    */
-  struct JFaceDetectorOptions final: public jni::JavaClass<JFaceDetectorOptions> {
+  class JFaceDetectorOptions: public jni::JavaClass<JFaceDetectorOptions> {
   public:
     static constexpr auto kJavaDescriptor = "Lcom/margelo/nitro/camera/facedetector/FaceDetectorOptions;";
 
-  public:
-    /**
-     * Convert this Java/Kotlin-based struct to the C++ struct FaceDetectorOptions by copying all values to C++.
-     */
-    [[maybe_unused]]
-    [[nodiscard]]
-    FaceDetectorOptions toCpp() const {
-      static const auto clazz = javaClassStatic();
-      static const auto fieldCameraFacing = clazz->getField<JCameraPosition>("cameraFacing");
-      jni::local_ref<JCameraPosition> cameraFacing = this->getFieldValue(fieldCameraFacing);
-      static const auto fieldAutoMode = clazz->getField<jni::JBoolean>("autoMode");
-      jni::local_ref<jni::JBoolean> autoMode = this->getFieldValue(fieldAutoMode);
-      static const auto fieldWindowWidth = clazz->getField<jni::JDouble>("windowWidth");
-      jni::local_ref<jni::JDouble> windowWidth = this->getFieldValue(fieldWindowWidth);
-      static const auto fieldWindowHeight = clazz->getField<jni::JDouble>("windowHeight");
-      jni::local_ref<jni::JDouble> windowHeight = this->getFieldValue(fieldWindowHeight);
-      static const auto fieldPerformanceMode = clazz->getField<JPerformanceMode>("performanceMode");
-      jni::local_ref<JPerformanceMode> performanceMode = this->getFieldValue(fieldPerformanceMode);
-      static const auto fieldRunLandmarks = clazz->getField<jni::JBoolean>("runLandmarks");
-      jni::local_ref<jni::JBoolean> runLandmarks = this->getFieldValue(fieldRunLandmarks);
-      static const auto fieldRunContours = clazz->getField<jni::JBoolean>("runContours");
-      jni::local_ref<jni::JBoolean> runContours = this->getFieldValue(fieldRunContours);
-      static const auto fieldRunClassifications = clazz->getField<jni::JBoolean>("runClassifications");
-      jni::local_ref<jni::JBoolean> runClassifications = this->getFieldValue(fieldRunClassifications);
-      static const auto fieldMinFaceSize = clazz->getField<jni::JDouble>("minFaceSize");
-      jni::local_ref<jni::JDouble> minFaceSize = this->getFieldValue(fieldMinFaceSize);
-      static const auto fieldTrackingEnabled = clazz->getField<jni::JBoolean>("trackingEnabled");
-      jni::local_ref<jni::JBoolean> trackingEnabled = this->getFieldValue(fieldTrackingEnabled);
-      return FaceDetectorOptions(
-        cameraFacing != nullptr ? std::make_optional(cameraFacing->toCpp()) : std::nullopt,
-        autoMode != nullptr ? std::make_optional(static_cast<bool>(autoMode->value())) : std::nullopt,
-        windowWidth != nullptr ? std::make_optional(windowWidth->value()) : std::nullopt,
-        windowHeight != nullptr ? std::make_optional(windowHeight->value()) : std::nullopt,
-        performanceMode != nullptr ? std::make_optional(performanceMode->toCpp()) : std::nullopt,
-        runLandmarks != nullptr ? std::make_optional(static_cast<bool>(runLandmarks->value())) : std::nullopt,
-        runContours != nullptr ? std::make_optional(static_cast<bool>(runContours->value())) : std::nullopt,
-        runClassifications != nullptr ? std::make_optional(static_cast<bool>(runClassifications->value())) : std::nullopt,
-        minFaceSize != nullptr ? std::make_optional(minFaceSize->value()) : std::nullopt,
-        trackingEnabled != nullptr ? std::make_optional(static_cast<bool>(trackingEnabled->value())) : std::nullopt
-      );
+    static jni::local_ref<JFaceDetectorOptions> create_0(jni::alias_ref<JFaceDetectorOptionsAutoModeDisabled> value) {
+      static const auto method = javaClassStatic()->getStaticMethod<JFaceDetectorOptions(jni::alias_ref<JFaceDetectorOptionsAutoModeDisabled>)>("create");
+      return method(javaClassStatic(), value);
+    }
+    static jni::local_ref<JFaceDetectorOptions> create_1(jni::alias_ref<JFaceDetectorOptionsAutoModeEnabled> value) {
+      static const auto method = javaClassStatic()->getStaticMethod<JFaceDetectorOptions(jni::alias_ref<JFaceDetectorOptionsAutoModeEnabled>)>("create");
+      return method(javaClassStatic(), value);
     }
 
-  public:
-    /**
-     * Create a Java/Kotlin-based struct by copying all values from the given C++ struct to Java.
-     */
-    [[maybe_unused]]
-    static jni::local_ref<JFaceDetectorOptions::javaobject> fromCpp(const FaceDetectorOptions& value) {
-      using JSignature = JFaceDetectorOptions(jni::alias_ref<JCameraPosition>, jni::alias_ref<jni::JBoolean>, jni::alias_ref<jni::JDouble>, jni::alias_ref<jni::JDouble>, jni::alias_ref<JPerformanceMode>, jni::alias_ref<jni::JBoolean>, jni::alias_ref<jni::JBoolean>, jni::alias_ref<jni::JBoolean>, jni::alias_ref<jni::JDouble>, jni::alias_ref<jni::JBoolean>);
-      static const auto clazz = javaClassStatic();
-      static const auto create = clazz->getStaticMethod<JSignature>("fromCpp");
-      return create(
-        clazz,
-        value.cameraFacing.has_value() ? JCameraPosition::fromCpp(value.cameraFacing.value()) : nullptr,
-        value.autoMode.has_value() ? jni::JBoolean::valueOf(value.autoMode.value()) : nullptr,
-        value.windowWidth.has_value() ? jni::JDouble::valueOf(value.windowWidth.value()) : nullptr,
-        value.windowHeight.has_value() ? jni::JDouble::valueOf(value.windowHeight.value()) : nullptr,
-        value.performanceMode.has_value() ? JPerformanceMode::fromCpp(value.performanceMode.value()) : nullptr,
-        value.runLandmarks.has_value() ? jni::JBoolean::valueOf(value.runLandmarks.value()) : nullptr,
-        value.runContours.has_value() ? jni::JBoolean::valueOf(value.runContours.value()) : nullptr,
-        value.runClassifications.has_value() ? jni::JBoolean::valueOf(value.runClassifications.value()) : nullptr,
-        value.minFaceSize.has_value() ? jni::JDouble::valueOf(value.minFaceSize.value()) : nullptr,
-        value.trackingEnabled.has_value() ? jni::JBoolean::valueOf(value.trackingEnabled.value()) : nullptr
-      );
+    static jni::local_ref<JFaceDetectorOptions> fromCpp(const std::variant<FaceDetectorOptionsAutoModeDisabled, FaceDetectorOptionsAutoModeEnabled>& variant) {
+      switch (variant.index()) {
+        case 0: return create_0(JFaceDetectorOptionsAutoModeDisabled::fromCpp(std::get<0>(variant)));
+        case 1: return create_1(JFaceDetectorOptionsAutoModeEnabled::fromCpp(std::get<1>(variant)));
+        default: throw std::invalid_argument("Variant holds unknown index! (" + std::to_string(variant.index()) + ")");
+      }
     }
+
+    [[nodiscard]] std::variant<FaceDetectorOptionsAutoModeDisabled, FaceDetectorOptionsAutoModeEnabled> toCpp() const;
   };
 
+  namespace JFaceDetectorOptions_impl {
+    class First final: public jni::JavaClass<First, JFaceDetectorOptions> {
+    public:
+      static constexpr auto kJavaDescriptor = "Lcom/margelo/nitro/camera/facedetector/FaceDetectorOptions$First;";
+    
+      [[nodiscard]] jni::local_ref<JFaceDetectorOptionsAutoModeDisabled> getValue() const {
+        static const auto field = javaClassStatic()->getField<JFaceDetectorOptionsAutoModeDisabled>("value");
+        return getFieldValue(field);
+      }
+    };
+    
+    class Second final: public jni::JavaClass<Second, JFaceDetectorOptions> {
+    public:
+      static constexpr auto kJavaDescriptor = "Lcom/margelo/nitro/camera/facedetector/FaceDetectorOptions$Second;";
+    
+      [[nodiscard]] jni::local_ref<JFaceDetectorOptionsAutoModeEnabled> getValue() const {
+        static const auto field = javaClassStatic()->getField<JFaceDetectorOptionsAutoModeEnabled>("value");
+        return getFieldValue(field);
+      }
+    };
+  } // namespace JFaceDetectorOptions_impl
 } // namespace margelo::nitro::camera::facedetector

@@ -18,172 +18,367 @@ public extension Contours {
   /**
    * Create a new instance of `Contours`.
    */
-  init(FACE: [Point], LEFT_EYEBROW_TOP: [Point], LEFT_EYEBROW_BOTTOM: [Point], RIGHT_EYEBROW_TOP: [Point], RIGHT_EYEBROW_BOTTOM: [Point], LEFT_EYE: [Point], RIGHT_EYE: [Point], UPPER_LIP_TOP: [Point], UPPER_LIP_BOTTOM: [Point], LOWER_LIP_TOP: [Point], LOWER_LIP_BOTTOM: [Point], NOSE_BRIDGE: [Point], NOSE_BOTTOM: [Point], LEFT_CHEEK: [Point], RIGHT_CHEEK: [Point]) {
-    self.init({ () -> bridge.std__vector_Point_ in
-      var __vector = bridge.create_std__vector_Point_(FACE.count)
-      for __item in FACE {
-        __vector.push_back(__item)
+  init(FACE: [Point]?, LEFT_EYEBROW_TOP: [Point]?, LEFT_EYEBROW_BOTTOM: [Point]?, RIGHT_EYEBROW_TOP: [Point]?, RIGHT_EYEBROW_BOTTOM: [Point]?, LEFT_EYE: [Point]?, RIGHT_EYE: [Point]?, UPPER_LIP_TOP: [Point]?, UPPER_LIP_BOTTOM: [Point]?, LOWER_LIP_TOP: [Point]?, LOWER_LIP_BOTTOM: [Point]?, NOSE_BRIDGE: [Point]?, NOSE_BOTTOM: [Point]?, LEFT_CHEEK: [Point]?, RIGHT_CHEEK: [Point]?) {
+    self.init({ () -> bridge.std__optional_std__vector_Point__ in
+      if let __unwrappedValue = FACE {
+        return bridge.create_std__optional_std__vector_Point__({ () -> bridge.std__vector_Point_ in
+          var __vector = bridge.create_std__vector_Point_(__unwrappedValue.count)
+          for __item in __unwrappedValue {
+            __vector.push_back(__item)
+          }
+          return __vector
+        }())
+      } else {
+        return .init()
       }
-      return __vector
-    }(), { () -> bridge.std__vector_Point_ in
-      var __vector = bridge.create_std__vector_Point_(LEFT_EYEBROW_TOP.count)
-      for __item in LEFT_EYEBROW_TOP {
-        __vector.push_back(__item)
+    }(), { () -> bridge.std__optional_std__vector_Point__ in
+      if let __unwrappedValue = LEFT_EYEBROW_TOP {
+        return bridge.create_std__optional_std__vector_Point__({ () -> bridge.std__vector_Point_ in
+          var __vector = bridge.create_std__vector_Point_(__unwrappedValue.count)
+          for __item in __unwrappedValue {
+            __vector.push_back(__item)
+          }
+          return __vector
+        }())
+      } else {
+        return .init()
       }
-      return __vector
-    }(), { () -> bridge.std__vector_Point_ in
-      var __vector = bridge.create_std__vector_Point_(LEFT_EYEBROW_BOTTOM.count)
-      for __item in LEFT_EYEBROW_BOTTOM {
-        __vector.push_back(__item)
+    }(), { () -> bridge.std__optional_std__vector_Point__ in
+      if let __unwrappedValue = LEFT_EYEBROW_BOTTOM {
+        return bridge.create_std__optional_std__vector_Point__({ () -> bridge.std__vector_Point_ in
+          var __vector = bridge.create_std__vector_Point_(__unwrappedValue.count)
+          for __item in __unwrappedValue {
+            __vector.push_back(__item)
+          }
+          return __vector
+        }())
+      } else {
+        return .init()
       }
-      return __vector
-    }(), { () -> bridge.std__vector_Point_ in
-      var __vector = bridge.create_std__vector_Point_(RIGHT_EYEBROW_TOP.count)
-      for __item in RIGHT_EYEBROW_TOP {
-        __vector.push_back(__item)
+    }(), { () -> bridge.std__optional_std__vector_Point__ in
+      if let __unwrappedValue = RIGHT_EYEBROW_TOP {
+        return bridge.create_std__optional_std__vector_Point__({ () -> bridge.std__vector_Point_ in
+          var __vector = bridge.create_std__vector_Point_(__unwrappedValue.count)
+          for __item in __unwrappedValue {
+            __vector.push_back(__item)
+          }
+          return __vector
+        }())
+      } else {
+        return .init()
       }
-      return __vector
-    }(), { () -> bridge.std__vector_Point_ in
-      var __vector = bridge.create_std__vector_Point_(RIGHT_EYEBROW_BOTTOM.count)
-      for __item in RIGHT_EYEBROW_BOTTOM {
-        __vector.push_back(__item)
+    }(), { () -> bridge.std__optional_std__vector_Point__ in
+      if let __unwrappedValue = RIGHT_EYEBROW_BOTTOM {
+        return bridge.create_std__optional_std__vector_Point__({ () -> bridge.std__vector_Point_ in
+          var __vector = bridge.create_std__vector_Point_(__unwrappedValue.count)
+          for __item in __unwrappedValue {
+            __vector.push_back(__item)
+          }
+          return __vector
+        }())
+      } else {
+        return .init()
       }
-      return __vector
-    }(), { () -> bridge.std__vector_Point_ in
-      var __vector = bridge.create_std__vector_Point_(LEFT_EYE.count)
-      for __item in LEFT_EYE {
-        __vector.push_back(__item)
+    }(), { () -> bridge.std__optional_std__vector_Point__ in
+      if let __unwrappedValue = LEFT_EYE {
+        return bridge.create_std__optional_std__vector_Point__({ () -> bridge.std__vector_Point_ in
+          var __vector = bridge.create_std__vector_Point_(__unwrappedValue.count)
+          for __item in __unwrappedValue {
+            __vector.push_back(__item)
+          }
+          return __vector
+        }())
+      } else {
+        return .init()
       }
-      return __vector
-    }(), { () -> bridge.std__vector_Point_ in
-      var __vector = bridge.create_std__vector_Point_(RIGHT_EYE.count)
-      for __item in RIGHT_EYE {
-        __vector.push_back(__item)
+    }(), { () -> bridge.std__optional_std__vector_Point__ in
+      if let __unwrappedValue = RIGHT_EYE {
+        return bridge.create_std__optional_std__vector_Point__({ () -> bridge.std__vector_Point_ in
+          var __vector = bridge.create_std__vector_Point_(__unwrappedValue.count)
+          for __item in __unwrappedValue {
+            __vector.push_back(__item)
+          }
+          return __vector
+        }())
+      } else {
+        return .init()
       }
-      return __vector
-    }(), { () -> bridge.std__vector_Point_ in
-      var __vector = bridge.create_std__vector_Point_(UPPER_LIP_TOP.count)
-      for __item in UPPER_LIP_TOP {
-        __vector.push_back(__item)
+    }(), { () -> bridge.std__optional_std__vector_Point__ in
+      if let __unwrappedValue = UPPER_LIP_TOP {
+        return bridge.create_std__optional_std__vector_Point__({ () -> bridge.std__vector_Point_ in
+          var __vector = bridge.create_std__vector_Point_(__unwrappedValue.count)
+          for __item in __unwrappedValue {
+            __vector.push_back(__item)
+          }
+          return __vector
+        }())
+      } else {
+        return .init()
       }
-      return __vector
-    }(), { () -> bridge.std__vector_Point_ in
-      var __vector = bridge.create_std__vector_Point_(UPPER_LIP_BOTTOM.count)
-      for __item in UPPER_LIP_BOTTOM {
-        __vector.push_back(__item)
+    }(), { () -> bridge.std__optional_std__vector_Point__ in
+      if let __unwrappedValue = UPPER_LIP_BOTTOM {
+        return bridge.create_std__optional_std__vector_Point__({ () -> bridge.std__vector_Point_ in
+          var __vector = bridge.create_std__vector_Point_(__unwrappedValue.count)
+          for __item in __unwrappedValue {
+            __vector.push_back(__item)
+          }
+          return __vector
+        }())
+      } else {
+        return .init()
       }
-      return __vector
-    }(), { () -> bridge.std__vector_Point_ in
-      var __vector = bridge.create_std__vector_Point_(LOWER_LIP_TOP.count)
-      for __item in LOWER_LIP_TOP {
-        __vector.push_back(__item)
+    }(), { () -> bridge.std__optional_std__vector_Point__ in
+      if let __unwrappedValue = LOWER_LIP_TOP {
+        return bridge.create_std__optional_std__vector_Point__({ () -> bridge.std__vector_Point_ in
+          var __vector = bridge.create_std__vector_Point_(__unwrappedValue.count)
+          for __item in __unwrappedValue {
+            __vector.push_back(__item)
+          }
+          return __vector
+        }())
+      } else {
+        return .init()
       }
-      return __vector
-    }(), { () -> bridge.std__vector_Point_ in
-      var __vector = bridge.create_std__vector_Point_(LOWER_LIP_BOTTOM.count)
-      for __item in LOWER_LIP_BOTTOM {
-        __vector.push_back(__item)
+    }(), { () -> bridge.std__optional_std__vector_Point__ in
+      if let __unwrappedValue = LOWER_LIP_BOTTOM {
+        return bridge.create_std__optional_std__vector_Point__({ () -> bridge.std__vector_Point_ in
+          var __vector = bridge.create_std__vector_Point_(__unwrappedValue.count)
+          for __item in __unwrappedValue {
+            __vector.push_back(__item)
+          }
+          return __vector
+        }())
+      } else {
+        return .init()
       }
-      return __vector
-    }(), { () -> bridge.std__vector_Point_ in
-      var __vector = bridge.create_std__vector_Point_(NOSE_BRIDGE.count)
-      for __item in NOSE_BRIDGE {
-        __vector.push_back(__item)
+    }(), { () -> bridge.std__optional_std__vector_Point__ in
+      if let __unwrappedValue = NOSE_BRIDGE {
+        return bridge.create_std__optional_std__vector_Point__({ () -> bridge.std__vector_Point_ in
+          var __vector = bridge.create_std__vector_Point_(__unwrappedValue.count)
+          for __item in __unwrappedValue {
+            __vector.push_back(__item)
+          }
+          return __vector
+        }())
+      } else {
+        return .init()
       }
-      return __vector
-    }(), { () -> bridge.std__vector_Point_ in
-      var __vector = bridge.create_std__vector_Point_(NOSE_BOTTOM.count)
-      for __item in NOSE_BOTTOM {
-        __vector.push_back(__item)
+    }(), { () -> bridge.std__optional_std__vector_Point__ in
+      if let __unwrappedValue = NOSE_BOTTOM {
+        return bridge.create_std__optional_std__vector_Point__({ () -> bridge.std__vector_Point_ in
+          var __vector = bridge.create_std__vector_Point_(__unwrappedValue.count)
+          for __item in __unwrappedValue {
+            __vector.push_back(__item)
+          }
+          return __vector
+        }())
+      } else {
+        return .init()
       }
-      return __vector
-    }(), { () -> bridge.std__vector_Point_ in
-      var __vector = bridge.create_std__vector_Point_(LEFT_CHEEK.count)
-      for __item in LEFT_CHEEK {
-        __vector.push_back(__item)
+    }(), { () -> bridge.std__optional_std__vector_Point__ in
+      if let __unwrappedValue = LEFT_CHEEK {
+        return bridge.create_std__optional_std__vector_Point__({ () -> bridge.std__vector_Point_ in
+          var __vector = bridge.create_std__vector_Point_(__unwrappedValue.count)
+          for __item in __unwrappedValue {
+            __vector.push_back(__item)
+          }
+          return __vector
+        }())
+      } else {
+        return .init()
       }
-      return __vector
-    }(), { () -> bridge.std__vector_Point_ in
-      var __vector = bridge.create_std__vector_Point_(RIGHT_CHEEK.count)
-      for __item in RIGHT_CHEEK {
-        __vector.push_back(__item)
+    }(), { () -> bridge.std__optional_std__vector_Point__ in
+      if let __unwrappedValue = RIGHT_CHEEK {
+        return bridge.create_std__optional_std__vector_Point__({ () -> bridge.std__vector_Point_ in
+          var __vector = bridge.create_std__vector_Point_(__unwrappedValue.count)
+          for __item in __unwrappedValue {
+            __vector.push_back(__item)
+          }
+          return __vector
+        }())
+      } else {
+        return .init()
       }
-      return __vector
     }())
   }
 
   @inline(__always)
-  var FACE: [Point] {
-    return self.__FACE.map({ __item in __item })
+  var FACE: [Point]? {
+    return { () -> [Point]? in
+      if bridge.has_value_std__optional_std__vector_Point__(self.__FACE) {
+        let __unwrapped = bridge.get_std__optional_std__vector_Point__(self.__FACE)
+        return __unwrapped.map({ __item in __item })
+      } else {
+        return nil
+      }
+    }()
   }
   
   @inline(__always)
-  var LEFT_EYEBROW_TOP: [Point] {
-    return self.__LEFT_EYEBROW_TOP.map({ __item in __item })
+  var LEFT_EYEBROW_TOP: [Point]? {
+    return { () -> [Point]? in
+      if bridge.has_value_std__optional_std__vector_Point__(self.__LEFT_EYEBROW_TOP) {
+        let __unwrapped = bridge.get_std__optional_std__vector_Point__(self.__LEFT_EYEBROW_TOP)
+        return __unwrapped.map({ __item in __item })
+      } else {
+        return nil
+      }
+    }()
   }
   
   @inline(__always)
-  var LEFT_EYEBROW_BOTTOM: [Point] {
-    return self.__LEFT_EYEBROW_BOTTOM.map({ __item in __item })
+  var LEFT_EYEBROW_BOTTOM: [Point]? {
+    return { () -> [Point]? in
+      if bridge.has_value_std__optional_std__vector_Point__(self.__LEFT_EYEBROW_BOTTOM) {
+        let __unwrapped = bridge.get_std__optional_std__vector_Point__(self.__LEFT_EYEBROW_BOTTOM)
+        return __unwrapped.map({ __item in __item })
+      } else {
+        return nil
+      }
+    }()
   }
   
   @inline(__always)
-  var RIGHT_EYEBROW_TOP: [Point] {
-    return self.__RIGHT_EYEBROW_TOP.map({ __item in __item })
+  var RIGHT_EYEBROW_TOP: [Point]? {
+    return { () -> [Point]? in
+      if bridge.has_value_std__optional_std__vector_Point__(self.__RIGHT_EYEBROW_TOP) {
+        let __unwrapped = bridge.get_std__optional_std__vector_Point__(self.__RIGHT_EYEBROW_TOP)
+        return __unwrapped.map({ __item in __item })
+      } else {
+        return nil
+      }
+    }()
   }
   
   @inline(__always)
-  var RIGHT_EYEBROW_BOTTOM: [Point] {
-    return self.__RIGHT_EYEBROW_BOTTOM.map({ __item in __item })
+  var RIGHT_EYEBROW_BOTTOM: [Point]? {
+    return { () -> [Point]? in
+      if bridge.has_value_std__optional_std__vector_Point__(self.__RIGHT_EYEBROW_BOTTOM) {
+        let __unwrapped = bridge.get_std__optional_std__vector_Point__(self.__RIGHT_EYEBROW_BOTTOM)
+        return __unwrapped.map({ __item in __item })
+      } else {
+        return nil
+      }
+    }()
   }
   
   @inline(__always)
-  var LEFT_EYE: [Point] {
-    return self.__LEFT_EYE.map({ __item in __item })
+  var LEFT_EYE: [Point]? {
+    return { () -> [Point]? in
+      if bridge.has_value_std__optional_std__vector_Point__(self.__LEFT_EYE) {
+        let __unwrapped = bridge.get_std__optional_std__vector_Point__(self.__LEFT_EYE)
+        return __unwrapped.map({ __item in __item })
+      } else {
+        return nil
+      }
+    }()
   }
   
   @inline(__always)
-  var RIGHT_EYE: [Point] {
-    return self.__RIGHT_EYE.map({ __item in __item })
+  var RIGHT_EYE: [Point]? {
+    return { () -> [Point]? in
+      if bridge.has_value_std__optional_std__vector_Point__(self.__RIGHT_EYE) {
+        let __unwrapped = bridge.get_std__optional_std__vector_Point__(self.__RIGHT_EYE)
+        return __unwrapped.map({ __item in __item })
+      } else {
+        return nil
+      }
+    }()
   }
   
   @inline(__always)
-  var UPPER_LIP_TOP: [Point] {
-    return self.__UPPER_LIP_TOP.map({ __item in __item })
+  var UPPER_LIP_TOP: [Point]? {
+    return { () -> [Point]? in
+      if bridge.has_value_std__optional_std__vector_Point__(self.__UPPER_LIP_TOP) {
+        let __unwrapped = bridge.get_std__optional_std__vector_Point__(self.__UPPER_LIP_TOP)
+        return __unwrapped.map({ __item in __item })
+      } else {
+        return nil
+      }
+    }()
   }
   
   @inline(__always)
-  var UPPER_LIP_BOTTOM: [Point] {
-    return self.__UPPER_LIP_BOTTOM.map({ __item in __item })
+  var UPPER_LIP_BOTTOM: [Point]? {
+    return { () -> [Point]? in
+      if bridge.has_value_std__optional_std__vector_Point__(self.__UPPER_LIP_BOTTOM) {
+        let __unwrapped = bridge.get_std__optional_std__vector_Point__(self.__UPPER_LIP_BOTTOM)
+        return __unwrapped.map({ __item in __item })
+      } else {
+        return nil
+      }
+    }()
   }
   
   @inline(__always)
-  var LOWER_LIP_TOP: [Point] {
-    return self.__LOWER_LIP_TOP.map({ __item in __item })
+  var LOWER_LIP_TOP: [Point]? {
+    return { () -> [Point]? in
+      if bridge.has_value_std__optional_std__vector_Point__(self.__LOWER_LIP_TOP) {
+        let __unwrapped = bridge.get_std__optional_std__vector_Point__(self.__LOWER_LIP_TOP)
+        return __unwrapped.map({ __item in __item })
+      } else {
+        return nil
+      }
+    }()
   }
   
   @inline(__always)
-  var LOWER_LIP_BOTTOM: [Point] {
-    return self.__LOWER_LIP_BOTTOM.map({ __item in __item })
+  var LOWER_LIP_BOTTOM: [Point]? {
+    return { () -> [Point]? in
+      if bridge.has_value_std__optional_std__vector_Point__(self.__LOWER_LIP_BOTTOM) {
+        let __unwrapped = bridge.get_std__optional_std__vector_Point__(self.__LOWER_LIP_BOTTOM)
+        return __unwrapped.map({ __item in __item })
+      } else {
+        return nil
+      }
+    }()
   }
   
   @inline(__always)
-  var NOSE_BRIDGE: [Point] {
-    return self.__NOSE_BRIDGE.map({ __item in __item })
+  var NOSE_BRIDGE: [Point]? {
+    return { () -> [Point]? in
+      if bridge.has_value_std__optional_std__vector_Point__(self.__NOSE_BRIDGE) {
+        let __unwrapped = bridge.get_std__optional_std__vector_Point__(self.__NOSE_BRIDGE)
+        return __unwrapped.map({ __item in __item })
+      } else {
+        return nil
+      }
+    }()
   }
   
   @inline(__always)
-  var NOSE_BOTTOM: [Point] {
-    return self.__NOSE_BOTTOM.map({ __item in __item })
+  var NOSE_BOTTOM: [Point]? {
+    return { () -> [Point]? in
+      if bridge.has_value_std__optional_std__vector_Point__(self.__NOSE_BOTTOM) {
+        let __unwrapped = bridge.get_std__optional_std__vector_Point__(self.__NOSE_BOTTOM)
+        return __unwrapped.map({ __item in __item })
+      } else {
+        return nil
+      }
+    }()
   }
   
   @inline(__always)
-  var LEFT_CHEEK: [Point] {
-    return self.__LEFT_CHEEK.map({ __item in __item })
+  var LEFT_CHEEK: [Point]? {
+    return { () -> [Point]? in
+      if bridge.has_value_std__optional_std__vector_Point__(self.__LEFT_CHEEK) {
+        let __unwrapped = bridge.get_std__optional_std__vector_Point__(self.__LEFT_CHEEK)
+        return __unwrapped.map({ __item in __item })
+      } else {
+        return nil
+      }
+    }()
   }
   
   @inline(__always)
-  var RIGHT_CHEEK: [Point] {
-    return self.__RIGHT_CHEEK.map({ __item in __item })
+  var RIGHT_CHEEK: [Point]? {
+    return { () -> [Point]? in
+      if bridge.has_value_std__optional_std__vector_Point__(self.__RIGHT_CHEEK) {
+        let __unwrapped = bridge.get_std__optional_std__vector_Point__(self.__RIGHT_CHEEK)
+        return __unwrapped.map({ __item in __item })
+      } else {
+        return nil
+      }
+    }()
   }
 }

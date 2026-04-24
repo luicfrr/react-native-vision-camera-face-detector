@@ -11,11 +11,11 @@ import VisionCamera
 /// See ``HybridFaceDetectorSpec``
 public protocol HybridFaceDetectorSpec_protocol: HybridObject {
   // Properties
-  var detectFaces: (_ frame: (any HybridFrameSpec)) -> Promise<Promise<[(any HybridFaceSpec)]>> { get set }
-  var stopListeners: () -> Void { get set }
+  
 
   // Methods
-  
+  func detectFaces(frame: (any HybridFrameSpec)) throws -> Promise<[(any HybridFaceSpec)]>
+  func stopListeners() throws -> Void
 }
 
 public extension HybridFaceDetectorSpec_protocol {
