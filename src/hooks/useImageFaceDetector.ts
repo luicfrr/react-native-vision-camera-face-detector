@@ -20,7 +20,7 @@ import type { FaceDetectorOptions } from '../specs/FaceDetectorFactory.nitro'
  * ```ts
  * const uri = 'file:///storage/emulated/0/Download/pic.jpg'
  * const ImageFaceDetector = useFaceDetector({...})
- * const faces = useImageFaceDetector.detectFaces(uri)
+ * const faces = ImageFaceDetector.detectFaces(uri)
  * ```
  */
 export function useImageFaceDetector(

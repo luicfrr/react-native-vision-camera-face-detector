@@ -123,19 +123,18 @@ export default function App() {
   } ).current
 
   const device = useCameraDevice('front')
-  const { 
-    detectFaces,
-    stopListeners
-  } = useFaceDetector( faceDetectorOptions )
-
+  // ❌ don't destruct hybrid objects ❌
+  // const {detectFaces} = useFaceDetector(faceDetectorOptions)
+  const faceDetector = useFaceDetector( faceDetectorOptions )
   const asyncRunner = useAsyncRunner()
   const frameOutput = useFrameOutput({
     onFrame: (frame) => {
       'worklet'
       
-      const wasHandled = asyncRunner.runAsync(() => {
+      const wasHandled = asyncRunner.runAsync(async () => {
         'worklet'
-        const faces = detectFaces(frame)
+
+        const faces = await faceDetector.detectFaces(frame)
         // ... do something with faces
         // ... chain something asynchronously
 
@@ -153,14 +152,14 @@ export default function App() {
   useEffect( () => {
     return () => {
       // you must call `stopListeners` when current component is unmounted
-      stopListeners()
+      faceDetector.stopListeners()
     }
   }, [] )
 
   useEffect(() => {
     if(!device) {
       // you must call `stopListeners` when `Camera` component is unmounted
-      stopListeners()
+      faceDetector.stopListeners()
       return
     }
 
@@ -169,16 +168,6 @@ export default function App() {
       console.log({ status })
     })()
   }, [device])
-
-  const frameProcessor = useFrameProcessor((frame) => {
-    'worklet'
-    runAsync(frame, () => {
-      'worklet'
-      
-    })
-    // ... chain frame processors
-    // ... do something with frame
-  }, [handleDetectedFaces])
 
   return (
     <View style={{ flex: 1 }}>
@@ -210,19 +199,21 @@ Supported image sources:
 ```ts
 import { useImageFaceDetector } from 'react-native-vision-camera-face-detector'
 
-const { detectFaces } = useImageFaceDetector( {
+// ❌ don't destruct hybrid objects ❌
+// const {detectFaces} = useImageFaceDetector({...})
+const faceDetector = useImageFaceDetector( {
   // detection options
 } )
 
 // Using a bundled asset
-const faces1 = await detectFaces(
+const faces1 = await faceDetector.detectFaces(
   require('./assets/photo.jpg')
 )
 // Using a local file path or content URI (e.g. from an image picker)
-const faces2 = await detectFaces(
+const faces2 = await faceDetector.detectFaces(
   'file:///storage/emulated/0/Download/pic.jpg'
 )
-const faces3 = await detectFaces({ 
+const faces3 = await faceDetector.detectFaces({ 
   uri: 'content://media/external/images/media/12345' 
 })
 
