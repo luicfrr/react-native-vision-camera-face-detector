@@ -38,7 +38,6 @@ export function Camera( {
   ...props
 }: ComponentType ) {
   const asyncRunner = useAsyncRunner()
-  const faces = useSharedValue<string>( '[]' )
   const faceDetector = useFaceDetector( faceDetectorOptions )
 
   useEffect( () => {
@@ -79,12 +78,8 @@ export function Camera( {
       'worklet'
 
       try {
-        faces.value = JSON.stringify(
-          faceDetector.detectFaces( frame )
-        )
-
         runOnJs(
-          JSON.parse( faces.value ),
+          await faceDetector.detectFaces( frame ),
           frame
         )
       } catch ( error: any ) {
