@@ -23,7 +23,7 @@ export type UseWorkletType = (
 export function useWorklet(
   func: ( frame: Frame ) => void,
   dependencyList: DependencyList
-): ( frame: Frame ) => Promise<void> {
+): UseWorkletType {
   return useMemo( () => {
     const runtime = createWorkletRuntime( {
       name: 'FaceDetectorContext'

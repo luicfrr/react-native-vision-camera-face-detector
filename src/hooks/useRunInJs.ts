@@ -3,13 +3,10 @@ import { scheduleOnRN } from 'react-native-worklets'
 
 // types
 import type { DependencyList } from 'react'
-import type { Frame } from 'react-native-vision-camera'
-import type { Face } from '../specs/Face.nitro'
 
-export type UseRunInJSType = (
-  faces: Face[],
-  frame: Frame
-) => Promise<void | Promise<void>>
+export type UseRunInJSType<TArgs extends unknown[]> = (
+  ...args: TArgs
+) => void
 
 /**
  * Create a Worklet function that runs the giver function on JS context.
@@ -22,7 +19,7 @@ export type UseRunInJSType = (
 export function useRunInJS<TArgs extends unknown[]>(
   func: ( ...args: TArgs ) => void | Promise<void>,
   dependencyList: DependencyList
-): ( ...args: TArgs ) => void {
+): UseRunInJSType<TArgs> {
   return useMemo( () => (
     ...args: TArgs
   ) => {
