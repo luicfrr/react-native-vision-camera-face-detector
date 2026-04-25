@@ -23,6 +23,7 @@ export function useRunInJS<TArgs extends unknown[]>(
   return useMemo( () => (
     ...args: TArgs
   ) => {
+    'worklet'
     scheduleOnRN( func, ...args )
   }, dependencyList )
 }
