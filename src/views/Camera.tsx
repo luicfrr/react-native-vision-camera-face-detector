@@ -74,7 +74,7 @@ export function Camera( {
   ) => {
     'worklet'
 
-    const finished = asyncRunner.runAsync( () => {
+    const finished = asyncRunner.runAsync( async () => {
       'worklet'
 
       try {
