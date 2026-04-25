@@ -13,24 +13,31 @@ import {
 } from 'react-native'
 import {
   CameraPosition,
-  DrawableFrame,
   Frame,
-  Camera as VisionCamera,
+  CameraRef,
   useCameraDevice,
   useCameraPermission
 } from 'react-native-vision-camera'
+import {
+  SkiaCameraProps,
+  SkiaCameraRef
+} from 'react-native-vision-camera-skia'
 import { launchImageLibraryAsync } from 'expo-image-picker'
 import { useIsFocused } from '@react-navigation/core'
 import { useAppState } from '@react-native-community/hooks'
-import { SafeAreaProvider } from 'react-native-safe-area-context'
 import { NavigationContainer } from '@react-navigation/native'
 import {
-  Face,
+  SafeAreaProvider,
+  useSafeAreaInsets
+} from 'react-native-safe-area-context'
+import {
   Camera,
+  SkiaCamera,
   Contours,
+  Face,
   Landmarks,
-  detectFaces,
-  FrameFaceDetectionOptions
+  useImageFaceDetector,
+  FaceDetectorOptions
 } from 'react-native-vision-camera-face-detector'
 import {
   ClipOp,
@@ -64,6 +71,7 @@ function Index(): ReactNode {
  * @return {ReactNode} Component
  */
 function FaceDetection(): ReactNode {
+  const insets = useSafeAreaInsets()
   const {
     width,
     height
@@ -88,11 +96,11 @@ function FaceDetection(): ReactNode {
     cameraFacing,
     setCameraFacing
   ] = useState<CameraPosition>( 'front' )
-  const faceDetectionOptions = useRef<FrameFaceDetectionOptions>( {
+  const faceDetectorOptions = useRef<FaceDetectorOptions>( {
     performanceMode: 'fast',
-    classificationMode: 'all',
-    contourMode: 'all',
-    landmarkMode: 'all',
+    runClassifications: true,
+    runContours: true,
+    runLandmarks: true,
     windowWidth: width,
     windowHeight: height
   } ).current
@@ -107,7 +115,9 @@ function FaceDetection(): ReactNode {
   //
   // vision camera ref
   //
-  const camera = useRef<VisionCamera>( null )
+  const camera = useRef<CameraRef>( null )
+  const skiaCamera = useRef<SkiaCameraRef>( null )
+  const { detectFaces } = useImageFaceDetector( faceDetectorOptions )
   //
   // face rectangle position
   //
@@ -145,16 +155,16 @@ function FaceDetection(): ReactNode {
     requestPermission()
   }, [] )
 
-  /**
-   * Handle camera UI rotation
-   * 
-   * @param {number} rotation Camera rotation
-   */
-  function handleUiRotation(
-    rotation: number
-  ) {
-    aRot.value = rotation
-  }
+  // /**
+  //  * Handle camera UI rotation
+  //  * 
+  //  * @param {number} rotation Camera rotation
+  //  */
+  // function handleUiRotation(
+  //   rotation: number
+  // ) {
+  //   aRot.value = rotation
+  // }
 
   /**
    * Hanldes camera mount error event
@@ -219,8 +229,9 @@ function FaceDetection(): ReactNode {
    * @returns {void}
    */
   function handleSkiaActions(
-    faces: Face[],
-    frame: DrawableFrame
+    frame: Frame,
+    render: Parameters<SkiaCameraProps[ 'onFrame' ]>[ 1 ],
+    faces: Face[]
   ): void {
     'worklet'
     // if no faces are detected we do nothing
@@ -267,11 +278,6 @@ function FaceDetection(): ReactNode {
       contourPath.close()
     } )
 
-    frame.save()
-    frame.clipPath( contourPath, ClipOp.Intersect, true )
-    frame.render( blurPaint )
-    frame.restore()
-
     // draw mouth shape
     const mouthPath = Skia.Path.Make()
     const mouthPaint = Skia.Paint()
@@ -295,14 +301,23 @@ function FaceDetection(): ReactNode {
       }
     } )
     mouthPath.close()
-    frame.drawPath( mouthPath, mouthPaint )
 
     // draw a rectangle around the face
     const rectPaint = Skia.Paint()
     rectPaint.setColor( Skia.Color( 'blue' ) )
     rectPaint.setStyle( 1 )
     rectPaint.setStrokeWidth( 5 )
-    frame.drawRect( bounds, rectPaint )
+
+    render( ( {
+      frameTexture,
+      canvas
+    } ) => {
+      canvas.drawImage( frameTexture, 0, 0 )
+      canvas.clipPath( contourPath, ClipOp.Intersect, true )
+      canvas.drawPaint( blurPaint )
+      canvas.drawPath( mouthPath, mouthPaint )
+      canvas.drawRect( bounds, rectPaint )
+    } )
   }
 
   /**
@@ -321,9 +336,7 @@ function FaceDetection(): ReactNode {
 
     if ( result.canceled ) return
 
-    const faces = await detectFaces( {
-      image: result.assets[ 0 ].uri
-    } )
+    const faces = await detectFaces( result.assets[ 0 ] )
     console.log( 'image detected faces', faces )
   }
 
@@ -336,10 +349,9 @@ function FaceDetection(): ReactNode {
     if ( !camera.current ) return
     // take snapshot is faster than take photo 
     // but it does not process captured image
-    const { path } = await camera.current?.takeSnapshot()
-    const faces = await detectFaces( {
-      image: `file://${ path }`
-    } )
+    const snapshot = await camera.current?.takeSnapshot()
+    const path = await snapshot.saveToTemporaryFileAsync( 'png' )
+    const faces = await detectFaces( `file://${ path }` )
     console.log( 'photo detected faces', faces )
   }
 
@@ -353,24 +365,31 @@ function FaceDetection(): ReactNode {
       ] }
     >
       { hasPermission && cameraDevice ? <>
-        { cameraMounted && <>
-          <Camera
-            // @ts-ignore
+        { cameraMounted && <> {
+          autoMode ? <Camera
             ref={ camera }
             style={ StyleSheet.absoluteFill }
             isActive={ isCameraActive }
             device={ cameraDevice }
             onError={ handleCameraMountError }
-            faceDetectionCallback={ handleFacesDetected }
-            onUIRotationChanged={ handleUiRotation }
-            // @ts-ignore
-            skiaActions={ handleSkiaActions }
-            faceDetectionOptions={ {
-              ...faceDetectionOptions,
+            faceDetectorCallback={ handleFacesDetected }
+            // onUIRotationChanged={ handleUiRotation }
+            orientationSource='device'
+            faceDetectorOptions={ {
+              ...faceDetectorOptions,
               autoMode,
               cameraFacing
             } }
-          />
+          /> : <SkiaCamera
+            ref={ skiaCamera }
+            style={ StyleSheet.absoluteFill }
+            isActive={ isCameraActive }
+            device={ cameraDevice }
+            onError={ handleCameraMountError }
+            skiaActions={ handleSkiaActions }
+            faceDetectorOptions={ faceDetectorOptions }
+            faceDetectorCallback={ handleFacesDetected }
+          /> }
 
           <Animated.View
             style={ boundingBoxStyle }
@@ -412,7 +431,7 @@ function FaceDetection(): ReactNode {
     <View
       style={ {
         position: 'absolute',
-        bottom: 20,
+        bottom: 20 + + insets.bottom,
         left: 0,
         right: 0,
         display: 'flex',

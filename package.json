@@ -1,6 +1,6 @@
 {
   "name": "react-native-vision-camera-face-detector",
-  "version": "1.10.2",
+  "version": "2.0.0-0",
   "description": "Frame Processor Plugin to detect faces using MLKit Vision Face Detector for React Native Vision Camera!",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
@@ -9,20 +9,28 @@
   "source": "src/index",
   "files": [
     "src",
+    "react-native.config.js",
     "lib",
-    "!**/__tests__",
-    "!**/__fixtures__",
-    "!**/__mocks__",
-    "android",
-    "ios",
-    "cpp",
-    "VisionCameraFaceDetector.podspec",
-    "!android/build",
-    "!ios/build"
+    "nitrogen",
+    "android/build.gradle",
+    "android/gradle.properties",
+    "android/fix-prefab.gradle",
+    "android/CMakeLists.txt",
+    "android/src",
+    "ios/**/*.h",
+    "ios/**/*.m",
+    "ios/**/*.mm",
+    "ios/**/*.cpp",
+    "ios/**/*.swift",
+    "nitro.json",
+    "*.podspec",
+    "README.md"
   ],
   "scripts": {
     "typescript": "tsc --noEmit",
+    "clean": "rm -rf android/build node_modules/**/android/build lib",
     "lint": "eslint \"**/*.{js,ts,tsx}\"",
+    "specs": "tsc --noEmit false && nitrogen --logLevel=\"debug\"",
     "prepare": "bob build",
     "release": "release-it",
     "example": "yarn --cwd example",
@@ -50,31 +58,33 @@
   },
   "devDependencies": {
     "@react-native-community/eslint-config": "^3.2.0",
-    "@release-it/conventional-changelog": "^10.0.1",
-    "@tsconfig/react-native": "^3.0.7",
+    "@release-it/conventional-changelog": "^10.0.6",
+    "@tsconfig/react-native": "^3.0.9",
     "@types/react": "^19",
-    "eslint": "^9.37.0",
+    "@shopify/react-native-skia": "^2.6.2",
+    "eslint": "^10.2.1",
     "eslint-config-prettier": "^10.1.8",
-    "eslint-plugin-prettier": "^5.5.4",
-    "prettier": "^3.6.2",
+    "eslint-plugin-prettier": "^5.5.5",
+    "nitrogen": "^0.35.5",
+    "prettier": "^3.8.3",
     "react": "^19",
-    "react-native": "0.79.6",
-    "react-native-builder-bob": "^0.40.13",
-    "react-native-vision-camera": "4.7.2",
-    "react-native-worklets-core": "^1.6.2",
-    "release-it": "^19.0.5",
-    "typescript": "~5.9.3"
+    "react-native": "0.83.6",
+    "react-native-builder-bob": "^0.41.0",
+    "react-native-nitro-image": "^0.13.1",
+    "react-native-nitro-modules": "^0.35.5",
+    "react-native-reanimated": "^4.3.0",
+    "react-native-vision-camera": "^5.0.6",
+    "react-native-vision-camera-skia": "^5.0.6",
+    "react-native-vision-camera-worklets": "^5.0.6",
+    "react-native-worklets": "^0.8.1",
+    "release-it": "^20.0.0",
+    "typescript": "~6.0.3"
   },
   "peerDependencies": {
     "react": ">= 18",
     "react-native": ">= 0.74",
-    "react-native-vision-camera": ">= 4.0"
-  },
-  "jest": {
-    "preset": "react-native",
-    "modulePathIgnorePatterns": [
-      "<rootDir>/lib/"
-    ]
+    "react-native-nitro-modules": ">= 0.35",
+    "react-native-vision-camera": ">= 5.0"
   },
   "release-it": {
     "git": {

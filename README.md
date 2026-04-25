@@ -1,19 +1,19 @@
 ## 📚 Introduction
 
-`react-native-vision-camera-face-detector` is a React Native library that integrates with the Vision Camera module to provide face detection functionality. It allows you to easily detect faces in real-time using device's front/back camera. Also supports static image face detections (thanks to @XChikuX).
+`react-native-vision-camera-face-detector` is a React Native library that integrates with the Vision Camera module to provide face detection functionality. It allows you to easily detect faces in real-time using the device's front and back camera. It also supports static image face detection.
 
-Is this package usefull to you?
+Is this package useful for you?
 
 <a href="https://www.buymeacoffee.com/luicfrr" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>
 
-Or give it a ⭐ on [GitHub](https://github.com/luicfrr/react-native-vision-camera-face-detector).
+Or leave a ⭐ on [GitHub](https://github.com/luicfrr/react-native-vision-camera-face-detector).
 
 ## 🏗️ Features
 
 - Real-time face detection using front and back camera
 - Adjustable face detection settings
 - Optional native side face bounds, contour and landmarks auto scaling
-- Can be combined with [Skia Frame Processor](https://react-native-vision-camera.com/docs/guides/skia-frame-processors)
+- Can be combined with [Skia Frame Processor](https://visioncamera.margelo.com/docs/skia-frame-processors)
 
 ## 🧰 Installation
 
@@ -21,12 +21,11 @@ Or give it a ⭐ on [GitHub](https://github.com/luicfrr/react-native-vision-came
 yarn add react-native-vision-camera-face-detector
 ```
 
-Then you need to add `react-native-worklets-core` plugin to `babel.config.js`. More details [here](https://react-native-vision-camera.com/docs/guides/frame-processors#react-native-worklets-core).
+Then you need to add `react-native-worklets` plugin to `babel.config.js`. More details [here](https://docs.swmansion.com/react-native-worklets/docs/#react-native-community-cli).
 
-## 🪲 Knowing Bugs
+## 🪲 Known Bugs
 
-There are open issues ([here](https://github.com/mrousavy/react-native-vision-camera/issues/3362), [here](https://github.com/mrousavy/react-native-vision-camera/issues/3034), and [here](https://github.com/mrousavy/react-native-vision-camera/issues/2951)) about a bug on Skia Frame Processor that may cause a Black Screen on some Android Devices.
-This bug can be easily fixed with [this trick](https://github.com/mrousavy/react-native-vision-camera/issues/3362#issuecomment-2624299305) but it makes Frame drawings to be in incorrect orientation.
+There are no known bugs at the moment....
 
 ## 💡 Usage
 
@@ -49,12 +48,12 @@ import {
 import {
   Face,
   Camera,
-  FaceDetectionOptions
+  FaceDetectorOptions
 } from 'react-native-vision-camera-face-detector'
 
 export default function App() {
-  const faceDetectionOptions = useRef<FaceDetectionOptions>( {
-    // detection options
+  const faceDetectorOptions = useRef<FaceDetectorOptions>( {
+    // detector options
   } ).current
 
   const device = useCameraDevice('front')
@@ -66,7 +65,7 @@ export default function App() {
     })()
   }, [device])
 
-  function handleFacesDetection(
+  function handleFacesDetected(
     faces: Face[],
     frame: Frame
   ) { 
@@ -81,8 +80,8 @@ export default function App() {
       {!!device? <Camera
         style={StyleSheet.absoluteFill}
         device={device}
-        faceDetectionCallback={ handleFacesDetection }
-        faceDetectionOptions={ faceDetectionOptions }
+        faceDetectorCallback={ handleFacesDetected }
+        faceDetectorOptions={ faceDetectorOptions }
       /> : <Text>
         No Device
       </Text>}
@@ -114,32 +113,53 @@ import {
 import { 
   Face,
   useFaceDetector,
-  FaceDetectionOptions
+  FaceDetectorOptions
 } from 'react-native-vision-camera-face-detector'
 import { Worklets } from 'react-native-worklets-core'
 
 export default function App() {
-  const faceDetectionOptions = useRef<FaceDetectionOptions>( {
+  const faceDetectorOptions = useRef<FaceDetectorOptions>( {
     // detection options
   } ).current
 
   const device = useCameraDevice('front')
-  const { 
-    detectFaces,
-    stopListeners
-  } = useFaceDetector( faceDetectionOptions )
+  // ❌ don't destruct hybrid objects ❌
+  // const {detectFaces} = useFaceDetector(faceDetectorOptions)
+  const faceDetector = useFaceDetector( faceDetectorOptions )
+  const asyncRunner = useAsyncRunner()
+  const frameOutput = useFrameOutput({
+    onFrame: (frame) => {
+      'worklet'
+      
+      const wasHandled = asyncRunner.runAsync(async () => {
+        'worklet'
+
+        const faces = await faceDetector.detectFaces(frame)
+        // ... do something with faces
+        // ... chain something asynchronously
+
+        // async task finished - dispose the Frame now.
+        frame.dispose()
+      })
+      
+      if (!wasHandled) {
+        // `asyncRunner` is busy - drop this Frame!
+        frame.dispose()
+      } 
+    }
+  })
 
   useEffect( () => {
     return () => {
       // you must call `stopListeners` when current component is unmounted
-      stopListeners()
+      faceDetector.stopListeners()
     }
   }, [] )
 
   useEffect(() => {
     if(!device) {
       // you must call `stopListeners` when `Camera` component is unmounted
-      stopListeners()
+      faceDetector.stopListeners()
       return
     }
 
@@ -149,32 +169,13 @@ export default function App() {
     })()
   }, [device])
 
-  const handleDetectedFaces = Worklets.createRunOnJS( (
-    faces: Face[]
-  ) => { 
-    console.log( 'faces detected', faces )
-  })
-
-  const frameProcessor = useFrameProcessor((frame) => {
-    'worklet'
-    runAsync(frame, () => {
-      'worklet'
-      const faces = detectFaces(frame)
-      // ... chain some asynchronous frame processor
-      // ... do something asynchronously with frame
-      handleDetectedFaces(faces)
-    })
-    // ... chain frame processors
-    // ... do something with frame
-  }, [handleDetectedFaces])
-
   return (
     <View style={{ flex: 1 }}>
       {!!device? <Camera
         style={StyleSheet.absoluteFill}
         device={device}
         isActive={true}
-        frameProcessor={frameProcessor}
+        outputs={[frameOutput]}
       /> : <Text>
         No Device
       </Text>}
@@ -183,8 +184,8 @@ export default function App() {
 }
 ```
 
-As face detection is a heavy process you should run it in an asynchronous thread so it can be finished without blocking your camera preview.
-You should read `vision-camera` [docs](https://react-native-vision-camera.com/docs/guides/frame-processors-interacting#running-asynchronously) about this feature.
+As face detection is a heavy process you should run it in an asynchronously so it can be finished without blocking your camera preview.
+You should read `vision-camera` [docs](https://visioncamera.margelo.com/docs/async-frame-processing#the-async-runner) about this feature.
 
 ## 🖼️ Static Image Face Detection
 
@@ -196,27 +197,24 @@ Supported image sources:
 - Object (`{ uri: string }`)
 
 ```ts
-import { 
-  detectFaces,
-  ImageFaceDetectionOptions
-} from 'react-native-vision-camera-face-detector'
+import { useImageFaceDetector } from 'react-native-vision-camera-face-detector'
 
-const detectionOptions: ImageFaceDetectionOptions = {
+// ❌ don't destruct hybrid objects ❌
+// const {detectFaces} = useImageFaceDetector({...})
+const faceDetector = useImageFaceDetector( {
   // detection options
-}
+} )
+
 // Using a bundled asset
-const faces1 = await detectFaces({
-  image: require('./assets/photo.jpg'),
-  options: detectionOptions
-})
+const faces1 = await faceDetector.detectFaces(
+  require('./assets/photo.jpg')
+)
 // Using a local file path or content URI (e.g. from an image picker)
-const faces2 = await detectFaces({
-  image: 'file:///storage/emulated/0/Download/pic.jpg',
-  options: detectionOptions
-})
-const faces3 = await detectFaces({
-  image: { uri: 'content://media/external/images/media/12345' },
-  options: detectionOptions
+const faces2 = await faceDetector.detectFaces(
+  'file:///storage/emulated/0/Download/pic.jpg'
+)
+const faces3 = await faceDetector.detectFaces({ 
+  uri: 'content://media/external/images/media/12345' 
 })
 
 console.log({ 
@@ -228,29 +226,24 @@ console.log({
 
 ## Face Detection Options
 
-#### Common (Frame Processor and Static Images)
+#### Image Face Detector
 | Option  | Description | Default | Options |
 | ------------- | ------------- | ------------- | ------------- |
 | `performanceMode` | Favor speed or accuracy when detecting faces.  | `fast` | `fast`, `accurate`|
-| `landmarkMode` | Whether to attempt to identify facial `landmarks`: eyes, ears, nose, cheeks, mouth, and so on. | `none` | `none`, `all` |
-| `contourMode` | Whether to detect the contours of facial features. Contours are detected for only the most prominent face in an image. | `none` | `none`, `all` |
-| `classificationMode` | Whether or not to classify faces into categories such as 'smiling', and 'eyes open'. | `none` | `none`, `all` |
+| `runLandmarks` | Whether to attempt to identify facial `landmarks`: eyes, ears, nose, cheeks, mouth, and so on. | `false` | `boolean` |
+| `runContours` | Whether to detect the contours of facial features. Contours are detected for only the most prominent face in an image. | `false` | `boolean` |
+| `runClassifications` | Whether or not to classify faces into categories such as 'smiling', and 'eyes open'. | `false` | `boolean` |
 | `minFaceSize` | Sets the smallest desired face size, expressed as the ratio of the width of the head to width of the image. | `0.15` | `number` |
 | `trackingEnabled` | Whether or not to assign faces an ID, which can be used to track faces across images. Note that when contour detection is enabled, only one face is detected, so face tracking doesn't produce useful results. For this reason, and to improve detection speed, don't enable both contour detection and face tracking. | `false` | `boolean` |
 
 
-#### Frame Processor
+#### Frame Face Detector (extends Image Face Detector)
 | Option  | Description | Default | Options |
 | ------------- | ------------- | ------------- | ------------- |
 | `cameraFacing` | Current active camera | `front` | `front`, `back` |
-| `autoMode` | Should handle auto scale (face bounds, contour and landmarks) and rotation on native side? If this option is disabled all detection results will be relative to frame coordinates, not to screen/preview. You shouldn't use this option if you want to draw on screen using `Skia Frame Processor`. See [this](https://github.com/luicfrr/react-native-vision-camera-face-detector/issues/30#issuecomment-2058805546) and [this](https://github.com/luicfrr/react-native-vision-camera-face-detector/issues/35) for more details. | `false` | `boolean` |
+| `autoMode` | Should handle auto scale (face bounds, contour and landmarks) and rotation on native side? If this option is disabled all detection results will be relative to frame coordinates, not to screen/preview. You should NOT use this option if you want to draw on screen using `Skia Frame Processor`. See [this](https://github.com/luicfrr/react-native-vision-camera-face-detector/issues/30#issuecomment-2058805546) and [this](https://github.com/luicfrr/react-native-vision-camera-face-detector/issues/35) for more details. | `false` | `boolean` |
 | `windowWidth` | * Required if you want to use `autoMode`. You must handle your own logic to get screen sizes, with or without statusbar size, etc... | `1.0` | `number` |
 | `windowHeight` | * Required if you want to use `autoMode`. You must handle your own logic to get screen sizes, with or without statusbar size, etc... | `1.0` | `number` |
-
-#### Static Images
-| Option  | Description | Default | Options |
-| ------------- | ------------- | ------------- | ------------- |
-| `image` | Image source | - | `number`, `string`, `{ uri: string }` |
 
 ## 🔧 Troubleshooting
 
@@ -274,13 +267,17 @@ If you find other errors while using this package you're wellcome to open a new 
 
 This package was tested using the following:
 
-- `react-native`: `0.79.5` (new arch disabled)
-- `react-native-vision-camera`: `4.7.2`
-- `react-native-worklets-core`: `1.6.2`
-- `@shopify/react-native-skia`: `2.2.19`
-- `react-native-reanimated`: `~3.17.4`
-- `@react-native-firebase`: `^22.2.1`
-- `expo`: `^53`
+- `@react-native-firebase`: `24.0.0`
+- `@shopify/react-native-skia`: `2.6.2`
+- `react-native`: `0.85.2`
+- `react-native-nitro-image`: `0.13.1`
+- `react-native-nitro-modules`: `0.35.5`
+- `react-native-reanimated`: `4.3.0`
+- `react-native-vision-camera`: `5.0.6`
+- `react-native-vision-camera-skia`: `5.0.6`
+- `react-native-vision-camera-worklets`: `5.0.6`
+- `react-native-worklets`: `0.8.1`
+- `expo`: `55`
 
 Min O.S version:
 
