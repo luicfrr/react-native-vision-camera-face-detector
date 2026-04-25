@@ -1,14 +1,14 @@
 import { useMemo } from 'react'
 import { Image } from 'react-native'
-import { createImageFaceDetector } from './factory'
+import { createImageFaceDetector } from '../factory'
 
 // types
 import type {
   ImageFaceDetector,
   InputImage
-} from './specs/ImageFaceDetector.nitro'
-import type { Face } from './specs/Face.nitro'
-import type { FaceDetectorOptions } from './specs/FaceDetectorFactory.nitro'
+} from '../specs/ImageFaceDetector.nitro'
+import type { Face } from '../specs/Face.nitro'
+import type { FaceDetectorOptions } from '../specs/FaceDetectorFactory.nitro'
 
 /**
  * Use a {@linkcode ImageFaceDetector}.

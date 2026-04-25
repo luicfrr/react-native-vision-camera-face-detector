@@ -1,11 +1,11 @@
 import { useMemo } from 'react'
-import { createFaceDetector } from './factory'
+import { createFaceDetector } from '../factory'
 
 // types
 import type { Frame } from 'react-native-vision-camera'
-import type { Face } from './specs/Face.nitro'
-import type { FaceDetector } from './specs/FaceDetector.nitro'
-import type { FaceDetectorOptions } from './specs/FaceDetectorFactory.nitro'
+import type { Face } from '../specs/Face.nitro'
+import type { FaceDetector } from '../specs/FaceDetector.nitro'
+import type { FaceDetectorOptions } from '../specs/FaceDetectorFactory.nitro'
 
 /**
  * Use a {@linkcode FaceDetector}.

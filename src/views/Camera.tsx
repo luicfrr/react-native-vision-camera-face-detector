@@ -6,8 +6,7 @@ import {
   useAsyncRunner,
   useFrameOutput
 } from 'react-native-vision-camera'
-import { useSharedValue } from 'react-native-reanimated'
-import useFaceDetector from '../useFaceDetector'
+import useFaceDetector from '../hooks/useFaceDetector'
 import useRunInJS from '../hooks/useRunInJs'
 import useWorklet from '../hooks/useWorklet'
 
