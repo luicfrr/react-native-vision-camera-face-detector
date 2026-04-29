@@ -151,17 +151,6 @@ function FaceDetection(): ReactNode {
     requestPermission()
   }, [] )
 
-  // /**
-  //  * Handle camera UI rotation
-  //  * 
-  //  * @param {number} rotation Camera rotation
-  //  */
-  // function handleUiRotation(
-  //   rotation: number
-  // ) {
-  //   aRot.value = rotation
-  // }
-
   /**
    * Hanldes camera mount error event
    *
