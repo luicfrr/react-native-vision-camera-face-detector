@@ -125,7 +125,6 @@ function FaceDetection(): ReactNode {
   const aFaceH = useSharedValue( 0 )
   const aFaceX = useSharedValue( 0 )
   const aFaceY = useSharedValue( 0 )
-  const aRot = useSharedValue( 0 )
   const boundingBoxStyle = useAnimatedStyle( () => ( {
     position: 'absolute',
     borderWidth: 4,
@@ -144,10 +143,7 @@ function FaceDetection(): ReactNode {
     } ),
     top: withTiming( aFaceY.value, {
       duration: 100
-    } ),
-    transform: [ {
-      rotate: `${ aRot.value }deg`
-    } ]
+    } )
   } ) )
 
   useEffect( () => {
@@ -373,7 +369,6 @@ function FaceDetection(): ReactNode {
             device={ cameraDevice }
             onError={ handleCameraMountError }
             faceDetectorCallback={ handleFacesDetected }
-            // onUIRotationChanged={ handleUiRotation }
             orientationSource='device'
             faceDetectorOptions={ {
               ...faceDetectorOptions,
