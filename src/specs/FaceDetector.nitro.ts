@@ -11,7 +11,7 @@ export interface FaceDetector extends HybridObject<{
    * 
    * @param {Frame} frame Frame to detect faces
    */
-  detectFaces( frame: Frame ): Promise<Face[]>
+  detectFaces( frame: Frame ): Face[]
   /**
    * Stop orientation listeners for Android.
    * Does nothing for IOS.

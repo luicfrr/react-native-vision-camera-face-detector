@@ -5,7 +5,7 @@ import androidx.camera.core.ExperimentalGetImage
 import com.google.mlkit.vision.face.FaceDetection
 import com.margelo.nitro.NitroModules
 import com.margelo.nitro.camera.HybridFrameSpec
-import com.margelo.nitro.core.Promise
+import com.google.android.gms.tasks.Tasks
 import com.margelo.nitro.camera.facedetector.extensions.toMLFaceDetectorOptions
 import com.margelo.nitro.camera.facedetector.extensions.toInputImage
 
@@ -29,8 +29,7 @@ class HybridFaceDetector(
   @OptIn(ExperimentalGetImage::class)
   override fun detectFaces(
     frame: HybridFrameSpec
-  ): Promise<Array<HybridFaceSpec>> {
-    val promise = Promise<Array<HybridFaceSpec>>()
+  ): Array<HybridFaceSpec> {
     val image = frame.toInputImage()
     val width = image.height.toDouble()
     val height = image.width.toDouble()
@@ -49,20 +48,12 @@ class HybridFaceDetector(
       cameraFacing,
       orientation = orientationManager.orientation
     )
+    val task =  faceDetector.process(image)
+    val faces = Tasks.await(task)
 
-    faceDetector
-      .process(image)
-      .addOnSuccessListener { faces ->
-        val hybridFaces = faces.map { 
-          HybridFace(it, config)
-        }.toTypedArray<HybridFaceSpec>()
-
-        promise.resolve(hybridFaces)
-      }.addOnFailureListener { error ->
-        promise.reject(error)
-      }
-
-    return promise
+    return faces.map { 
+      HybridFace(it, config)
+    }.toTypedArray<HybridFaceSpec>()
   }
 
   override fun stopListeners() {
