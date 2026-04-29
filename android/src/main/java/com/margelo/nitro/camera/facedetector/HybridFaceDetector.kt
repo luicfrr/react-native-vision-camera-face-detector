@@ -48,7 +48,7 @@ class HybridFaceDetector(
       cameraFacing,
       orientation = orientationManager.orientation
     )
-    val task =  faceDetector.process(image)
+    val task = faceDetector.process(image)
     val faces = Tasks.await(task)
 
     return faces.map { 
