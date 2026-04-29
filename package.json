@@ -31,7 +31,7 @@
     "clean": "rm -rf android/build node_modules/**/android/build lib",
     "lint": "eslint \"**/*.{js,ts,tsx}\"",
     "specs": "tsc --noEmit false && nitrogen --logLevel=\"debug\"",
-    "prepare": "bob build",
+    "prepare": "npx nitrogen && bob build",
     "release": "release-it",
     "example": "yarn --cwd example",
     "bootstrap": "yarn example && yarn install && yarn example pods"
