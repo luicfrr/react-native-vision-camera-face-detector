@@ -1,14 +1,15 @@
 import React, {
-  useEffect
+  useEffect,
+  useMemo
 } from 'react'
 import {
   Camera as VisionCamera,
   useAsyncRunner,
   useFrameOutput
 } from 'react-native-vision-camera'
+import { createSynchronizable } from 'react-native-worklets'
 import useFaceDetector from '../hooks/useFaceDetector'
 import useRunInJS from '../hooks/useRunInJs'
-import useWorklet from '../hooks/useWorklet'
 
 // types
 import type { RefObject } from 'react'
@@ -17,6 +18,7 @@ import type {
   CameraRef,
   Frame
 } from 'react-native-vision-camera'
+import type { Face } from '../specs/Face.nitro'
 import type { FaceDetectorOptions } from '../specs/FaceDetectorFactory.nitro'
 import type { FaceDetectedCallback } from '../specs/FaceDetectedCallback'
 
@@ -38,24 +40,11 @@ export function Camera( {
   ...props
 }: ComponentType ) {
   const asyncRunner = useAsyncRunner()
+  const faces = createSynchronizable<Face[]>( [] )
   const faceDetector = useFaceDetector( faceDetectorOptions )
 
   useEffect( () => {
     return () => faceDetector.stopListeners()
-  }, [] )
-
-  /** 
-   * Throws logs/errors back on js thread
-   */
-  const logOnJs = useRunInJS( (
-    log: string,
-    error?: Error
-  ) => {
-    if ( error ) {
-      console.error( log, error.message ?? JSON.stringify( error ) )
-    } else {
-      console.log( log )
-    }
   }, [] )
 
   /**
@@ -69,21 +58,23 @@ export function Camera( {
   /**
    * Async context that will handle face detection
    */
-  const runOnAsyncContext = useWorklet( (
+  const detectFacesAsync = useMemo( () => (
     frame: Frame
   ) => {
     'worklet'
 
-    const finished = asyncRunner.runAsync( async () => {
+    const finished = asyncRunner.runAsync( () => {
       'worklet'
 
       try {
-        runOnJs(
-          await faceDetector.detectFaces( frame ),
-          frame
+        faces.setBlocking(
+          faceDetector.detectFaces( frame )
         )
       } catch ( error: any ) {
-        logOnJs( 'Face detector execution error:', error )
+        console.error(
+          'Face detector execution error:',
+          error.message ?? JSON.stringify( error )
+        )
       } finally {
         frame.dispose()
       }
@@ -92,9 +83,11 @@ export function Camera( {
     if ( !finished ) {
       frame.dispose()
     }
+
+    runOnJs( faces.getDirty() )
   }, [
-    faceDetector,
-    runOnJs
+    asyncRunner,
+    faceDetector
   ] )
 
   /**
@@ -104,7 +97,7 @@ export function Camera( {
     pixelFormat: 'yuv',
     onFrame: ( frame ) => {
       'worklet'
-      runOnAsyncContext( frame )
+      detectFacesAsync( frame )
     }
   } )
 

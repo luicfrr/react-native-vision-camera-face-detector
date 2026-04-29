@@ -1,12 +1,12 @@
 import React, {
-  useEffect
+  useEffect,
+  useMemo
 } from 'react'
 import { SkiaCamera as VisionSkiaCamera } from 'react-native-vision-camera-skia'
 import { useAsyncRunner } from 'react-native-vision-camera'
-import { useSharedValue } from 'react-native-reanimated'
+import { createSynchronizable } from 'react-native-worklets'
 import useFaceDetector from '../hooks/useFaceDetector'
 import useRunInJS from '../hooks/useRunInJs'
-import useWorklet from '../hooks/useWorklet'
 
 // types
 import type { Frame } from 'react-native-vision-camera'
@@ -37,11 +37,8 @@ export function SkiaCamera( {
   ...props
 }: ComponentType ) {
   const asyncRunner = useAsyncRunner()
-  const faces = useSharedValue<string>( '[]' )
-  const {
-    detectFaces,
-    stopListeners
-  } = useFaceDetector( {
+  const faces = createSynchronizable<Face[]>( [] )
+  const faceDetector = useFaceDetector( {
     ...faceDetectorOptions,
     autoMode: undefined,
     windowWidth: undefined,
@@ -49,21 +46,7 @@ export function SkiaCamera( {
   } )
 
   useEffect( () => {
-    return () => stopListeners()
-  }, [] )
-
-  /** 
-     * Throws logs/errors back on js thread
-     */
-  const logOnJs = useRunInJS( (
-    log: string,
-    error?: Error
-  ) => {
-    if ( error ) {
-      console.error( log, error.message ?? JSON.stringify( error ) )
-    } else {
-      console.log( log )
-    }
+    return () => faceDetector.stopListeners()
   }, [] )
 
   /**
@@ -77,7 +60,7 @@ export function SkiaCamera( {
   /**
     * Async context that will handle face detection
     */
-  const runOnAsyncContext = useWorklet( (
+  const detectFacesAsync = useMemo( () => (
     frame: Frame
   ) => {
     'worklet'
@@ -86,16 +69,14 @@ export function SkiaCamera( {
       'worklet'
 
       try {
-        faces.value = JSON.stringify(
-          detectFaces( frame )
-        )
-
-        runOnJs(
-          JSON.parse( faces.value ),
-          frame
+        faces.setBlocking(
+          faceDetector.detectFaces( frame )
         )
       } catch ( error: any ) {
-        logOnJs( 'Face detector execution error:', error )
+        console.error(
+          'Face detector execution error:',
+          error.message ?? JSON.stringify( error )
+        )
       } finally {
         frame.dispose()
       }
@@ -104,8 +85,11 @@ export function SkiaCamera( {
     if ( !finished ) {
       frame.dispose()
     }
+
+    runOnJs( faces.getDirty() )
   }, [
-    detectFaces,
+    asyncRunner,
+    faceDetector,
     runOnJs
   ] )
 
@@ -121,11 +105,10 @@ export function SkiaCamera( {
       skiaActions?.(
         frame,
         render,
-        JSON.parse( faces.value )
+        faces.getDirty()
       )
 
-      runOnAsyncContext( frame )
-      frame.dispose()
+      detectFacesAsync( frame )
     } }
   />
 }
