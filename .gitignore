@@ -76,3 +76,6 @@ lib/
 .eslintcache
 .cache
 *.tsbuildinfo
+
+# nitro generated
+nitrogen
