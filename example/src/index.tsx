@@ -428,6 +428,25 @@ function FaceDetection(): ReactNode {
         } }
       >
         <Button
+          onPress={ () => setCameraPaused( ( current ) => !current ) }
+          title={ `${ cameraPaused ? 'Resume' : 'Pause' } Cam` }
+        />
+
+        <Button
+          onPress={ () => setCameraMounted( ( current ) => !current ) }
+          title={ `${ cameraMounted ? 'Unmount' : 'Mount' } Cam` }
+        />
+      </View>
+
+      <View
+        style={ {
+          width: '100%',
+          display: 'flex',
+          flexDirection: 'row',
+          justifyContent: 'space-around'
+        } }
+      >
+        <Button
           onPress={ detectFacesFromImage }
           title={ 'Detect from file' }
         />
@@ -457,24 +476,6 @@ function FaceDetection(): ReactNode {
         <Button
           onPress={ () => setAutoMode( ( current ) => !current ) }
           title={ `${ autoMode ? 'Disable' : 'Enable' } AutoMode` }
-        />
-      </View>
-      <View
-        style={ {
-          width: '100%',
-          display: 'flex',
-          flexDirection: 'row',
-          justifyContent: 'space-around'
-        } }
-      >
-        <Button
-          onPress={ () => setCameraPaused( ( current ) => !current ) }
-          title={ `${ cameraPaused ? 'Resume' : 'Pause' } Cam` }
-        />
-
-        <Button
-          onPress={ () => setCameraMounted( ( current ) => !current ) }
-          title={ `${ cameraMounted ? 'Unmount' : 'Mount' } Cam` }
         />
       </View>
     </View>
