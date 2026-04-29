@@ -166,12 +166,10 @@ function FaceDetection(): ReactNode {
    * Handle detection result
    * 
    * @param {Face[]} faces Detection result 
-   * @param {Frame} frame Current frame
    * @returns {void}
    */
   function handleFacesDetected(
-    faces: Face[],
-    frame: Frame
+    faces: Face[]
   ): void {
     // if no faces are detected we do nothing
     if ( faces.length <= 0 ) {
@@ -184,7 +182,6 @@ function FaceDetection(): ReactNode {
 
     console.log(
       'faces', faces.length,
-      'frame', frame.toString(),
       'faces', JSON.stringify( faces )
     )
 
