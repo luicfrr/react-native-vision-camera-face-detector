@@ -180,10 +180,7 @@ function FaceDetection(): ReactNode {
       return
     }
 
-    console.log(
-      'faces', faces.length,
-      'faces', JSON.stringify( faces )
-    )
+    console.log( 'faces', faces.length )
 
     const { bounds } = faces[ 0 ]
     const {
