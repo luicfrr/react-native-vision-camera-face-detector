@@ -35,22 +35,6 @@ namespace margelo::nitro::camera::facedetector::bridge::swift {
     return swiftPart.toUnsafe();
   }
   
-  // pragma MARK: std::function<void(const std::vector<std::shared_ptr<HybridFaceSpec>>& /* result */)>
-  Func_void_std__vector_std__shared_ptr_HybridFaceSpec__ create_Func_void_std__vector_std__shared_ptr_HybridFaceSpec__(void* NON_NULL swiftClosureWrapper) noexcept {
-    auto swiftClosure = VisionCameraFaceDetector::Func_void_std__vector_std__shared_ptr_HybridFaceSpec__::fromUnsafe(swiftClosureWrapper);
-    return [swiftClosure = std::move(swiftClosure)](const std::vector<std::shared_ptr<HybridFaceSpec>>& result) mutable -> void {
-      swiftClosure.call(result);
-    };
-  }
-  
-  // pragma MARK: std::function<void(const std::exception_ptr& /* error */)>
-  Func_void_std__exception_ptr create_Func_void_std__exception_ptr(void* NON_NULL swiftClosureWrapper) noexcept {
-    auto swiftClosure = VisionCameraFaceDetector::Func_void_std__exception_ptr::fromUnsafe(swiftClosureWrapper);
-    return [swiftClosure = std::move(swiftClosure)](const std::exception_ptr& error) mutable -> void {
-      swiftClosure.call(error);
-    };
-  }
-  
   // pragma MARK: std::shared_ptr<margelo::nitro::camera::HybridFrameSpec>
   std::shared_ptr<margelo::nitro::camera::HybridFrameSpec> create_std__shared_ptr_margelo__nitro__camera__HybridFrameSpec_(void* NON_NULL swiftUnsafePointer) noexcept {
     // Implemented in VisionCamera
@@ -91,6 +75,22 @@ namespace margelo::nitro::camera::facedetector::bridge::swift {
     #endif
     VisionCameraFaceDetector::HybridFaceDetectorFactorySpec_cxx& swiftPart = swiftWrapper->getSwiftPart();
     return swiftPart.toUnsafe();
+  }
+  
+  // pragma MARK: std::function<void(const std::vector<std::shared_ptr<HybridFaceSpec>>& /* result */)>
+  Func_void_std__vector_std__shared_ptr_HybridFaceSpec__ create_Func_void_std__vector_std__shared_ptr_HybridFaceSpec__(void* NON_NULL swiftClosureWrapper) noexcept {
+    auto swiftClosure = VisionCameraFaceDetector::Func_void_std__vector_std__shared_ptr_HybridFaceSpec__::fromUnsafe(swiftClosureWrapper);
+    return [swiftClosure = std::move(swiftClosure)](const std::vector<std::shared_ptr<HybridFaceSpec>>& result) mutable -> void {
+      swiftClosure.call(result);
+    };
+  }
+  
+  // pragma MARK: std::function<void(const std::exception_ptr& /* error */)>
+  Func_void_std__exception_ptr create_Func_void_std__exception_ptr(void* NON_NULL swiftClosureWrapper) noexcept {
+    auto swiftClosure = VisionCameraFaceDetector::Func_void_std__exception_ptr::fromUnsafe(swiftClosureWrapper);
+    return [swiftClosure = std::move(swiftClosure)](const std::exception_ptr& error) mutable -> void {
+      swiftClosure.call(error);
+    };
   }
   
   // pragma MARK: std::shared_ptr<HybridImageFaceDetectorSpec>

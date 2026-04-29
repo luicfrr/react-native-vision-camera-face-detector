@@ -54,7 +54,7 @@ namespace margelo::nitro::camera::facedetector {
 
   public:
     // Methods
-    std::shared_ptr<Promise<std::vector<std::shared_ptr<HybridFaceSpec>>>> detectFaces(const std::shared_ptr<margelo::nitro::camera::HybridFrameSpec>& frame) override;
+    std::vector<std::shared_ptr<HybridFaceSpec>> detectFaces(const std::shared_ptr<margelo::nitro::camera::HybridFrameSpec>& frame) override;
     void stopListeners() override;
 
   private:

@@ -186,62 +186,6 @@ namespace margelo::nitro::camera::facedetector::bridge::swift {
     return vector;
   }
   
-  // pragma MARK: std::shared_ptr<Promise<std::vector<std::shared_ptr<HybridFaceSpec>>>>
-  /**
-   * Specialized version of `std::shared_ptr<Promise<std::vector<std::shared_ptr<HybridFaceSpec>>>>`.
-   */
-  using std__shared_ptr_Promise_std__vector_std__shared_ptr_HybridFaceSpec____ = std::shared_ptr<Promise<std::vector<std::shared_ptr<HybridFaceSpec>>>>;
-  inline std::shared_ptr<Promise<std::vector<std::shared_ptr<HybridFaceSpec>>>> create_std__shared_ptr_Promise_std__vector_std__shared_ptr_HybridFaceSpec____() noexcept {
-    return Promise<std::vector<std::shared_ptr<HybridFaceSpec>>>::create();
-  }
-  inline PromiseHolder<std::vector<std::shared_ptr<HybridFaceSpec>>> wrap_std__shared_ptr_Promise_std__vector_std__shared_ptr_HybridFaceSpec____(std::shared_ptr<Promise<std::vector<std::shared_ptr<HybridFaceSpec>>>> promise) noexcept {
-    return PromiseHolder<std::vector<std::shared_ptr<HybridFaceSpec>>>(std::move(promise));
-  }
-  
-  // pragma MARK: std::function<void(const std::vector<std::shared_ptr<HybridFaceSpec>>& /* result */)>
-  /**
-   * Specialized version of `std::function<void(const std::vector<std::shared_ptr<HybridFaceSpec>>&)>`.
-   */
-  using Func_void_std__vector_std__shared_ptr_HybridFaceSpec__ = std::function<void(const std::vector<std::shared_ptr<HybridFaceSpec>>& /* result */)>;
-  /**
-   * Wrapper class for a `std::function<void(const std::vector<std::shared_ptr<HybridFaceSpec>>& / * result * /)>`, this can be used from Swift.
-   */
-  class Func_void_std__vector_std__shared_ptr_HybridFaceSpec___Wrapper final {
-  public:
-    explicit Func_void_std__vector_std__shared_ptr_HybridFaceSpec___Wrapper(std::function<void(const std::vector<std::shared_ptr<HybridFaceSpec>>& /* result */)>&& func): _function(std::make_unique<std::function<void(const std::vector<std::shared_ptr<HybridFaceSpec>>& /* result */)>>(std::move(func))) {}
-    inline void call(std::vector<std::shared_ptr<HybridFaceSpec>> result) const noexcept {
-      _function->operator()(result);
-    }
-  private:
-    std::unique_ptr<std::function<void(const std::vector<std::shared_ptr<HybridFaceSpec>>& /* result */)>> _function;
-  } SWIFT_NONCOPYABLE;
-  Func_void_std__vector_std__shared_ptr_HybridFaceSpec__ create_Func_void_std__vector_std__shared_ptr_HybridFaceSpec__(void* NON_NULL swiftClosureWrapper) noexcept;
-  inline Func_void_std__vector_std__shared_ptr_HybridFaceSpec___Wrapper wrap_Func_void_std__vector_std__shared_ptr_HybridFaceSpec__(Func_void_std__vector_std__shared_ptr_HybridFaceSpec__ value) noexcept {
-    return Func_void_std__vector_std__shared_ptr_HybridFaceSpec___Wrapper(std::move(value));
-  }
-  
-  // pragma MARK: std::function<void(const std::exception_ptr& /* error */)>
-  /**
-   * Specialized version of `std::function<void(const std::exception_ptr&)>`.
-   */
-  using Func_void_std__exception_ptr = std::function<void(const std::exception_ptr& /* error */)>;
-  /**
-   * Wrapper class for a `std::function<void(const std::exception_ptr& / * error * /)>`, this can be used from Swift.
-   */
-  class Func_void_std__exception_ptr_Wrapper final {
-  public:
-    explicit Func_void_std__exception_ptr_Wrapper(std::function<void(const std::exception_ptr& /* error */)>&& func): _function(std::make_unique<std::function<void(const std::exception_ptr& /* error */)>>(std::move(func))) {}
-    inline void call(std::exception_ptr error) const noexcept {
-      _function->operator()(error);
-    }
-  private:
-    std::unique_ptr<std::function<void(const std::exception_ptr& /* error */)>> _function;
-  } SWIFT_NONCOPYABLE;
-  Func_void_std__exception_ptr create_Func_void_std__exception_ptr(void* NON_NULL swiftClosureWrapper) noexcept;
-  inline Func_void_std__exception_ptr_Wrapper wrap_Func_void_std__exception_ptr(Func_void_std__exception_ptr value) noexcept {
-    return Func_void_std__exception_ptr_Wrapper(std::move(value));
-  }
-  
   // pragma MARK: std::shared_ptr<margelo::nitro::camera::HybridFrameSpec>
   /**
    * Specialized version of `std::shared_ptr<margelo::nitro::camera::HybridFrameSpec>`.
@@ -266,13 +210,13 @@ namespace margelo::nitro::camera::facedetector::bridge::swift {
   using std__weak_ptr_HybridFaceDetectorSpec_ = std::weak_ptr<HybridFaceDetectorSpec>;
   inline std__weak_ptr_HybridFaceDetectorSpec_ weakify_std__shared_ptr_HybridFaceDetectorSpec_(const std::shared_ptr<HybridFaceDetectorSpec>& strong) noexcept { return strong; }
   
-  // pragma MARK: Result<std::shared_ptr<Promise<std::vector<std::shared_ptr<HybridFaceSpec>>>>>
-  using Result_std__shared_ptr_Promise_std__vector_std__shared_ptr_HybridFaceSpec_____ = Result<std::shared_ptr<Promise<std::vector<std::shared_ptr<HybridFaceSpec>>>>>;
-  inline Result_std__shared_ptr_Promise_std__vector_std__shared_ptr_HybridFaceSpec_____ create_Result_std__shared_ptr_Promise_std__vector_std__shared_ptr_HybridFaceSpec_____(const std::shared_ptr<Promise<std::vector<std::shared_ptr<HybridFaceSpec>>>>& value) noexcept {
-    return Result<std::shared_ptr<Promise<std::vector<std::shared_ptr<HybridFaceSpec>>>>>::withValue(value);
+  // pragma MARK: Result<std::vector<std::shared_ptr<HybridFaceSpec>>>
+  using Result_std__vector_std__shared_ptr_HybridFaceSpec___ = Result<std::vector<std::shared_ptr<HybridFaceSpec>>>;
+  inline Result_std__vector_std__shared_ptr_HybridFaceSpec___ create_Result_std__vector_std__shared_ptr_HybridFaceSpec___(const std::vector<std::shared_ptr<HybridFaceSpec>>& value) noexcept {
+    return Result<std::vector<std::shared_ptr<HybridFaceSpec>>>::withValue(value);
   }
-  inline Result_std__shared_ptr_Promise_std__vector_std__shared_ptr_HybridFaceSpec_____ create_Result_std__shared_ptr_Promise_std__vector_std__shared_ptr_HybridFaceSpec_____(const std::exception_ptr& error) noexcept {
-    return Result<std::shared_ptr<Promise<std::vector<std::shared_ptr<HybridFaceSpec>>>>>::withError(error);
+  inline Result_std__vector_std__shared_ptr_HybridFaceSpec___ create_Result_std__vector_std__shared_ptr_HybridFaceSpec___(const std::exception_ptr& error) noexcept {
+    return Result<std::vector<std::shared_ptr<HybridFaceSpec>>>::withError(error);
   }
   
   // pragma MARK: Result<void>
@@ -350,6 +294,62 @@ namespace margelo::nitro::camera::facedetector::bridge::swift {
     return Result<std::shared_ptr<HybridFaceDetectorSpec>>::withError(error);
   }
   
+  // pragma MARK: std::shared_ptr<Promise<std::vector<std::shared_ptr<HybridFaceSpec>>>>
+  /**
+   * Specialized version of `std::shared_ptr<Promise<std::vector<std::shared_ptr<HybridFaceSpec>>>>`.
+   */
+  using std__shared_ptr_Promise_std__vector_std__shared_ptr_HybridFaceSpec____ = std::shared_ptr<Promise<std::vector<std::shared_ptr<HybridFaceSpec>>>>;
+  inline std::shared_ptr<Promise<std::vector<std::shared_ptr<HybridFaceSpec>>>> create_std__shared_ptr_Promise_std__vector_std__shared_ptr_HybridFaceSpec____() noexcept {
+    return Promise<std::vector<std::shared_ptr<HybridFaceSpec>>>::create();
+  }
+  inline PromiseHolder<std::vector<std::shared_ptr<HybridFaceSpec>>> wrap_std__shared_ptr_Promise_std__vector_std__shared_ptr_HybridFaceSpec____(std::shared_ptr<Promise<std::vector<std::shared_ptr<HybridFaceSpec>>>> promise) noexcept {
+    return PromiseHolder<std::vector<std::shared_ptr<HybridFaceSpec>>>(std::move(promise));
+  }
+  
+  // pragma MARK: std::function<void(const std::vector<std::shared_ptr<HybridFaceSpec>>& /* result */)>
+  /**
+   * Specialized version of `std::function<void(const std::vector<std::shared_ptr<HybridFaceSpec>>&)>`.
+   */
+  using Func_void_std__vector_std__shared_ptr_HybridFaceSpec__ = std::function<void(const std::vector<std::shared_ptr<HybridFaceSpec>>& /* result */)>;
+  /**
+   * Wrapper class for a `std::function<void(const std::vector<std::shared_ptr<HybridFaceSpec>>& / * result * /)>`, this can be used from Swift.
+   */
+  class Func_void_std__vector_std__shared_ptr_HybridFaceSpec___Wrapper final {
+  public:
+    explicit Func_void_std__vector_std__shared_ptr_HybridFaceSpec___Wrapper(std::function<void(const std::vector<std::shared_ptr<HybridFaceSpec>>& /* result */)>&& func): _function(std::make_unique<std::function<void(const std::vector<std::shared_ptr<HybridFaceSpec>>& /* result */)>>(std::move(func))) {}
+    inline void call(std::vector<std::shared_ptr<HybridFaceSpec>> result) const noexcept {
+      _function->operator()(result);
+    }
+  private:
+    std::unique_ptr<std::function<void(const std::vector<std::shared_ptr<HybridFaceSpec>>& /* result */)>> _function;
+  } SWIFT_NONCOPYABLE;
+  Func_void_std__vector_std__shared_ptr_HybridFaceSpec__ create_Func_void_std__vector_std__shared_ptr_HybridFaceSpec__(void* NON_NULL swiftClosureWrapper) noexcept;
+  inline Func_void_std__vector_std__shared_ptr_HybridFaceSpec___Wrapper wrap_Func_void_std__vector_std__shared_ptr_HybridFaceSpec__(Func_void_std__vector_std__shared_ptr_HybridFaceSpec__ value) noexcept {
+    return Func_void_std__vector_std__shared_ptr_HybridFaceSpec___Wrapper(std::move(value));
+  }
+  
+  // pragma MARK: std::function<void(const std::exception_ptr& /* error */)>
+  /**
+   * Specialized version of `std::function<void(const std::exception_ptr&)>`.
+   */
+  using Func_void_std__exception_ptr = std::function<void(const std::exception_ptr& /* error */)>;
+  /**
+   * Wrapper class for a `std::function<void(const std::exception_ptr& / * error * /)>`, this can be used from Swift.
+   */
+  class Func_void_std__exception_ptr_Wrapper final {
+  public:
+    explicit Func_void_std__exception_ptr_Wrapper(std::function<void(const std::exception_ptr& /* error */)>&& func): _function(std::make_unique<std::function<void(const std::exception_ptr& /* error */)>>(std::move(func))) {}
+    inline void call(std::exception_ptr error) const noexcept {
+      _function->operator()(error);
+    }
+  private:
+    std::unique_ptr<std::function<void(const std::exception_ptr& /* error */)>> _function;
+  } SWIFT_NONCOPYABLE;
+  Func_void_std__exception_ptr create_Func_void_std__exception_ptr(void* NON_NULL swiftClosureWrapper) noexcept;
+  inline Func_void_std__exception_ptr_Wrapper wrap_Func_void_std__exception_ptr(Func_void_std__exception_ptr value) noexcept {
+    return Func_void_std__exception_ptr_Wrapper(std::move(value));
+  }
+  
   // pragma MARK: std::variant<std::string, double, ImageUri>
   /**
    * Wrapper struct for `std::variant<std::string, double, ImageUri>`.
@@ -396,6 +396,15 @@ namespace margelo::nitro::camera::facedetector::bridge::swift {
   // pragma MARK: std::weak_ptr<HybridImageFaceDetectorSpec>
   using std__weak_ptr_HybridImageFaceDetectorSpec_ = std::weak_ptr<HybridImageFaceDetectorSpec>;
   inline std__weak_ptr_HybridImageFaceDetectorSpec_ weakify_std__shared_ptr_HybridImageFaceDetectorSpec_(const std::shared_ptr<HybridImageFaceDetectorSpec>& strong) noexcept { return strong; }
+  
+  // pragma MARK: Result<std::shared_ptr<Promise<std::vector<std::shared_ptr<HybridFaceSpec>>>>>
+  using Result_std__shared_ptr_Promise_std__vector_std__shared_ptr_HybridFaceSpec_____ = Result<std::shared_ptr<Promise<std::vector<std::shared_ptr<HybridFaceSpec>>>>>;
+  inline Result_std__shared_ptr_Promise_std__vector_std__shared_ptr_HybridFaceSpec_____ create_Result_std__shared_ptr_Promise_std__vector_std__shared_ptr_HybridFaceSpec_____(const std::shared_ptr<Promise<std::vector<std::shared_ptr<HybridFaceSpec>>>>& value) noexcept {
+    return Result<std::shared_ptr<Promise<std::vector<std::shared_ptr<HybridFaceSpec>>>>>::withValue(value);
+  }
+  inline Result_std__shared_ptr_Promise_std__vector_std__shared_ptr_HybridFaceSpec_____ create_Result_std__shared_ptr_Promise_std__vector_std__shared_ptr_HybridFaceSpec_____(const std::exception_ptr& error) noexcept {
+    return Result<std::shared_ptr<Promise<std::vector<std::shared_ptr<HybridFaceSpec>>>>>::withError(error);
+  }
   
   // pragma MARK: std::shared_ptr<HybridImageFaceDetectorFactorySpec>
   /**

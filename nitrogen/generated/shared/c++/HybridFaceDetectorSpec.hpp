@@ -21,7 +21,6 @@ namespace margelo::nitro::camera { class HybridFrameSpec; }
 #include <memory>
 #include "HybridFaceSpec.hpp"
 #include <vector>
-#include <NitroModules/Promise.hpp>
 #include <VisionCamera/HybridFrameSpec.hpp>
 
 namespace margelo::nitro::camera::facedetector {
@@ -55,7 +54,7 @@ namespace margelo::nitro::camera::facedetector {
 
     public:
       // Methods
-      virtual std::shared_ptr<Promise<std::vector<std::shared_ptr<HybridFaceSpec>>>> detectFaces(const std::shared_ptr<margelo::nitro::camera::HybridFrameSpec>& frame) = 0;
+      virtual std::vector<std::shared_ptr<HybridFaceSpec>> detectFaces(const std::shared_ptr<margelo::nitro::camera::HybridFrameSpec>& frame) = 0;
       virtual void stopListeners() = 0;
 
     protected:

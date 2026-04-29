@@ -20,7 +20,6 @@ namespace margelo::nitro::camera { class HybridFrameSpec; }
 #include <memory>
 #include "HybridFaceSpec.hpp"
 #include <vector>
-#include <NitroModules/Promise.hpp>
 #include <VisionCamera/HybridFrameSpec.hpp>
 
 #include "VisionCameraFaceDetector-Swift-Cxx-Umbrella.hpp"
@@ -73,7 +72,7 @@ namespace margelo::nitro::camera::facedetector {
 
   public:
     // Methods
-    inline std::shared_ptr<Promise<std::vector<std::shared_ptr<HybridFaceSpec>>>> detectFaces(const std::shared_ptr<margelo::nitro::camera::HybridFrameSpec>& frame) override {
+    inline std::vector<std::shared_ptr<HybridFaceSpec>> detectFaces(const std::shared_ptr<margelo::nitro::camera::HybridFrameSpec>& frame) override {
       auto __result = _swiftPart.detectFaces(frame);
       if (__result.hasError()) [[unlikely]] {
         std::rethrow_exception(__result.error());

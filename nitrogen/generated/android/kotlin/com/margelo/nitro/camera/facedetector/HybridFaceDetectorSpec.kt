@@ -10,7 +10,6 @@ package com.margelo.nitro.camera.facedetector
 import androidx.annotation.Keep
 import com.facebook.jni.HybridData
 import com.facebook.proguard.annotations.DoNotStrip
-import com.margelo.nitro.core.Promise
 import com.margelo.nitro.camera.HybridFrameSpec
 import com.margelo.nitro.core.HybridObject
 
@@ -32,7 +31,7 @@ abstract class HybridFaceDetectorSpec: HybridObject() {
   // Methods
   @DoNotStrip
   @Keep
-  abstract fun detectFaces(frame: com.margelo.nitro.camera.HybridFrameSpec): Promise<Array<HybridFaceSpec>>
+  abstract fun detectFaces(frame: com.margelo.nitro.camera.HybridFrameSpec): Array<HybridFaceSpec>
   
   @DoNotStrip
   @Keep

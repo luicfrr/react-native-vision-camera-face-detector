@@ -126,34 +126,27 @@ open class HybridFaceDetectorSpec_cxx {
 
   // Methods
   @inline(__always)
-  public final func detectFaces(frame: bridge.std__shared_ptr_margelo__nitro__camera__HybridFrameSpec_) -> bridge.Result_std__shared_ptr_Promise_std__vector_std__shared_ptr_HybridFaceSpec_____ {
+  public final func detectFaces(frame: bridge.std__shared_ptr_margelo__nitro__camera__HybridFrameSpec_) -> bridge.Result_std__vector_std__shared_ptr_HybridFaceSpec___ {
     do {
       let __result = try self.__implementation.detectFaces(frame: { () -> any HybridFrameSpec in
         let __unsafePointer = bridge.get_std__shared_ptr_margelo__nitro__camera__HybridFrameSpec_(frame)
         let __instance = HybridFrameSpec_cxx.fromUnsafe(__unsafePointer)
         return __instance.getHybridFrameSpec()
       }())
-      let __resultCpp = { () -> bridge.std__shared_ptr_Promise_std__vector_std__shared_ptr_HybridFaceSpec____ in
-        let __promise = bridge.create_std__shared_ptr_Promise_std__vector_std__shared_ptr_HybridFaceSpec____()
-        let __promiseHolder = bridge.wrap_std__shared_ptr_Promise_std__vector_std__shared_ptr_HybridFaceSpec____(__promise)
-        __result
-          .then({ __result in __promiseHolder.resolve({ () -> bridge.std__vector_std__shared_ptr_HybridFaceSpec__ in
-              var __vector = bridge.create_std__vector_std__shared_ptr_HybridFaceSpec__(__result.count)
-              for __item in __result {
-                __vector.push_back({ () -> bridge.std__shared_ptr_HybridFaceSpec_ in
-                  let __cxxWrapped = __item.getCxxWrapper()
-                  return __cxxWrapped.getCxxPart()
-                }())
-              }
-              return __vector
-            }()) })
-          .catch({ __error in __promiseHolder.reject(__error.toCpp()) })
-        return __promise
+      let __resultCpp = { () -> bridge.std__vector_std__shared_ptr_HybridFaceSpec__ in
+        var __vector = bridge.create_std__vector_std__shared_ptr_HybridFaceSpec__(__result.count)
+        for __item in __result {
+          __vector.push_back({ () -> bridge.std__shared_ptr_HybridFaceSpec_ in
+            let __cxxWrapped = __item.getCxxWrapper()
+            return __cxxWrapped.getCxxPart()
+          }())
+        }
+        return __vector
       }()
-      return bridge.create_Result_std__shared_ptr_Promise_std__vector_std__shared_ptr_HybridFaceSpec_____(__resultCpp)
+      return bridge.create_Result_std__vector_std__shared_ptr_HybridFaceSpec___(__resultCpp)
     } catch (let __error) {
       let __exceptionPtr = __error.toCpp()
-      return bridge.create_Result_std__shared_ptr_Promise_std__vector_std__shared_ptr_HybridFaceSpec_____(__exceptionPtr)
+      return bridge.create_Result_std__vector_std__shared_ptr_HybridFaceSpec___(__exceptionPtr)
     }
   }
   
