@@ -3,22 +3,23 @@ package com.margelo.nitro.camera.facedetector
 import androidx.annotation.OptIn
 import androidx.camera.core.ExperimentalGetImage
 import com.google.mlkit.vision.face.FaceDetection
-import com.margelo.nitro.camera.facedetector.extensions.toMLFaceDetectorOptions
-import com.margelo.nitro.core.Promise
+import com.margelo.nitro.camera.facedetector.extensions.toMLImageFaceDetectorOptions
+import com.google.android.gms.tasks.Tasks
 import com.google.mlkit.vision.common.InputImage as MLInputImage
 import com.margelo.nitro.NitroModules
 import androidx.core.net.toUri
 
 class HybridImageFaceDetector(
-  options: FaceDetectorOptions
+  options: ImageFaceDetectorOptions
 ) : HybridImageFaceDetectorSpec() {
   private val context = NitroModules.applicationContext ?: throw Error("Image Face Detector - No Context available!")
+  private val onFacesDetected = options.onFacesDetected
   private val runLandmarks = options.runLandmarks ?: false
   private val runContours = options.runContours ?: false
   private val runClassifications = options.runClassifications ?: false
   private val trackingEnabled = options.trackingEnabled ?: false
   private val faceDetector = FaceDetection.getClient(
-    options.toMLFaceDetectorOptions()
+    options.toMLImageFaceDetectorOptions()
   )
 
   private fun resolveInputImage(
@@ -46,8 +47,7 @@ class HybridImageFaceDetector(
   @OptIn(ExperimentalGetImage::class)
   override fun detectFaces(
     image: InputImage
-  ): Promise<Array<HybridFaceSpec>>  {
-    val promise = Promise<Array<HybridFaceSpec>>()
+  ): Array<HybridFaceSpec> {
     val uri = resolveInputImage(image)
     val mlImage = createInputImage(uri)
     val config = FaceProcessConfig(
@@ -60,19 +60,12 @@ class HybridImageFaceDetector(
       runClassifications,
       trackingEnabled
     )
+    val task = faceDetector.process(mlImage)
+    val faces = Tasks.await(task).map {
+      HybridFace(it, config)
+    }.toTypedArray<HybridFaceSpec>()
 
-    faceDetector
-      .process(mlImage)
-      .addOnSuccessListener { faces ->
-        val hybridFaces = faces.map { 
-          HybridFace(it, config)
-        }.toTypedArray<HybridFaceSpec>()
-
-        promise.resolve(hybridFaces)
-      }.addOnFailureListener { error ->
-        promise.reject(error)
-      }
-
-    return promise
+    onFacesDetected?.invoke(faces)
+    return faces
   }
 }

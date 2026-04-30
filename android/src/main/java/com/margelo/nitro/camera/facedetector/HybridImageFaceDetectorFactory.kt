@@ -8,7 +8,7 @@ import com.facebook.proguard.annotations.DoNotStrip
 class HybridImageFaceDetectorFactory : HybridImageFaceDetectorFactorySpec() {
   @DoNotStrip
   @Keep
-  override fun createImageFaceDetector(options: FaceDetectorOptions): HybridImageFaceDetectorSpec {
+  override fun createImageFaceDetector(options: ImageFaceDetectorOptions): HybridImageFaceDetectorSpec {
     return HybridImageFaceDetector(options)
   }
 }

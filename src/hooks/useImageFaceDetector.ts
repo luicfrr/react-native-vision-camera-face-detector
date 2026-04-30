@@ -8,7 +8,7 @@ import type {
   InputImage
 } from '../specs/ImageFaceDetector.nitro'
 import type { Face } from '../specs/Face.nitro'
-import type { FaceDetectorOptions } from '../specs/FaceDetectorFactory.nitro'
+import type { ImageFaceDetectorOptions } from '../specs/ImageFaceDetectorFactory.nitro'
 
 /**
  * Use a {@linkcode ImageFaceDetector}.
@@ -24,7 +24,7 @@ import type { FaceDetectorOptions } from '../specs/FaceDetectorFactory.nitro'
  * ```
  */
 export function useImageFaceDetector(
-  options?: FaceDetectorOptions
+  options?: ImageFaceDetectorOptions
 ): ImageFaceDetector {
   /**
    * Resolves input image
