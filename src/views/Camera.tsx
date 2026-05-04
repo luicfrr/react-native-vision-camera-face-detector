@@ -1,8 +1,5 @@
 import React from 'react'
-import {
-  Camera as VisionCamera,
-  useCameraDevice
-} from 'react-native-vision-camera'
+import { Camera as VisionCamera } from 'react-native-vision-camera'
 
 // types
 import type { RefObject } from 'react'
