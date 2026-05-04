@@ -3,7 +3,7 @@ package com.margelo.nitro.camera.facedetector
 import androidx.annotation.OptIn
 import androidx.camera.core.ExperimentalGetImage
 import com.google.mlkit.vision.face.FaceDetection
-import com.margelo.nitro.camera.facedetector.extensions.toMLImageFaceDetectorOptions
+import com.margelo.nitro.camera.facedetector.extensions.toMLFaceDetectorOptions
 import com.google.android.gms.tasks.Tasks
 import com.google.mlkit.vision.common.InputImage as MLInputImage
 import com.margelo.nitro.NitroModules
@@ -19,7 +19,7 @@ class HybridImageFaceDetector(
   private val runClassifications = options.runClassifications ?: false
   private val trackingEnabled = options.trackingEnabled ?: false
   private val faceDetector = FaceDetection.getClient(
-    options.toMLImageFaceDetectorOptions()
+    options.toMLFaceDetectorOptions()
   )
 
   private fun resolveInputImage(
