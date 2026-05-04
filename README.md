@@ -47,15 +47,10 @@ import {
 } from 'react-native-vision-camera'
 import {
   Face,
-  Camera,
-  FaceDetectorOptions
+  Camera
 } from 'react-native-vision-camera-face-detector'
 
 export default function App() {
-  const faceDetectorOptions = useRef<FaceDetectorOptions>( {
-    // detector options
-  } ).current
-
   const device = useCameraDevice('front')
 
   useEffect(() => {
@@ -66,22 +61,21 @@ export default function App() {
   }, [device])
 
   function handleFacesDetected(
-    faces: Face[],
-    frame: Frame
+    faces: Face[]
   ) { 
-    console.log(
-      'faces', faces.length,
-      'frame', frame.toString()
-    )
+    console.log('faces', faces.length)
   }
 
   return (
     <View style={{ flex: 1 }}>
       {!!device? <Camera
+        runClassifications
+        runContours
+        runLandmarks
+        performanceMode={'fast'}
+        onFacesDetected={ handleFacesDetected }
         style={StyleSheet.absoluteFill}
         device={device}
-        faceDetectorCallback={ handleFacesDetected }
-        faceDetectorOptions={ faceDetectorOptions }
       /> : <Text>
         No Device
       </Text>}
@@ -118,24 +112,22 @@ import {
 import { Worklets } from 'react-native-worklets-core'
 
 export default function App() {
-  const faceDetectorOptions = useRef<FaceDetectorOptions>( {
-    // detection options
-  } ).current
-
   const device = useCameraDevice('front')
   // ❌ don't destruct hybrid objects ❌
   // const {detectFaces} = useFaceDetector(faceDetectorOptions)
-  const faceDetector = useFaceDetector( faceDetectorOptions )
+  const faceDetector = useFaceDetector( {
+    // detection options
+  } )
   const asyncRunner = useAsyncRunner()
   const frameOutput = useFrameOutput({
     onFrame: (frame) => {
       'worklet'
       
-      const wasHandled = asyncRunner.runAsync(async () => {
+      const wasHandled = asyncRunner.runAsync(() => {
         'worklet'
 
-        const faces = await faceDetector.detectFaces(frame)
-        // ... do something with faces
+        const faces = faceDetector.detectFaces(frame)
+        // ... do something with detected faces
         // ... chain something asynchronously
 
         // async task finished - dispose the Frame now.
@@ -149,20 +141,7 @@ export default function App() {
     }
   })
 
-  useEffect( () => {
-    return () => {
-      // you must call `stopListeners` when current component is unmounted
-      faceDetector.stopListeners()
-    }
-  }, [] )
-
   useEffect(() => {
-    if(!device) {
-      // you must call `stopListeners` when `Camera` component is unmounted
-      faceDetector.stopListeners()
-      return
-    }
-
     (async () => {
       const status = await Camera.requestCameraPermission()
       console.log({ status })
