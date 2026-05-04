@@ -13,7 +13,6 @@ class HybridImageFaceDetector(
   options: ImageFaceDetectorOptions
 ) : HybridImageFaceDetectorSpec() {
   private val context = NitroModules.applicationContext ?: throw Error("Image Face Detector - No Context available!")
-  private val onFacesDetected = options.onFacesDetected
   private val runLandmarks = options.runLandmarks ?: false
   private val runContours = options.runContours ?: false
   private val runClassifications = options.runClassifications ?: false
@@ -65,7 +64,6 @@ class HybridImageFaceDetector(
       HybridFace(it, config)
     }.toTypedArray<HybridFaceSpec>()
 
-    onFacesDetected?.invoke(faces)
     return faces
   }
 }

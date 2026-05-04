@@ -14,7 +14,6 @@ class HybridFaceDetector(
 ) : HybridFaceDetectorSpec() {
   private val context = NitroModules.applicationContext ?: throw Error("Face Detector - No Context available!")
   private val orientationManager = FaceDetectorOrientation.get(context.applicationContext)
-  private val onFacesDetected = options.onFacesDetected
   private val runLandmarks = options.runLandmarks ?: false
   private val runContours = options.runContours ?: false
   private val runClassifications = options.runClassifications ?: false
@@ -54,11 +53,13 @@ class HybridFaceDetector(
       HybridFace(it, config)
     }.toTypedArray<HybridFaceSpec>()
 
-    onFacesDetected?.invoke(faces)
     return faces
   }
 
-  override fun stopListeners() {
-    FaceDetectorOrientation.stop()
+  override fun dispose() {
+    faceDetector.close()
+    orientationManager.stopDeviceOrientationListener()
+
+    super.dispose()
   }
 }
