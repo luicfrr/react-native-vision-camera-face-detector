@@ -1,5 +1,9 @@
+import type {
+  CameraOutput,
+  CameraPosition
+} from 'react-native-vision-camera'
 import type { HybridObject } from 'react-native-nitro-modules'
-import type { CameraPosition } from 'react-native-vision-camera'
+import type { Face } from './Face.nitro'
 import type { FaceDetector } from './FaceDetector.nitro'
 import type { ImageFaceDetectorOptions } from './ImageFaceDetectorFactory.nitro'
 
@@ -36,6 +40,38 @@ export interface FaceDetectorOptions
   windowHeight?: number
 }
 
+/**
+ * Controls the camera buffer resolution used for barcode scanning.
+ *
+ * - `'preview'`: Prefer preview-sized buffers for lower latency.
+ * - `'full'`: Prefer full/highest available buffers for better detail.
+ */
+export type FaceDetectorOutputResolution = 'preview' | 'full'
+
+export interface FaceDetectorOutputOptions
+  extends FaceDetectorOptions {
+  /**
+   * Controls which camera buffer resolution should be used.
+   *
+   * - `'preview'`: Prefer preview-sized buffers for lower latency.
+   * - `'full'`: Prefer full/highest available buffers for better detail.
+   *
+   * @default 'preview'
+   */
+  outputResolution?: FaceDetectorOutputResolution
+  /**
+   * Called whenever faces have been detected.
+   */
+  onFacesDetected: (
+    faces: Face[]
+  ) => void
+
+  /**
+   * Called when there was an error detecting faces.
+   */
+  onError: ( error: Error ) => void
+}
+
 export interface FaceDetectorFactory
   extends HybridObject<{
     ios: 'swift',
@@ -45,4 +81,10 @@ export interface FaceDetectorFactory
    * Create a new {@linkcode FaceDetector}.
    */
   createFaceDetector( options: FaceDetectorOptions ): FaceDetector
+
+  /**
+   * Create a new {@linkcode CameraOutput} that can
+   * detect Barcodes.
+   */
+  createFaceDetectorOutput( options: FaceDetectorOutputOptions ): CameraOutput
 }

@@ -1,5 +1,6 @@
 export * from './factory'
 export * from './hooks/useFaceDetector'
+export * from './hooks/useFaceDetectorOutput'
 export * from './hooks/useImageFaceDetector'
 export * from './specs/Bounds'
 export * from './specs/Contours'

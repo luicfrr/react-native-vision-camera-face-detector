@@ -1,5 +1,4 @@
 import type { HybridObject } from 'react-native-nitro-modules'
-import type { Face } from './Face.nitro'
 import type { ImageFaceDetector } from './ImageFaceDetector.nitro'
 
 type PerformanceMode = 'fast' | 'accurate'
@@ -47,18 +46,6 @@ export interface ImageFaceDetectorOptions {
    * @default false
    */
   trackingEnabled?: boolean
-
-  /**
-   * Called whenever faces have been detected.
-   */
-  onFacesDetected?: (
-    faces: Face[]
-  ) => void | Promise<void>
-
-  /**
-   * Called when there was an error detecting faces.
-   */
-  onFacesDetectedError?: ( error: Error ) => void
 }
 
 export interface ImageFaceDetectorFactory

@@ -1,12 +1,8 @@
-import React, {
-  useEffect
-} from 'react'
+import React from 'react'
 import {
   Camera as VisionCamera,
-  useAsyncRunner,
-  useFrameOutput
+  useCameraDevice
 } from 'react-native-vision-camera'
-import useFaceDetector from '../hooks/useFaceDetector'
 
 // types
 import type { RefObject } from 'react'
@@ -14,86 +10,77 @@ import type {
   CameraViewProps,
   CameraRef
 } from 'react-native-vision-camera'
-import type { FaceDetectorOptions } from '../specs/FaceDetectorFactory.nitro'
+import type { FaceDetectorOutputOptions } from '../specs/FaceDetectorFactory.nitro'
+import useFaceDetectorOutput from '../hooks/useFaceDetectorOutput'
 
 interface ComponentType
-  extends CameraViewProps, FaceDetectorOptions {
+  extends Omit<CameraViewProps, 'onError'>,
+  FaceDetectorOutputOptions {
   ref?: RefObject<CameraRef | null>
 }
 
 /**
- * Vision camera wrapper
- * 
- * @param {ComponentType} props Camera + face detection props 
- * @returns 
+ * A view that detects {@linkcode Face}s in a Camera
+ * using the default front {@linkcode CameraDevice}.
+ *
+ *
+ * @example
+ * ```tsx
+ * function App() {
+ *   const isFocused = useIsFocused()
+ *   const appState = useAppState()
+ *   const isActive = isFocused && appState === 'active'
+ *   return (
+ *     <Camera
+ *       isActive={isActive}
+ *       barcodeFormats={['all']}
+ *       onFacesDetected={(faces) => {
+ *         console.log(`Detected ${faces.length} faces!`)
+ *       }}
+ *       onError={(error) => {
+ *         console.error(`Error detecting faces:`, error)
+ *       }}
+ *     />
+ *   )
+ * }
+ * ```
  */
 export function Camera( {
   onFacesDetected,
-  onFacesDetectedError,
+  onError,
+  outputResolution,
+  cameraFacing,
+  autoMode,
+  windowWidth,
+  windowHeight,
   performanceMode,
   runLandmarks,
   runContours,
   runClassifications,
   minFaceSize,
   trackingEnabled,
-  cameraFacing,
-  autoMode,
-  windowWidth,
-  windowHeight,
   ...cameraProps
 }: ComponentType ) {
-  const asyncRunner = useAsyncRunner()
-  const faceDetector = useFaceDetector( {
+  const output = useFaceDetectorOutput( {
     onFacesDetected,
+    onError,
+    outputResolution,
+    cameraFacing,
+    autoMode,
+    windowWidth,
+    windowHeight,
     performanceMode,
     runLandmarks,
     runContours,
     runClassifications,
     minFaceSize,
     trackingEnabled,
-    autoMode,
-    windowWidth,
-    windowHeight,
-    cameraFacing
-  } )
-
-  useEffect( () => {
-    return () => faceDetector.stopListeners()
-  }, [] )
-
-  /**
-   * Default frame output
-   */
-  const frameOutput = useFrameOutput( {
-    pixelFormat: 'yuv',
-    onFrame: ( frame ) => {
-      'worklet'
-
-      const finished = asyncRunner.runAsync( () => {
-        'worklet'
-
-        try {
-          faceDetector.detectFaces( frame )
-        } catch ( error: any ) {
-          console.error(
-            'Face detector execution error:',
-            error.message ?? JSON.stringify( error )
-          )
-          onFacesDetectedError?.( error )
-        } finally {
-          frame.dispose()
-        }
-      } )
-
-      if ( !finished ) {
-        frame.dispose()
-      }
-    }
   } )
 
   return <VisionCamera
     { ...cameraProps }
-    outputs={ [ frameOutput ] }
+    outputs={ [ output ] }
+    onError={ onError }
   />
 }
 
