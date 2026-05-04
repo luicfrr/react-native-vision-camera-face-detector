@@ -13,15 +13,10 @@ import {
 } from 'react-native'
 import {
   CameraPosition,
-  Frame,
   CameraRef,
   useCameraDevice,
   useCameraPermission
 } from 'react-native-vision-camera'
-import {
-  SkiaCameraProps,
-  SkiaCameraRef
-} from 'react-native-vision-camera-skia'
 import { launchImageLibraryAsync } from 'expo-image-picker'
 import { useIsFocused } from '@react-navigation/core'
 import { useAppState } from '@react-native-community/hooks'
@@ -32,18 +27,10 @@ import {
 } from 'react-native-safe-area-context'
 import {
   Camera,
-  SkiaCamera,
-  Contours,
   Face,
-  Landmarks,
   useImageFaceDetector,
   FaceDetectorOptions
 } from 'react-native-vision-camera-face-detector'
-import {
-  ClipOp,
-  Skia,
-  TileMode
-} from '@shopify/react-native-skia'
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -116,7 +103,6 @@ function FaceDetection(): ReactNode {
   // vision camera ref
   //
   const camera = useRef<CameraRef>( null )
-  const skiaCamera = useRef<SkiaCameraRef>( null )
   const { detectFaces } = useImageFaceDetector( faceDetectorOptions )
   //
   // face rectangle position
@@ -198,101 +184,6 @@ function FaceDetection(): ReactNode {
   }
 
   /**
-   * Handle skia frame actions
-   * 
-   * @param {DrawableFrame} frame Current frame
-   * @param {Parameters<SkiaCameraProps[ 'onFrame' ]>[ 1 ]} render Skia render function
-   * @returns {void}
-   */
-  function onSkiaFrame(
-    frame: Frame,
-    render: Parameters<SkiaCameraProps[ 'onFrame' ]>[ 1 ],
-  ): void {
-    'worklet'
-    // if no faces are detected we do nothing
-    if ( faces.value.length <= 0 ) return
-
-    console.log( 'SKIA frame - faces: ', faces.value.length )
-
-    const {
-      bounds,
-      contours,
-      landmarks
-    } = faces.value[ 0 ]
-
-    // draw a blur shape around the face points
-    const blurRadius = 25
-    const blurFilter = Skia.ImageFilter.MakeBlur(
-      blurRadius,
-      blurRadius,
-      TileMode.Repeat,
-      null
-    )
-    const blurPaint = Skia.Paint()
-    blurPaint.setImageFilter( blurFilter )
-    const contourPath = Skia.Path.Make()
-    const necessaryContours: ( keyof Contours )[] = [
-      'FACE',
-      'LEFT_CHEEK',
-      'RIGHT_CHEEK'
-    ]
-
-    necessaryContours.map( ( key ) => {
-      contours?.[ key ]?.map( ( point, index ) => {
-        if ( index === 0 ) {
-          // it's a starting point
-          contourPath.moveTo( point.x, point.y )
-        } else {
-          // it's a continuation
-          contourPath.lineTo( point.x, point.y )
-        }
-      } )
-      contourPath.close()
-    } )
-
-    // draw mouth shape
-    const mouthPath = Skia.Path.Make()
-    const mouthPaint = Skia.Paint()
-    mouthPaint.setColor( Skia.Color( 'red' ) )
-    const necessaryLandmarks: ( keyof Landmarks )[] = [
-      'MOUTH_BOTTOM',
-      'MOUTH_LEFT',
-      'MOUTH_RIGHT'
-    ]
-
-    necessaryLandmarks.map( ( key, index ) => {
-      const point = landmarks?.[ key ]
-      if ( !point ) return
-
-      if ( index === 0 ) {
-        // it's a starting point
-        mouthPath.moveTo( point.x, point.y )
-      } else {
-        // it's a continuation
-        mouthPath.lineTo( point.x, point.y )
-      }
-    } )
-    mouthPath.close()
-
-    // draw a rectangle around the face
-    const rectPaint = Skia.Paint()
-    rectPaint.setColor( Skia.Color( 'blue' ) )
-    rectPaint.setStyle( 1 )
-    rectPaint.setStrokeWidth( 5 )
-
-    render( ( {
-      frameTexture,
-      canvas
-    } ) => {
-      canvas.drawImage( frameTexture, 0, 0 )
-      canvas.clipPath( contourPath, ClipOp.Intersect, true )
-      canvas.drawPaint( blurPaint )
-      canvas.drawPath( mouthPath, mouthPaint )
-      canvas.drawRect( bounds, rectPaint )
-    } )
-  }
-
-  /**
    * Detect faces from image
    * 
    * @returns {Promise<void>} Promise
@@ -337,8 +228,8 @@ function FaceDetection(): ReactNode {
       ] }
     >
       { hasPermission && cameraDevice ? <>
-        { cameraMounted && <> {
-          autoMode ? <Camera
+        { cameraMounted && <>
+          <Camera
             ref={ camera }
             style={ StyleSheet.absoluteFill }
             isActive={ isCameraActive }
@@ -349,16 +240,7 @@ function FaceDetection(): ReactNode {
             { ...faceDetectorOptions }
             autoMode={ autoMode }
             cameraFacing={ cameraFacing }
-          /> : <SkiaCamera
-            ref={ skiaCamera }
-            style={ StyleSheet.absoluteFill }
-            isActive={ isCameraActive }
-            device={ cameraDevice }
-            onError={ handleCameraMountError }
-            onFrame={ onSkiaFrame }
-            onFacesDetected={ handleFacesDetected }
-            { ...faceDetectorOptions }
-          /> }
+          />
 
           <Animated.View
             style={ boundingBoxStyle }
