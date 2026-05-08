@@ -4,12 +4,12 @@ import CoreMotion
 import Foundation
 import UIKit
 
-final class VisionCameraFaceDetectorOrientation {
+final class FaceDetectorOrientation {
   private let motionManager = CMMotionManager()
   private let operationQueue = OperationQueue()
   
   // The orientation of the physical device's gyro sensor/accelerometer
-  var orientation: Orientation {
+  var orientation: UIInterfaceOrientation {
     didSet {
       if oldValue != orientation {
         print("Device Orientation changed from \(oldValue) -> \(orientation)")
@@ -53,11 +53,11 @@ extension CMAccelerometerData {
   /**
    Get the current device orientation from the given acceleration/gyro data.
    */
-  var deviceOrientation: Orientation {
+  var deviceOrientation: UIInterfaceOrientation {
     let acceleration = acceleration
-    let xNorm = abs(acceleration.x)
-    let yNorm = abs(acceleration.y)
-    let zNorm = abs(acceleration.z)
+    let xNorm = Swift.abs(acceleration.x)
+    let yNorm = Swift.abs(acceleration.y)
+    let zNorm = Swift.abs(acceleration.z)
 
     // If the z-axis is greater than the other axes, the phone is flat.
     if zNorm > xNorm && zNorm > yNorm {
@@ -79,3 +79,4 @@ extension CMAccelerometerData {
     }
   }
 }
+
