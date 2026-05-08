@@ -17,8 +17,6 @@
   "main": "index.js",
   "dependencies": {
     "@react-native-community/hooks": "^100.1.0",
-    "@react-native-firebase/app": "^24.0.0",
-    "@react-native-firebase/messaging": "^24.0.0",
     "@react-navigation/native": "^7.2.2",
     "babel-preset-expo": "^55.0.18",
     "expo": "^55",
