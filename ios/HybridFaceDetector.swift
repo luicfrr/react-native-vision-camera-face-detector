@@ -1,6 +1,7 @@
-import Foundation
 import MLKitFaceDetection
 import MLKitVision
+import NitroModules
+import VisionCamera
 
 class HybridFaceDetector: HybridFaceDetectorSpec {
   private let orientationManager = FaceDetectorOrientation()
