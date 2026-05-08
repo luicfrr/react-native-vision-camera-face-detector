@@ -242,29 +242,6 @@ If you find other errors while using this package you're wellcome to open a new 
 - [Google MLKit](https://developers.google.com/ml-kit)
 - [Vision Camera](https://react-native-vision-camera.com/)
 
-## 🔎 About
-
-This package was tested using the following:
-
-- `@react-native-firebase`: `24.0.0`
-- `@shopify/react-native-skia`: `2.6.2`
-- `react-native`: `0.85.2`
-- `react-native-nitro-image`: `0.13.1`
-- `react-native-nitro-modules`: `0.35.5`
-- `react-native-reanimated`: `4.3.0`
-- `react-native-vision-camera`: `5.0.6`
-- `react-native-vision-camera-skia`: `5.0.6`
-- `react-native-vision-camera-worklets`: `5.0.6`
-- `react-native-worklets`: `0.8.1`
-- `expo`: `55`
-
-Min O.S version:
-
-- `Android`: `SDK 26` (Android 8)
-- `IOS`: `15.5`
-
-Make sure to follow tested versions and your device is using the minimum O.S version before opening issues.
-
 ## 📚 Author
 
 Made with ❤️ by [luicfrr](https://github.com/luicfrr)
