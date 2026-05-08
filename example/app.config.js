@@ -1,6 +1,6 @@
 export default {
   expo: {
-    newArchEnabled: false,
+    newArchEnabled: true,
     name: 'Face Detector Example',
     slug: 'face-detector-example',
     version: '1.0.0',
@@ -52,8 +52,7 @@ export default {
           buildToolsVersion: '36.0.0'
         },
         ios: {
-          deploymentTarget: '15.5',
-          useFrameworks: 'static'
+          deploymentTarget: '16.4'
         }
       } ]
     ]
