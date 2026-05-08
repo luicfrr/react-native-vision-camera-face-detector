@@ -5678,11 +5678,6 @@ react-native-nitro-image@^0.14.0:
   resolved "https://registry.yarnpkg.com/react-native-nitro-image/-/react-native-nitro-image-0.14.0.tgz#a3102c038e192e71e03370d69d1f57839abcbce4"
   integrity sha512-yLBm+SC/bdssO5XJhYOxVf6UeFfcUoRLwR1YXPJpNZyv65aHPijDg/nklJ/spAonWEl4yfPpATGSqo8mvVEjlQ==
 
-react-native-nitro-modules@^0.35.5:
-  version "0.35.5"
-  resolved "https://registry.yarnpkg.com/react-native-nitro-modules/-/react-native-nitro-modules-0.35.5.tgz#19fe8f289b118b26b9e8522f62bb6e7b40e44c50"
-  integrity sha512-aa03UzC5dLg5qFfyBkVK+JGSwHTjmK7jUZzyRz11r1Yk9C/nJTFe59EeHPxxNNTagkiwQTM6p3sySgD/TDRC7Q==
-
 react-native-nitro-modules@^0.35.6:
   version "0.35.6"
   resolved "https://registry.yarnpkg.com/react-native-nitro-modules/-/react-native-nitro-modules-0.35.6.tgz#717a890fa033083f91765a586d433dd60492ac8b"
@@ -5696,20 +5691,20 @@ react-native-reanimated@^4.3.0:
     react-native-is-edge-to-edge "^1.3.1"
     semver "^7.7.3"
 
-react-native-vision-camera-worklets@^5.0.8:
-  version "5.0.8"
-  resolved "https://registry.yarnpkg.com/react-native-vision-camera-worklets/-/react-native-vision-camera-worklets-5.0.8.tgz#dbea8c23ea99d9d6627e1051229debc7635c1419"
-  integrity sha512-HO1gX4+DuDWOyj6lyLMLDyUxkTZHAL5tbQmX6hWWggQRV+YfUPiq0VZ9tpTVtw5Y7Ll92F6LkBclesISovkMiQ==
+react-native-vision-camera-worklets@^5.0.9:
+  version "5.0.9"
+  resolved "https://registry.yarnpkg.com/react-native-vision-camera-worklets/-/react-native-vision-camera-worklets-5.0.9.tgz#32993fe6b47ddb982116db378003c0b01e23025c"
+  integrity sha512-Z08UmMqhUKeK0URU9HD0qcBYtTZbr7ofFHHqXG939IEvUzOykL73Etj4l/KR/MdJIigra2PI3W3ZXAt6aVdrAQ==
 
-react-native-vision-camera@^5.0.8:
-  version "5.0.8"
-  resolved "https://registry.yarnpkg.com/react-native-vision-camera/-/react-native-vision-camera-5.0.8.tgz#688cd4c53c2a5bacc55083bafd8c9a5ff31d790a"
-  integrity sha512-2dbUCZ5H29KZIoAiWDdTu4FwxrOt0GQL5Y1DYHMpupkvcWE2w69bLRRT8jUT3lhK1tXwa5cwlM9GL119JKyzaw==
+react-native-vision-camera@^5.0.9:
+  version "5.0.9"
+  resolved "https://registry.yarnpkg.com/react-native-vision-camera/-/react-native-vision-camera-5.0.9.tgz#e36b8b0a4c1ec8af12ade726c5f9e1d7fa692d59"
+  integrity sha512-vjEhW9+IrS9Dedj0kT2FXWyu+fKbD2zgSQbOaHEDRGlRjyHw+4h1kyLKt5oN4aYMv6COLGdg5BVlOThBgwwxkA==
 
-react-native-worklets@^0.8.1:
-  version "0.8.1"
-  resolved "https://registry.yarnpkg.com/react-native-worklets/-/react-native-worklets-0.8.1.tgz#bc7744eea950dc1ebdea6429f55aada2422d9862"
-  integrity sha512-oWP/lStsAHU6oYCaWDXrda/wOHVdhusQJz1e6x9gPnXdFf4ndNDAOtWCmk2zGrAnlapfyA3rM6PCQq94mPg9cw==
+react-native-worklets@^0.8.3:
+  version "0.8.3"
+  resolved "https://registry.yarnpkg.com/react-native-worklets/-/react-native-worklets-0.8.3.tgz#87014dbe148f76a8ffd623953d3614a54aa880e8"
+  integrity sha512-oCBJROyLU7yG/1R8s0INMflygTH71bx+5XcYkH0CM938TlhSoVbiunE1WVW5FZa51vwYqfLie/IXMX2s1Kh3eg==
   dependencies:
     "@babel/plugin-transform-arrow-functions" "^7.27.1"
     "@babel/plugin-transform-class-properties" "^7.27.1"
