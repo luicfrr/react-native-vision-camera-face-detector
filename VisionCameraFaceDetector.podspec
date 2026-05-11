@@ -10,7 +10,7 @@ Pod::Spec.new do |s|
   s.license      = package["license"]
   s.authors      = package["author"]
 
-  s.platforms    = { :ios => min_ios_version_supported }
+  s.platforms    = { :ios => "15.5" } # 15.5 is the minimum version for GoogleMLKit/FaceDetection (7/8).0.0
   s.source       = { :git => "https://github.com/luicfrr/react-native-vision-camera-face-detector.git", :tag => "#{s.version}" }
 
   s.source_files = [
