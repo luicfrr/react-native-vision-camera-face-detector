@@ -14,6 +14,7 @@ class HybridFaceDetector: HybridFaceDetectorSpec {
   private let windowWidth: Double
   private let windowHeight: Double
   private let faceDetector: FaceDetector
+  private var outputOrientation: CameraOrientation = .up
 
   init(options: FaceDetectorOptions) {
     self.runLandmarks = options.runLandmarks ?? false
@@ -35,20 +36,17 @@ class HybridFaceDetector: HybridFaceDetectorSpec {
     frame: any HybridFrameSpec
   ) throws -> [any HybridFaceSpec] {
     let image = try frame.toMLImage()
-    let width = Double(image.height)
-    let height = Double(image.width)
-    let scaleX = autoMode
-      ? windowWidth / width
-      : 1.0
-    let scaleY = autoMode
-      ? windowHeight / height
-      : 1.0
-
+    image.orientation = outputOrientation.toUIImageOrientation(
+      orientationManager.orientation,
+      cameraFacing
+    )
+    let width = CGFloat(frame.height)
+    let height = CGFloat(frame.width)
     let config = FaceProcessConfig(
       width: width,
       height: height,
-      scaleX: scaleX,
-      scaleY: scaleY,
+      scaleX: autoMode ? windowWidth / width : 1.0,
+      scaleY: autoMode ? windowHeight / height : 1.0,
       runLandmarks: runLandmarks,
       runContours: runContours,
       runClassifications: runClassifications,

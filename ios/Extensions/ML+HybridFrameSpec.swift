@@ -1,10 +1,3 @@
-//
-//  ML+HybridFrameSpec.swift
-//  VisionCameraBarcodeScanner
-//
-//  Created by Marc Rousavy on 08.02.26.
-//
-
 import MLKitVision
 import NitroModules
 import VisionCamera
@@ -20,7 +13,7 @@ extension HybridFrameSpec_protocol {
     guard let image = MLImage(sampleBuffer: sampleBuffer) else {
       throw RuntimeError.error(withMessage: "Failed to create MLImage from CMSampleBuffer!")
     }
-    image.orientation = self.orientation.toUIImageOrientation(isMirrored: self.isMirrored)
+    
     return image
   }
 }

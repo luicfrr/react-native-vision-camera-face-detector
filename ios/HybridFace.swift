@@ -62,22 +62,22 @@ final class HybridFace: HybridFaceSpec {
     width: Double,
     height: Double
   ) -> (Double, Double) {
-    let scaleX = self.config.scaleX
+    let scaleX = config.scaleX
     let scaleY = config.scaleY
 
     if config.autoMode != true {
       return (
-        x * scaleX,
-        y * scaleY
+        y * scaleX,
+        x * scaleY
       )
     }
 
-    switch self.config.cameraFacing {
+    switch config.cameraFacing {
       case .front:
-        switch self.config.orientation {
+        switch config.orientation {
           case .portrait:
             return (
-              ((-x * scaleX) + config.width * scaleX) - width,
+              (-(x * scaleX) + config.width * scaleX) - width,
               y * scaleY
             )
           case .landscapeLeft:
@@ -141,8 +141,8 @@ final class HybridFace: HybridFaceSpec {
     let height = boundingBox.height * scaleY
 
     let (x, y) = transformPoint(
-      x: boundingBox.origin.y,
-      y: boundingBox.origin.x,
+      x: boundingBox.origin.x,
+      y: boundingBox.origin.y,
       width: width,
       height: height
     )
