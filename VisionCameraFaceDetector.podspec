@@ -10,7 +10,7 @@ Pod::Spec.new do |s|
   s.license      = package["license"]
   s.authors      = package["author"]
 
-  s.platforms    = { :ios => "15.5" } # 15.5 is the minimum version for GoogleMLKit/FaceDetection 7.0.0
+  s.platforms    = { :ios => min_ios_version_supported }
   s.source       = { :git => "https://github.com/luicfrr/react-native-vision-camera-face-detector.git", :tag => "#{s.version}" }
 
   s.source_files = [
@@ -21,6 +21,7 @@ Pod::Spec.new do |s|
     # Implementation (C++ objects)
     "cpp/**/*.{hpp,cpp}",
   ]
+  s.frameworks = ["AVFoundation"]
 
   load 'nitrogen/generated/ios/VisionCameraFaceDetector+autolinking.rb'
   add_nitrogen_files(s)
@@ -29,4 +30,5 @@ Pod::Spec.new do |s|
   s.dependency 'React-callinvoker'
   s.dependency "GoogleMLKit/FaceDetection" , "8.0.0"
   s.dependency "VisionCamera"
+  install_modules_dependencies(s)
 end
