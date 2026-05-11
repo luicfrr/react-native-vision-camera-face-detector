@@ -46,8 +46,8 @@ private func buildMLFaceDetectorOptions(
     runClassifications: Bool?,
     minFaceSize: Double?,
     trackingEnabled: Bool?
-) -> FaceDetectorOptions {
-  let options = FaceDetectorOptions()
+) -> MLKitFaceDetection.FaceDetectorOptions {
+  let options = MLKitFaceDetection.FaceDetectorOptions()
 
   options.performanceMode = (
     String(describing: performanceMode) == "accurate"
@@ -65,9 +65,9 @@ private func buildMLFaceDetectorOptions(
     runClassifications == true
   ) ? .all : .none
 
-  options.minFaceSize = NSNumber(
-    value: minFaceSize ?? 0.15
-  ).floatValue
+  options.minFaceSize = CGFloat(
+    minFaceSize ?? 0.15
+  )
 
   if trackingEnabled == true {
     options.isTrackingEnabled = true
