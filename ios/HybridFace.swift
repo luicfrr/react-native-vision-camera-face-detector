@@ -56,108 +56,37 @@ final class HybridFace: HybridFaceSpec {
     super.init()
   }
 
-  private func transformPoint(
-    x: Double,
-    y: Double,
-    width: Double,
-    height: Double
-  ) -> (Double, Double) {
-    let scaleX = config.scaleX
-    let scaleY = config.scaleY
-
-    if config.autoMode != true {
-      return (
-        y * scaleX,
-        x * scaleY
-      )
-    }
-
-    switch config.cameraFacing {
-      case .front:
-        switch config.orientation {
-          case .portrait:
-            return (
-              (-(x * scaleX) + config.width * scaleX) - width,
-              y * scaleY
-            )
-          case .landscapeLeft:
-            return (
-              y * scaleX,
-              x * scaleY
-            )
-          case .portraitUpsideDown:
-            return (
-              x * scaleX,
-              ((-y * scaleY) + config.height * scaleY) - height
-            )
-          case .landscapeRight:
-            return (
-              ((-y * scaleX) + config.width * scaleX) - width,
-              ((-x * scaleY) + config.height * scaleY) - height
-            )
-          default:
-            return (
-              x * scaleX,
-              y * scaleY
-            )
-        }
-      default:
-        switch config.orientation {
-          case .portrait:
-            return (
-              x * scaleX,
-              y * scaleY
-            )
-          case .landscapeLeft:
-            return (
-              y * scaleX,
-              ((-x * scaleY) + config.height * scaleY) - height
-            )
-          case .portraitUpsideDown:
-            return (
-              ((-x * scaleX) + config.width * scaleX) - width,
-              ((-y * scaleY) + config.height * scaleY) - height
-            )
-          case .landscapeRight:
-            return (
-              ((-y * scaleX) + config.width * scaleX) - width,
-              x * scaleY
-            )
-          default:
-            return (
-              x * scaleX,
-              y * scaleY
-            )
-        }
-    }
-  }
-
   private func processBoundingBox(
     _ boundingBox: CGRect
   ) -> Bounds {
     let scaleX = config.scaleX
     let scaleY = config.scaleY
-    let width = boundingBox.width * scaleX
-    let height = boundingBox.height * scaleY
+    let width: Double
+    let height: Double
 
-    let (x, y) = transformPoint(
-      x: boundingBox.origin.x,
-      y: boundingBox.origin.y,
-      width: width,
-      height: height
-    )
+    switch config.orientation {
+      case .landscapeLeft, .landscapeRight:
+        width = boundingBox.width * scaleY
+        height = boundingBox.height * scaleX
+      default:
+        width = boundingBox.width * scaleX
+        height = boundingBox.height * scaleY
+    }
 
     return Bounds(
       width: width,
       height: height,
-      x: x,
-      y: y
+      x: boundingBox.origin.y * scaleX,
+      y: boundingBox.origin.x * scaleY
     )
   }
 
   private func processLandmarks(
       _ face: Face
   ) -> Landmarks {
+    let scaleX = config.scaleX
+    let scaleY = config.scaleY
+
     func getPoint(
       _ type: FaceLandmarkType
     ) -> Point? {
@@ -166,16 +95,9 @@ final class HybridFace: HybridFaceSpec {
       }
 
       let position = landmark.position
-      let (x, y) = transformPoint(
-        x: Double(position.x),
-        y: Double(position.y),
-        width: 0,
-        height: 0
-      )
-
       return Point(
-        x: x, 
-        y: y
+        x: Double(position.y) * scaleX,
+        y: Double(position.x) * scaleY
       )
     }
 
@@ -196,6 +118,9 @@ final class HybridFace: HybridFaceSpec {
   private func processFaceContours(
     _ face: Face
   ) -> Contours {
+    let scaleX = config.scaleX
+    let scaleY = config.scaleY
+
     func getContour(
         _ type: FaceContourType
     ) -> [Point]? {
@@ -204,16 +129,9 @@ final class HybridFace: HybridFaceSpec {
       }
 
       return contour.points.map { point in
-        let (x, y) = transformPoint(
-          x: Double(point.x),
-          y: Double(point.y),
-          width: 0,
-          height: 0
-        )
-
         return Point(
-          x: x, 
-          y: y
+          x: Double(point.y) * scaleX, 
+          y: Double(point.x) * scaleY
         )
       }
     }

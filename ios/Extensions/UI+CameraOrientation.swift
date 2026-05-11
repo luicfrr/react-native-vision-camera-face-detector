@@ -8,9 +8,9 @@ extension CameraOrientation {
   ) -> UIImage.Orientation {
     switch orientation {
       case .portrait: return cameraFacing == .front ? .leftMirrored : .right
-      case .landscapeLeft: return cameraFacing == .front ? .upMirrored : .up
+      case .landscapeLeft: return cameraFacing == .front ? .downMirrored : .up
       case .portraitUpsideDown: return cameraFacing == .front ? .rightMirrored : .left
-      case .landscapeRight: return cameraFacing == .front ? .downMirrored : .down
+      case .landscapeRight: return cameraFacing == .front ? .upMirrored : .down
       default: return .up
     }
   }
