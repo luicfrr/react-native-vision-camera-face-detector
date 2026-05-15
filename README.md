@@ -17,11 +17,15 @@ Or leave a ⭐ on [GitHub](https://github.com/luicfrr/react-native-vision-camera
 
 ## 🧰 Installation
 
-```bash
-yarn add react-native-vision-camera-face-detector
-```
+You need to install `react-native-vision-camera` following it's [docs](https://visioncamera.margelo.com/docs) then:
 
-Then you need to add `react-native-worklets` plugin to `babel.config.js`. More details [here](https://docs.swmansion.com/react-native-worklets/docs/#react-native-community-cli).
+```bash
+yarn add react-native-vision-camera-face-detector@2.0.0-2
+```
+> [!WARNING]
+> `v2.0.0` is still in beta, but I think it's already usable in production apps if you only need portrait front-camera face detection. If your app depends on other device orientations, you’ll need to wait until #229 is resolved and a non-beta version is released.
+
+Don't forget to add `react-native-worklets` plugin to `babel.config.js`. More details [here](https://docs.swmansion.com/react-native-worklets/docs/#react-native-community-cli).
 
 ## 🪲 Known Bugs
 - `Xcode is not showing IOS 26.0 Simulators`: There's an excellent explanation about this issue [here](https://github.com/luicfrr/react-native-vision-camera-face-detector/issues/185#issuecomment-4459928441). TL;DR: Google needs to ship an ARM64 simulator slice for MLKit. Until then, the only workaround for IOS 26.0 is to test face detection on a physical device - thanks to @juanclaudiopardo.
