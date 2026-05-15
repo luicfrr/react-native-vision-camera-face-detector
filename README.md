@@ -23,7 +23,7 @@ You need to install `react-native-vision-camera` following it's [docs](https://v
 yarn add react-native-vision-camera-face-detector@2.0.0-2
 ```
 > [!WARNING]
-> `v2.0.0` is still in beta, but I think it's already usable in production apps if you only need portrait front-camera face detection. If your app depends on other device orientations, you’ll need to wait until #229 is resolved and a non-beta version is released.
+> `v2.0.0` is still in beta, but I think it's already usable in production apps if you only need portrait front-camera face detection. If your app depends on other device orientations, you’ll need to wait until [#229](https://github.com/luicfrr/react-native-vision-camera-face-detector/issues/229) is resolved and a non-beta version is released.
 
 Don't forget to add `react-native-worklets` plugin to `babel.config.js`. More details [here](https://docs.swmansion.com/react-native-worklets/docs/#react-native-community-cli).
 
