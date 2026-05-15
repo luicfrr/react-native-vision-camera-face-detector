@@ -1,0 +1,42 @@
+{
+  "$schema": "https://nitro.margelo.com/nitro.schema.json",
+  "cxxNamespace": [
+    "camera",
+    "facedetector"
+  ],
+  "ios": {
+    "iosModuleName": "VisionCameraFaceDetector"
+  },
+  "android": {
+    "androidNamespace": [
+      "camera",
+      "facedetector"
+    ],
+    "androidCxxLibName": "VisionCameraFaceDetector"
+  },
+  "autolinking": {
+    "FaceDetectorFactory": {
+      "ios": {
+        "language": "swift",
+        "implementationClassName": "HybridFaceDetectorFactory"
+      },
+      "android": {
+        "language": "kotlin",
+        "implementationClassName": "HybridFaceDetectorFactory"
+      }
+    },
+    "ImageFaceDetectorFactory": {
+      "ios": {
+        "language": "swift",
+        "implementationClassName": "HybridImageFaceDetectorFactory"
+      },
+      "android": {
+        "language": "kotlin",
+        "implementationClassName": "HybridImageFaceDetectorFactory"
+      }
+    }
+  },
+  "ignorePaths": [
+    "**/node_modules"
+  ]
+}

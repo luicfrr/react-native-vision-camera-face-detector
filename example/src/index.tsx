@@ -13,30 +13,24 @@ import {
 } from 'react-native'
 import {
   CameraPosition,
-  DrawableFrame,
-  Frame,
-  Camera as VisionCamera,
+  CameraRef,
   useCameraDevice,
   useCameraPermission
 } from 'react-native-vision-camera'
 import { launchImageLibraryAsync } from 'expo-image-picker'
 import { useIsFocused } from '@react-navigation/core'
 import { useAppState } from '@react-native-community/hooks'
-import { SafeAreaProvider } from 'react-native-safe-area-context'
 import { NavigationContainer } from '@react-navigation/native'
 import {
-  Face,
-  Camera,
-  Contours,
-  Landmarks,
-  detectFaces,
-  FrameFaceDetectionOptions
-} from 'react-native-vision-camera-face-detector'
+  SafeAreaProvider,
+  useSafeAreaInsets
+} from 'react-native-safe-area-context'
 import {
-  ClipOp,
-  Skia,
-  TileMode
-} from '@shopify/react-native-skia'
+  Camera,
+  Face,
+  useImageFaceDetector,
+  FaceDetectorOptions
+} from 'react-native-vision-camera-face-detector'
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -64,6 +58,7 @@ function Index(): ReactNode {
  * @return {ReactNode} Component
  */
 function FaceDetection(): ReactNode {
+  const insets = useSafeAreaInsets()
   const {
     width,
     height
@@ -87,12 +82,12 @@ function FaceDetection(): ReactNode {
   const [
     cameraFacing,
     setCameraFacing
-  ] = useState<CameraPosition>( 'front' )
-  const faceDetectionOptions = useRef<FrameFaceDetectionOptions>( {
+  ] = useState<Extract<CameraPosition, 'front' | 'back'>>( 'front' )
+  const faceDetectorOptions = useRef<FaceDetectorOptions>( {
     performanceMode: 'fast',
-    classificationMode: 'all',
-    contourMode: 'all',
-    landmarkMode: 'all',
+    runClassifications: true,
+    runContours: true,
+    runLandmarks: true,
     windowWidth: width,
     windowHeight: height
   } ).current
@@ -107,15 +102,16 @@ function FaceDetection(): ReactNode {
   //
   // vision camera ref
   //
-  const camera = useRef<VisionCamera>( null )
+  const camera = useRef<CameraRef>( null )
+  const { detectFaces } = useImageFaceDetector( faceDetectorOptions )
   //
   // face rectangle position
   //
+  const faces = useSharedValue<Face[]>( [] )
   const aFaceW = useSharedValue( 0 )
   const aFaceH = useSharedValue( 0 )
   const aFaceX = useSharedValue( 0 )
   const aFaceY = useSharedValue( 0 )
-  const aRot = useSharedValue( 0 )
   const boundingBoxStyle = useAnimatedStyle( () => ( {
     position: 'absolute',
     borderWidth: 4,
@@ -134,27 +130,13 @@ function FaceDetection(): ReactNode {
     } ),
     top: withTiming( aFaceY.value, {
       duration: 100
-    } ),
-    transform: [ {
-      rotate: `${ aRot.value }deg`
-    } ]
+    } )
   } ) )
 
   useEffect( () => {
     if ( hasPermission ) return
     requestPermission()
   }, [] )
-
-  /**
-   * Handle camera UI rotation
-   * 
-   * @param {number} rotation Camera rotation
-   */
-  function handleUiRotation(
-    rotation: number
-  ) {
-    aRot.value = rotation
-  }
 
   /**
    * Hanldes camera mount error event
@@ -170,16 +152,17 @@ function FaceDetection(): ReactNode {
   /**
    * Handle detection result
    * 
-   * @param {Face[]} faces Detection result 
-   * @param {Frame} frame Current frame
+   * @param {Face[]} detectedFaces Detection result 
    * @returns {void}
    */
   function handleFacesDetected(
-    faces: Face[],
-    frame: Frame
+    detectedFaces: Face[]
   ): void {
+    faces.value = detectedFaces
+    console.log( 'handleFacesDetected - detected', faces.value.length, 'faces' )
+
     // if no faces are detected we do nothing
-    if ( faces.length <= 0 ) {
+    if ( faces.value.length <= 0 ) {
       aFaceW.value = 0
       aFaceH.value = 0
       aFaceX.value = 0
@@ -187,13 +170,7 @@ function FaceDetection(): ReactNode {
       return
     }
 
-    console.log(
-      'faces', faces.length,
-      'frame', frame.toString(),
-      'faces', JSON.stringify( faces )
-    )
-
-    const { bounds } = faces[ 0 ]
+    const { bounds } = faces.value[ 0 ]
     const {
       width,
       height,
@@ -204,105 +181,6 @@ function FaceDetection(): ReactNode {
     aFaceH.value = height
     aFaceX.value = x
     aFaceY.value = y
-
-    // only call camera methods if ref is defined
-    if ( camera.current ) {
-      // take photo, capture video, etc...
-    }
-  }
-
-  /**
-   * Handle skia frame actions
-   * 
-   * @param {Face[]} faces Detection result 
-   * @param {DrawableFrame} frame Current frame
-   * @returns {void}
-   */
-  function handleSkiaActions(
-    faces: Face[],
-    frame: DrawableFrame
-  ): void {
-    'worklet'
-    // if no faces are detected we do nothing
-    if ( faces.length <= 0 ) return
-
-    console.log(
-      'SKIA - faces', faces.length,
-      'frame', frame.toString()
-    )
-
-    const {
-      bounds,
-      contours,
-      landmarks
-    } = faces[ 0 ]
-
-    // draw a blur shape around the face points
-    const blurRadius = 25
-    const blurFilter = Skia.ImageFilter.MakeBlur(
-      blurRadius,
-      blurRadius,
-      TileMode.Repeat,
-      null
-    )
-    const blurPaint = Skia.Paint()
-    blurPaint.setImageFilter( blurFilter )
-    const contourPath = Skia.Path.Make()
-    const necessaryContours: ( keyof Contours )[] = [
-      'FACE',
-      'LEFT_CHEEK',
-      'RIGHT_CHEEK'
-    ]
-
-    necessaryContours.map( ( key ) => {
-      contours?.[ key ]?.map( ( point, index ) => {
-        if ( index === 0 ) {
-          // it's a starting point
-          contourPath.moveTo( point.x, point.y )
-        } else {
-          // it's a continuation
-          contourPath.lineTo( point.x, point.y )
-        }
-      } )
-      contourPath.close()
-    } )
-
-    frame.save()
-    frame.clipPath( contourPath, ClipOp.Intersect, true )
-    frame.render( blurPaint )
-    frame.restore()
-
-    // draw mouth shape
-    const mouthPath = Skia.Path.Make()
-    const mouthPaint = Skia.Paint()
-    mouthPaint.setColor( Skia.Color( 'red' ) )
-    const necessaryLandmarks: ( keyof Landmarks )[] = [
-      'MOUTH_BOTTOM',
-      'MOUTH_LEFT',
-      'MOUTH_RIGHT'
-    ]
-
-    necessaryLandmarks.map( ( key, index ) => {
-      const point = landmarks?.[ key ]
-      if ( !point ) return
-
-      if ( index === 0 ) {
-        // it's a starting point
-        mouthPath.moveTo( point.x, point.y )
-      } else {
-        // it's a continuation
-        mouthPath.lineTo( point.x, point.y )
-      }
-    } )
-    mouthPath.close()
-    frame.drawPath( mouthPath, mouthPaint )
-
-    // draw a rectangle around the face
-    const rectPaint = Skia.Paint()
-    rectPaint.setColor( Skia.Color( 'blue' ) )
-    rectPaint.setStyle( 1 )
-    rectPaint.setStrokeWidth( 5 )
-    frame.drawRect( bounds, rectPaint )
   }
 
   /**
@@ -321,9 +199,7 @@ function FaceDetection(): ReactNode {
 
     if ( result.canceled ) return
 
-    const faces = await detectFaces( {
-      image: result.assets[ 0 ].uri
-    } )
+    const faces = detectFaces( result.assets[ 0 ] )
     console.log( 'image detected faces', faces )
   }
 
@@ -336,10 +212,9 @@ function FaceDetection(): ReactNode {
     if ( !camera.current ) return
     // take snapshot is faster than take photo 
     // but it does not process captured image
-    const { path } = await camera.current?.takeSnapshot()
-    const faces = await detectFaces( {
-      image: `file://${ path }`
-    } )
+    const snapshot = await camera.current?.takeSnapshot()
+    const path = await snapshot.saveToTemporaryFileAsync( 'png' )
+    const faces = detectFaces( `file://${ path }` )
     console.log( 'photo detected faces', faces )
   }
 
@@ -355,21 +230,16 @@ function FaceDetection(): ReactNode {
       { hasPermission && cameraDevice ? <>
         { cameraMounted && <>
           <Camera
-            // @ts-ignore
             ref={ camera }
             style={ StyleSheet.absoluteFill }
             isActive={ isCameraActive }
             device={ cameraDevice }
+            orientationSource={ 'device' }
             onError={ handleCameraMountError }
-            faceDetectionCallback={ handleFacesDetected }
-            onUIRotationChanged={ handleUiRotation }
-            // @ts-ignore
-            skiaActions={ handleSkiaActions }
-            faceDetectionOptions={ {
-              ...faceDetectionOptions,
-              autoMode,
-              cameraFacing
-            } }
+            onFacesDetected={ handleFacesDetected }
+            { ...faceDetectorOptions }
+            autoMode={ autoMode }
+            cameraFacing={ cameraFacing }
           />
 
           <Animated.View
@@ -412,13 +282,32 @@ function FaceDetection(): ReactNode {
     <View
       style={ {
         position: 'absolute',
-        bottom: 20,
+        bottom: 20 + + insets.bottom,
         left: 0,
         right: 0,
         display: 'flex',
         flexDirection: 'column'
       } }
     >
+      <View
+        style={ {
+          width: '100%',
+          display: 'flex',
+          flexDirection: 'row',
+          justifyContent: 'space-around'
+        } }
+      >
+        <Button
+          onPress={ () => setCameraPaused( ( current ) => !current ) }
+          title={ `${ cameraPaused ? 'Resume' : 'Pause' } Cam` }
+        />
+
+        <Button
+          onPress={ () => setCameraMounted( ( current ) => !current ) }
+          title={ `${ cameraMounted ? 'Unmount' : 'Mount' } Cam` }
+        />
+      </View>
+
       <View
         style={ {
           width: '100%',
@@ -457,24 +346,6 @@ function FaceDetection(): ReactNode {
         <Button
           onPress={ () => setAutoMode( ( current ) => !current ) }
           title={ `${ autoMode ? 'Disable' : 'Enable' } AutoMode` }
-        />
-      </View>
-      <View
-        style={ {
-          width: '100%',
-          display: 'flex',
-          flexDirection: 'row',
-          justifyContent: 'space-around'
-        } }
-      >
-        <Button
-          onPress={ () => setCameraPaused( ( current ) => !current ) }
-          title={ `${ cameraPaused ? 'Resume' : 'Pause' } Cam` }
-        />
-
-        <Button
-          onPress={ () => setCameraMounted( ( current ) => !current ) }
-          title={ `${ cameraMounted ? 'Unmount' : 'Mount' } Cam` }
         />
       </View>
     </View>

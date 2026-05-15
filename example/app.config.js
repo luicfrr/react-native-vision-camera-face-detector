@@ -1,6 +1,6 @@
 export default {
   expo: {
-    newArchEnabled: false,
+    newArchEnabled: true,
     name: 'Face Detector Example',
     slug: 'face-detector-example',
     version: '1.0.0',
@@ -18,6 +18,9 @@ export default {
     ios: {
       bundleIdentifier: 'com.facedetector.example',
       buildNumber: '1',
+      "infoPlist": {
+        "NSCameraUsageDescription": "$(PRODUCT_NAME) needs access to your Camera to capture photos and videos.",
+      },
       privacyManifests: {
         NSPrivacyAccessedAPITypes: [ {
           NSPrivacyAccessedAPIType: 'NSPrivacyAccessedAPICategoryUserDefaults',
@@ -31,12 +34,12 @@ export default {
       adaptiveIcon: {
         foregroundImage: './assets/adaptive-icon.png',
         backgroundColor: '#ffffff'
+      },
+      "android": {
+        "permissions": [ "android.permission.CAMERA" ]
       }
     },
     plugins: [
-      [ 'react-native-vision-camera', {
-        cameraPermissionText: '$(PRODUCT_NAME) needs to access your device\'s camera.'
-      } ],
       [ 'expo-image-picker', {
         photosPermission: 'The app accesses your photos to let you share them with your friends.'
       } ],
@@ -44,14 +47,12 @@ export default {
         android: {
           // android 8
           minSdkVersion: 26,
-          // android 14
-          compileSdkVersion: 35,
-          targetSdkVersion: 35,
-          buildToolsVersion: '35.0.0'
+          compileSdkVersion: 36,
+          targetSdkVersion: 36,
+          buildToolsVersion: '36.0.0'
         },
         ios: {
-          deploymentTarget: '15.5',
-          useFrameworks: 'static'
+          deploymentTarget: '16.4'
         }
       } ]
     ]

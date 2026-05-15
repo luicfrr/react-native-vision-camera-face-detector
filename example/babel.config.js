@@ -16,10 +16,7 @@ module.exports = {
         '.json'
       ]
     } ], [
-    'react-native-reanimated/plugin', {
+    'react-native-worklets/plugin', {
       processNestedWorklets: true
-    }
-  ], [
-    'react-native-worklets-core/plugin'
-  ] ]
+    } ] ]
 }
