@@ -24,8 +24,7 @@ yarn add react-native-vision-camera-face-detector
 Then you need to add `react-native-worklets` plugin to `babel.config.js`. More details [here](https://docs.swmansion.com/react-native-worklets/docs/#react-native-community-cli).
 
 ## 🪲 Known Bugs
-
-There are no known bugs at the moment....
+- `Xcode is not showing IOS 26.0 Simulators`: There's an excellent explanation about this issue [here](https://github.com/luicfrr/react-native-vision-camera-face-detector/issues/185#issuecomment-4459928441). TL;DR: Google needs to ship an ARM64 simulator slice for MLKit. Until then, the only workaround for IOS 26.0 is to test face detection on a physical device - thanks to @juanclaudiopardo.
 
 ## 💡 Usage
 
