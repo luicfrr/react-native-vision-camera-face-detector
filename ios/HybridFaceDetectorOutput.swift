@@ -76,8 +76,8 @@ NativeCameraOutput {
       return
     }
     image.orientation = outputOrientation.toUIImageOrientation(
-      orientationManager.orientation,
-      cameraFacing
+      orientation: orientationManager.orientation,
+      cameraFacing: cameraFacing
     )
     let width = image.height
     let height = image.width

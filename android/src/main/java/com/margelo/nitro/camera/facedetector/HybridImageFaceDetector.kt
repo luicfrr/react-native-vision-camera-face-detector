@@ -50,8 +50,8 @@ class HybridImageFaceDetector(
     val uri = resolveInputImage(image)
     val mlImage = createInputImage(uri)
     val config = FaceProcessConfig(
-      width = mlImage.height.toDouble(),
-      height = mlImage.width.toDouble(),
+      width = mlImage.width.toDouble(),
+      height = mlImage.height.toDouble(),
       scaleX = 1.0,
       scaleY = 1.0,
       runLandmarks,

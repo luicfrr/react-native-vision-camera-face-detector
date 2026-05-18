@@ -3,7 +3,10 @@ import NitroModules
 import VisionCamera
 
 extension HybridFrameSpec_protocol {
-  func toMLImage() throws -> MLImage {
+  func toMLImage(
+    orientation: UIInterfaceOrientation,
+    cameraFacing: CameraPosition
+  ) throws -> MLImage {
     guard let nativeFrame = self as? any NativeFrame else {
       throw RuntimeError.error(withMessage: "Frame is not of type `NativeFrame`!")
     }
@@ -13,7 +16,10 @@ extension HybridFrameSpec_protocol {
     guard let image = MLImage(sampleBuffer: sampleBuffer) else {
       throw RuntimeError.error(withMessage: "Failed to create MLImage from CMSampleBuffer!")
     }
-    
+    image.orientation = self.orientation.toUIImageOrientation(
+      orientation: orientation,
+      cameraFacing: cameraFacing
+    )
     return image
   }
 }

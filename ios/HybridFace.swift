@@ -61,13 +61,12 @@ final class HybridFace: HybridFaceSpec {
   ) -> Bounds {
     let scaleX = config.scaleX
     let scaleY = config.scaleY
-    let width: Double
-    let height: Double
-
+    var width: Double
+    var height: Double
     switch config.orientation {
       case .landscapeLeft, .landscapeRight:
-        width = boundingBox.width * scaleY
-        height = boundingBox.height * scaleX
+        width = boundingBox.height * scaleY
+        height = boundingBox.width * scaleX
       default:
         width = boundingBox.width * scaleX
         height = boundingBox.height * scaleY
@@ -76,8 +75,8 @@ final class HybridFace: HybridFaceSpec {
     return Bounds(
       width: width,
       height: height,
-      x: boundingBox.origin.y * scaleX,
-      y: boundingBox.origin.x * scaleY
+      x: boundingBox.minY * scaleX,
+      y: boundingBox.minX * scaleY
     )
   }
 

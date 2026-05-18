@@ -3,8 +3,8 @@ import VisionCamera
 
 extension CameraOrientation {
   func toUIImageOrientation(
-    _ orientation: UIInterfaceOrientation,
-    _ cameraFacing: CameraPosition
+    orientation: UIInterfaceOrientation,
+    cameraFacing: CameraPosition
   ) -> UIImage.Orientation {
     switch orientation {
       case .portrait: return cameraFacing == .front ? .leftMirrored : .right
