@@ -26,6 +26,10 @@ NativeCameraOutput {
   let mediaType: MediaType = .video
   let streamType: StreamType = .video
   var outputOrientation: CameraOrientation = .up
+  var currentResolution: Size? {
+    guard let connection = output.connection(with: .video) else { return nil }
+    return connection.inputStreamResolution
+  }
   var targetResolution: ResolutionRule {
     return .closestTo(
       Size(width: 720.0, height: 1280.0)

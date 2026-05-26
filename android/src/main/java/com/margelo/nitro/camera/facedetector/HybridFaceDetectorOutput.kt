@@ -32,6 +32,8 @@ class HybridFaceDetectorOutput(
       field = value
       imageAnalysis?.targetRotation = value.surfaceRotation
     }
+  override val currentResolution: com.margelo.nitro.camera.Size?
+    get() = imageAnalysis?.resolutionInfo?.resolution?.toSize()
   private val context = NitroModules.applicationContext ?: throw Error("Face Detector - No Context available!")
   private val orientationManager = FaceDetectorOrientation.get(context.applicationContext)
   private val runLandmarks = options.runLandmarks ?: false
@@ -48,7 +50,7 @@ class HybridFaceDetectorOutput(
   private var isBusy = AtomicBoolean(false)
   private val executor = Executors.newSingleThreadExecutor()
   private var imageAnalysis: ImageAnalysis? = null
-  private val recommendedResolutionForBarcodeScanning = Size(1280, 720)
+  private val recommendedResolutionForFaceDetection = Size(1280, 720)
 
   override fun createUseCase(
     mirrorMode: MirrorMode,
@@ -59,7 +61,7 @@ class HybridFaceDetectorOutput(
         ResolutionStrategy.HIGHEST_AVAILABLE_STRATEGY
       } else {
         ResolutionStrategy(
-          recommendedResolutionForBarcodeScanning,
+          recommendedResolutionForFaceDetection,
           ResolutionStrategy.FALLBACK_RULE_CLOSEST_HIGHER_THEN_LOWER
         )
       }

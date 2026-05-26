@@ -5742,15 +5742,15 @@ react-native-reanimated@4.2.1:
     react-native-is-edge-to-edge "1.2.1"
     semver "7.7.3"
 
-react-native-vision-camera-worklets@^5.0.9:
-  version "5.0.9"
-  resolved "https://registry.yarnpkg.com/react-native-vision-camera-worklets/-/react-native-vision-camera-worklets-5.0.9.tgz#32993fe6b47ddb982116db378003c0b01e23025c"
-  integrity sha512-Z08UmMqhUKeK0URU9HD0qcBYtTZbr7ofFHHqXG939IEvUzOykL73Etj4l/KR/MdJIigra2PI3W3ZXAt6aVdrAQ==
+react-native-vision-camera-worklets@^5.0.10:
+  version "5.0.10"
+  resolved "https://registry.yarnpkg.com/react-native-vision-camera-worklets/-/react-native-vision-camera-worklets-5.0.10.tgz#c08c5872aa0a349e68b41e48f50f11e607f7de88"
+  integrity sha512-KVOtqHc7E+brvVz+TQa8NUIBxbUcH15/f4rkczo1soj3IKcmGCJvjQfKZw8A1i3dVf2FdnU+K5ekob++ZBW/1A==
 
-react-native-vision-camera@^5.0.9:
-  version "5.0.9"
-  resolved "https://registry.yarnpkg.com/react-native-vision-camera/-/react-native-vision-camera-5.0.9.tgz#e36b8b0a4c1ec8af12ade726c5f9e1d7fa692d59"
-  integrity sha512-vjEhW9+IrS9Dedj0kT2FXWyu+fKbD2zgSQbOaHEDRGlRjyHw+4h1kyLKt5oN4aYMv6COLGdg5BVlOThBgwwxkA==
+react-native-vision-camera@^5.0.10:
+  version "5.0.10"
+  resolved "https://registry.yarnpkg.com/react-native-vision-camera/-/react-native-vision-camera-5.0.10.tgz#d86b7947500d66ec442314b441066e4e4d23984f"
+  integrity sha512-NE1SyeI09VhpV9S9SIHq5WHylvviZIfToLmaLLA3jvXCuwTJ5qfIIiYXaJuJW5+6gxGl7Y05LjmLLWZgup4dNA==
 
 react-native-worklets@0.7.4:
   version "0.7.4"
