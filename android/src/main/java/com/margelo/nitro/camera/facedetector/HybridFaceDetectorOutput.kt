@@ -14,6 +14,7 @@ import com.margelo.nitro.camera.CameraOrientation
 import com.margelo.nitro.camera.HybridCameraOutputSpec
 import com.margelo.nitro.camera.MediaType
 import com.margelo.nitro.camera.MirrorMode
+import com.margelo.nitro.camera.extensions.converters.toSize
 import com.margelo.nitro.camera.extensions.surfaceRotation
 import com.margelo.nitro.camera.facedetector.extensions.toMLFaceDetectorOptions
 import com.margelo.nitro.camera.public.NativeCameraOutput
