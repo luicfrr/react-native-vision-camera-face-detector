@@ -5,7 +5,8 @@ import { Camera as VisionCamera } from 'react-native-vision-camera'
 import type { RefObject } from 'react'
 import type {
   CameraViewProps,
-  CameraRef
+  CameraRef,
+  CameraOutput
 } from 'react-native-vision-camera'
 import type { FaceDetectorOutputOptions } from '../specs/FaceDetectorFactory.nitro'
 import useFaceDetectorOutput from '../hooks/useFaceDetectorOutput'
@@ -14,6 +15,7 @@ interface ComponentType
   extends Omit<CameraViewProps, 'onError'>,
   FaceDetectorOutputOptions {
   ref?: RefObject<CameraRef | null>
+  output: CameraOutput[] | undefined
 }
 
 /**
@@ -56,6 +58,7 @@ export function Camera( {
   runClassifications,
   minFaceSize,
   trackingEnabled,
+  outputs,
   ...cameraProps
 }: ComponentType ) {
   const output = useFaceDetectorOutput( {
@@ -76,7 +79,10 @@ export function Camera( {
 
   return <VisionCamera
     { ...cameraProps }
-    outputs={ [ output ] }
+    outputs={ [
+      output,
+      ...( outputs ?? [] )
+    ] }
     onError={ onError }
   />
 }
