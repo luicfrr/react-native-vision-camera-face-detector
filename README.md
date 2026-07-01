@@ -1,12 +1,12 @@
 ## 📚 Introduction
 
+<a href="https://github.com/sponsors/luicfrr">
+  <img align="right" width="100" alt="Is this package useful for you? Consider Sponsoring its development!" src=".github/funding-octocat.svg">
+</a>
+
 `react-native-vision-camera-face-detector` is a React Native library that integrates with the Vision Camera module to provide face detection functionality. It allows you to easily detect faces in real-time using the device's front and back camera. It also supports static image face detection.
 
-Is this package useful for you?
-
-<a href="https://www.buymeacoffee.com/luicfrr" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>
-
-Or leave a ⭐ on [GitHub](https://github.com/luicfrr/react-native-vision-camera-face-detector).
+Is this package useful for you? Consider [Sponsoring](https://github.com/sponsors/luicfrr) its development!
 
 ## 🏗️ Features
 
@@ -20,10 +20,8 @@ Or leave a ⭐ on [GitHub](https://github.com/luicfrr/react-native-vision-camera
 You need to install `react-native-vision-camera` following it's [docs](https://visioncamera.margelo.com/docs) then:
 
 ```bash
-yarn add react-native-vision-camera-face-detector@2.0.0-2
+yarn add react-native-vision-camera-face-detector
 ```
-> [!WARNING]
-> `v2.0.0` is still in beta, but I think it's already usable in production apps if you only need portrait front-camera face detection. If your app depends on other device orientations, you’ll need to wait until [#229](https://github.com/luicfrr/react-native-vision-camera-face-detector/issues/229) is resolved and a non-beta version is released.
 
 Don't forget to add `react-native-worklets` plugin to `babel.config.js`. More details [here](https://docs.swmansion.com/react-native-worklets/docs/#react-native-community-cli).
 
@@ -87,7 +85,62 @@ export default function App() {
 }
 ```
 
-Or use it following [vision-camera docs](https://react-native-vision-camera.com/docs/guides/frame-processors-interacting):
+[Outputs way](https://visioncamera.margelo.com/docs/camera-outputs#connecting-a-cameraoutput-to-a-camerasession):
+```jsx
+import { 
+  StyleSheet, 
+  Text, 
+  View,
+  NativeModules,
+  Platform
+} from 'react-native'
+import { 
+  useEffect, 
+  useState,
+  useRef
+} from 'react'
+import {
+  Camera,
+  runAsync,
+  useCameraDevice,
+  useFrameProcessor
+} from 'react-native-vision-camera'
+import { 
+  Face,
+  useFaceDetectorOutput,
+  FaceDetectorOptions
+} from 'react-native-vision-camera-face-detector'
+import { Worklets } from 'react-native-worklets-core'
+
+export default function App() {
+  const device = useCameraDevice('front')
+  const faceDetectorOutput = useFaceDetectorOutput( {
+    // detection options
+  } )
+
+  useEffect(() => {
+    (async () => {
+      const status = await Camera.requestCameraPermission()
+      console.log({ status })
+    })()
+  }, [device])
+
+  return (
+    <View style={{ flex: 1 }}>
+      {!!device? <Camera
+        style={StyleSheet.absoluteFill}
+        device={device}
+        isActive={true}
+        outputs={[faceDetectorOutput]}
+      /> : <Text>
+        No Device
+      </Text>}
+    </View>
+  )
+}
+```
+
+Or [Frame processor way](https://visioncamera.margelo.com/docs/async-frame-processing#the-async-runner):
 ```jsx
 import { 
   StyleSheet, 
