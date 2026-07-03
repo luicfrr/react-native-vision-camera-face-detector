@@ -15,7 +15,6 @@ interface ComponentType
   extends Omit<CameraViewProps, 'onError'>,
   FaceDetectorOutputOptions {
   ref?: RefObject<CameraRef | null>
-  output: CameraOutput[] | undefined
 }
 
 /**
