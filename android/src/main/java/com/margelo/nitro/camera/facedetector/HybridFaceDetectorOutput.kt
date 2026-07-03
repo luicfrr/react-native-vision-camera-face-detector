@@ -7,6 +7,7 @@ import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
 import androidx.camera.core.resolutionselector.ResolutionSelector
 import androidx.camera.core.resolutionselector.ResolutionStrategy
+import com.google.android.gms.tasks.Tasks
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.face.FaceDetection
 import com.margelo.nitro.NitroModules
@@ -29,6 +30,7 @@ class HybridFaceDetectorOutput(
   override val mediaType: MediaType = MediaType.VIDEO
   override val mirrorMode: MirrorMode = MirrorMode.AUTO
   override var outputOrientation: CameraOrientation = CameraOrientation.UP
+    get() - field
     set(value) {
       field = value
       imageAnalysis?.targetRotation = value.surfaceRotation
@@ -49,6 +51,7 @@ class HybridFaceDetectorOutput(
     options.toMLFaceDetectorOptions()
   )
   private var isBusy = AtomicBoolean(false)
+  private val isDisposed = AtomicBoolean(false)
   private val executor = Executors.newSingleThreadExecutor()
   private var imageAnalysis: ImageAnalysis? = null
   private val recommendedResolutionForFaceDetection = Size(1280, 720)
@@ -87,28 +90,30 @@ class HybridFaceDetectorOutput(
   }
 
   override fun dispose() {
+    super.dispose()
+    isDisposed.set(true)
     orientationManager.stopDeviceOrientationListener()
-    faceDetector.close()
+    // Order matters: drain the analyzer executor FIRST so any in-flight
+    // synchronous detection finishes before the detector is torn down.
+    // Closing the ML Kit detector while a native detection is still reading the
+    // frame's YUV buffer is the JNI abort in libface_detector_v2_jni.so.
     executor.close()
+    faceDetector.close()
   }
 
   @OptIn(ExperimentalGetImage::class)
   override fun analyze(imageProxy: ImageProxy) {
-    try {
-      if (!isBusy.compareAndSet(false, true)) {
-        // pipeline is busy. close image & return
-        imageProxy.close()
-        return
-      }
+    if (
+      isDisposed.get() ||
+      !isBusy.compareAndSet(false, true)
+    ) {
+      // pipeline is busy. close image & return
+      imageProxy.close()
+      return
+    }
 
-      val mediaImage = imageProxy.image
-      if (mediaImage == null) {
-        // media image is null - error & return.
-        imageProxy.close()
-        isBusy.set(false)
-        options.onError(Error("`ImageProxy` does not have an `Image`!"))
-        return
-      }
+    try {
+      val mediaImage = imageProxy.image ?: throw Error("`ImageProxy` does not have an `Image`!")
       val inputImage = InputImage.fromMediaImage(mediaImage, imageProxy.imageInfo.rotationDegrees)
       val width = inputImage.height.toDouble()
       val height = inputImage.width.toDouble()
@@ -127,6 +132,17 @@ class HybridFaceDetectorOutput(
         cameraFacing,
         orientation = orientationManager.orientation
       )
+
+      // Run detection synchronously on the analyzer executor. Tasks.await blocks
+      // only this background thread, keeping the whole detection inside the
+      // frame's + executor's lifetime so dispose() can drain it before closing
+      // the detector. KEEP_ONLY_LATEST still drops frames while busy.
+      val faces = Tasks.await(faceDetector.process(inputImage))
+      options.onFacesDetected(faces
+        .map { HybridFace(it, config) }
+        .toTypedArray<HybridFaceSpec>()
+      )
+
       faceDetector
         .process(inputImage)
         .addOnSuccessListener { faces ->
@@ -142,9 +158,10 @@ class HybridFaceDetectorOutput(
           isBusy.set(false)
         }
     } catch (error: Throwable) {
+      options.onError(error)
+    } finally {
       imageProxy.close()
       isBusy.set(false)
-      options.onError(error)
     }
   }
 }
