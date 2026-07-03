@@ -36,13 +36,9 @@
     "react-native-worklets": "../node_modules/react-native-worklets"
   },
   "devDependencies": {
-    "@babel/core": "^7.29.0",
-    "@babel/preset-env": "^8.0.2",
-    "@babel/runtime": "^8.0.0",
     "@types/react": "~19.2.17",
     "babel-plugin-module-resolver": "^5.0.3",
     "eslint": "../node_modules/eslint",
-    "metro-react-native-babel-preset": "^0.77.0",
     "pod-install": "^1.1.0",
     "typescript": "../node_modules/typescript"
   }
