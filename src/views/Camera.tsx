@@ -5,8 +5,7 @@ import { Camera as VisionCamera } from 'react-native-vision-camera'
 import type { RefObject } from 'react'
 import type {
   CameraViewProps,
-  CameraRef,
-  CameraOutput
+  CameraRef
 } from 'react-native-vision-camera'
 import type { FaceDetectorOutputOptions } from '../specs/FaceDetectorFactory.nitro'
 import useFaceDetectorOutput from '../hooks/useFaceDetectorOutput'
