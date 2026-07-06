@@ -142,21 +142,6 @@ class HybridFaceDetectorOutput(
         .map { HybridFace(it, config) }
         .toTypedArray<HybridFaceSpec>()
       )
-
-      faceDetector
-        .process(inputImage)
-        .addOnSuccessListener { faces ->
-          val hybridFaces =
-            faces
-              .map { HybridFace(it, config) }
-              .toTypedArray<HybridFaceSpec>()
-          options.onFacesDetected(hybridFaces)
-        }.addOnFailureListener { error ->
-          options.onError(error)
-        }.addOnCompleteListener {
-          imageProxy.close()
-          isBusy.set(false)
-        }
     } catch (error: Throwable) {
       options.onError(error)
     } finally {
