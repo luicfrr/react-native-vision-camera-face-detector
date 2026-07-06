@@ -90,7 +90,6 @@ class HybridFaceDetectorOutput(
   }
 
   override fun dispose() {
-    super.dispose()
     isDisposed.set(true)
     orientationManager.stopDeviceOrientationListener()
     // Order matters: drain the analyzer executor FIRST so any in-flight
@@ -99,6 +98,7 @@ class HybridFaceDetectorOutput(
     // frame's YUV buffer is the JNI abort in libface_detector_v2_jni.so.
     executor.close()
     faceDetector.close()
+    super.dispose()
   }
 
   @OptIn(ExperimentalGetImage::class)
