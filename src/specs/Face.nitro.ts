@@ -18,4 +18,6 @@ export interface Face
   readonly pitchAngle: number
   readonly rollAngle: number
   readonly yawAngle: number
+  readonly frameWidth: number
+  readonly frameHeight: number
 }

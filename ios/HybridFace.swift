@@ -196,7 +196,15 @@ final class HybridFace: HybridFaceSpec {
     return face.headEulerAngleZ
   }
 
-   var yawAngle: Double {
+  var yawAngle: Double {
     return face.headEulerAngleY
+  }
+
+  var frameWidth: Double {
+    return config.width
+  }
+
+  var frameHeight: Double {
+    return config.height
   }
 }

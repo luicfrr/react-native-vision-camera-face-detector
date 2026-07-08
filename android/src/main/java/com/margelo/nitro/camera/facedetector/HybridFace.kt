@@ -244,4 +244,10 @@ class HybridFace(
 
   override val yawAngle: Double
     get() = face.headEulerAngleY.toDouble()
+
+  override val frameWidth: Double
+    get() = config.width
+
+  override val frameHeight: Double
+    get() = config.height
 }
