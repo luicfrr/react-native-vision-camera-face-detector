@@ -120,7 +120,7 @@ dependencies {
   // Add minimal dependency on CameraX to use ImageAnalysis
   implementation "androidx.camera:camera-core:1.7.0-alpha01"
   // Google MLKit library
-  implementation "com.google.mlkit:face-detection:16.1.7"
+  implementation "com.google.mlkit:face-detection:17.3.0"
   // Add a dependency on NitroModules
   compileOnly project(":react-native-nitro-modules")
   // Add a dependency on VisionCamera (for HybridFrameSpec and HybridCameraOutputSpec)
