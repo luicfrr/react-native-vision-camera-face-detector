@@ -30,7 +30,6 @@ class HybridFaceDetectorOutput(
   override val mediaType: MediaType = MediaType.VIDEO
   override val mirrorMode: MirrorMode = MirrorMode.AUTO
   override var outputOrientation: CameraOrientation = CameraOrientation.UP
-    get() = field
     set(value) {
       field = value
       imageAnalysis?.targetRotation = value.surfaceRotation
