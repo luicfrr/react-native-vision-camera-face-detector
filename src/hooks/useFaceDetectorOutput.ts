@@ -7,29 +7,57 @@ import { createFaceDetectorOutput } from '../factory'
 // types
 import type {
   CameraOutput,
-  Frame
+  CameraSession,
+  Camera
 } from 'react-native-vision-camera'
-import type { Face } from '../specs/Face.nitro'
-import type { FaceDetector } from '../specs/FaceDetector.nitro'
 import type { FaceDetectorOutputOptions } from '../specs/FaceDetectorFactory.nitro'
 
 /**
- * Use a {@linkcode FaceDetector}.
+ * Use a Barcode Scanner {@linkcode CameraOutput}.
  *
- * A {@linkcode FaceDetector} can be used to detect
- * {@linkcode Face}s in a {@linkcode Frame} in a Frame
- * Processor.
+ * The Face Detector {@linkcode CameraOutput} can be
+ * attached to a {@linkcode CameraSession} or {@linkcode Camera}
+ * component.
  *
  * @example
- * ```ts
- * const FaceDetector = useFaceDetector({...})
- * const frameOutput = useFrameOutput({
- *   onFrame(frame) {
- *     'worklet'
- *     const faces = FaceDetector.detectFaces(frame)
+ * Attach to a `<Camera />` component:
+ * ```tsx
+ * const device = ...
+ * const faceDetectorOutput = useFaceDetectorOutput({
+ *   performanceMode: 'fast',
+ *   onFacesDetected(faces) {
  *     console.log(`Detected ${faces.length} faces!`)
- *     frame.dispose()
+ *   },
+ *   onError(error) {
+ *     console.error(`Failed to detect faces!`, error)
  *   }
+ * })
+ *
+ * return (
+ *   <Camera
+ *     isActive={true}
+ *     device={device}
+ *     outputs={[faceDetectorOutput]}
+ *   />
+ * )
+ * ```
+ * @example
+ * Attach to a `CameraSession`:
+ * ```ts
+ * const device = ...
+ * const faceDetectorOutput = useFaceDetectorOutput({
+ *   performanceMode: 'fast',
+ *   onFacesDetected(faces, frame) {
+ *     console.log(`Detected ${faces.length} faces!`)
+ *   },
+ *   onError(error) {
+ *     console.error(`Failed to detect faces!`, error)
+ *   }
+ * })
+ * const camera = useCamera({
+ *   isActive: true,
+ *   device: device,
+ *   outputs: [faceDetectorOutput]
  * })
  * ```
  */

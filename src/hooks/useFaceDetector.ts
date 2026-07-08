@@ -16,11 +16,11 @@ import type { FaceDetectorOptions } from '../specs/FaceDetectorFactory.nitro'
  *
  * @example
  * ```ts
- * const FaceDetector = useFaceDetector({...})
+ * const faceDetector = useFaceDetector({...})
  * const frameOutput = useFrameOutput({
  *   onFrame(frame) {
  *     'worklet'
- *     const faces = FaceDetector.detectFaces(frame)
+ *     const {faces} = faceDetector.detectFaces(frame)
  *     console.log(`Detected ${faces.length} faces!`)
  *     frame.dispose()
  *   }
