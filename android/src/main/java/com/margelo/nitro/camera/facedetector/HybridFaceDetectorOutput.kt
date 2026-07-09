@@ -7,9 +7,11 @@ import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
 import androidx.camera.core.resolutionselector.ResolutionSelector
 import androidx.camera.core.resolutionselector.ResolutionStrategy
+import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.face.FaceDetection
+import com.google.mlkit.vision.face.Face
 import com.margelo.nitro.NitroModules
 import com.margelo.nitro.camera.CameraOrientation
 import com.margelo.nitro.camera.HybridCameraOutputSpec
@@ -21,6 +23,7 @@ import com.margelo.nitro.camera.facedetector.extensions.toMLFaceDetectorOptions
 import com.margelo.nitro.camera.public.NativeCameraOutput
 import java.util.concurrent.Executors
 import java.util.concurrent.atomic.AtomicBoolean
+import java.util.concurrent.atomic.AtomicReference
 
 class HybridFaceDetectorOutput(
   private val options: FaceDetectorOutputOptions
@@ -50,7 +53,7 @@ class HybridFaceDetectorOutput(
     options.toMLFaceDetectorOptions()
   )
   private var isBusy = AtomicBoolean(false)
-  private val isDisposed = AtomicBoolean(false)
+  private val faceDetectorTask = AtomicReference<Task<List<Face>>?>()
   private val executor = Executors.newSingleThreadExecutor()
   private var imageAnalysis: ImageAnalysis? = null
   private val recommendedResolutionForFaceDetection = Size(1280, 720)
@@ -82,30 +85,28 @@ class HybridFaceDetectorOutput(
         .setResolutionSelector(resolutionSelector)
         .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
         .build()
-    return NativeCameraOutput.PreparedUseCase(imageAnalysis, {
+    return NativeCameraOutput.PreparedUseCase(imageAnalysis) {
       this.imageAnalysis = imageAnalysis
       imageAnalysis.setAnalyzer(executor, this)
-    })
+    }
   }
 
   override fun dispose() {
-    isDisposed.set(true)
+    faceDetectorTask.get()?.let {
+      try {
+        Tasks.await(it)
+      } catch (_: Exception) {}
+    }
+
     orientationManager.stopDeviceOrientationListener()
-    // Order matters: drain the analyzer executor FIRST so any in-flight
-    // synchronous detection finishes before the detector is torn down.
-    // Closing the ML Kit detector while a native detection is still reading the
-    // frame's YUV buffer is the JNI abort in libface_detector_v2_jni.so.
-    executor.close()
     faceDetector.close()
+    executor.close()
     super.dispose()
   }
 
   @OptIn(ExperimentalGetImage::class)
   override fun analyze(imageProxy: ImageProxy) {
-    if (
-      isDisposed.get() ||
-      !isBusy.compareAndSet(false, true)
-    ) {
+    if (!isBusy.compareAndSet(false, true)) {
       // pipeline is busy. close image & return
       imageProxy.close()
       return
@@ -132,20 +133,26 @@ class HybridFaceDetectorOutput(
         orientation = orientationManager.orientation
       )
 
-      // Run detection synchronously on the analyzer executor. Tasks.await blocks
-      // only this background thread, keeping the whole detection inside the
-      // frame's + executor's lifetime so dispose() can drain it before closing
-      // the detector. KEEP_ONLY_LATEST still drops frames while busy.
-      val faces = Tasks.await(faceDetector.process(inputImage))
-      options.onFacesDetected(faces
-        .map { HybridFace(it, config) }
-        .toTypedArray<HybridFaceSpec>()
-      )
+      val task = faceDetector.process(inputImage)
+      faceDetectorTask.set(task)
+      
+      task.addOnSuccessListener { faces ->
+        val hybridFaces =
+          faces
+            .map { HybridFace(it, config) }
+            .toTypedArray<HybridFaceSpec>()
+        options.onFacesDetected(hybridFaces)
+      }.addOnFailureListener { error ->
+        options.onError(error)
+      }.addOnCompleteListener {
+        imageProxy.close()
+        faceDetectorTask.set(null)
+        isBusy.set(false)
+      }
     } catch (error: Throwable) {
-      options.onError(error)
-    } finally {
       imageProxy.close()
       isBusy.set(false)
+      options.onError(error)
     }
   }
 }
