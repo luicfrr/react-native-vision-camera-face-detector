@@ -52,15 +52,15 @@ class HybridImageFaceDetector: HybridImageFaceDetectorSpec {
   }
 
   private func resolveInputImage(
-    _ input: Any
+    _ input: InputImage
   ) throws -> String {
-    if let uri = input as? String {
+    switch input {
+    case .first(let uri):
       return uri
-    }
-
-    if let object = input as? [String: Any],
-      let uri = object["uri"] as? String {
-      return uri
+    case .third(let object):
+      return object.uri
+    case .second:
+      break
     }
 
     throw NSError(
