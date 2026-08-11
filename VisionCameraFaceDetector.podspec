@@ -1,34 +1,34 @@
-require "json"
+require 'json'
 
-package = JSON.parse(File.read(File.join(__dir__, "package.json")))
+package = JSON.parse(File.read(File.join(__dir__, 'package.json')))
 
 Pod::Spec.new do |s|
-  s.name         = "VisionCameraFaceDetector"
-  s.version      = package["version"]
-  s.summary      = package["description"]
-  s.homepage     = package["homepage"]
-  s.license      = package["license"]
-  s.authors      = package["author"]
+  s.name         = 'VisionCameraFaceDetector'
+  s.version      = package['version']
+  s.summary      = package['description']
+  s.homepage     = package['homepage']
+  s.license      = package['license']
+  s.authors      = package['author']
 
-  s.platforms    = { :ios => "15.5" } # 15.5 is the minimum version for GoogleMLKit/FaceDetection (7/8).0.0
-  s.source       = { :git => package["repository"]["url"], :tag => "#{s.version}" }
+  s.platforms    = { :ios => '15.5' } # 15.5 is the minimum version for GoogleMLKit/FaceDetection (7/8).0.0
+  s.source       = { :git => package['repository']['url'], :tag => '#{s.version}' }
 
   s.source_files = [
     # Implementation (Swift)
-    "ios/**/*.{swift}",
+    'ios/**/*.{swift}',
     # Autolinking/Registration (Objective-C++)
-    "ios/**/*.{m,mm}",
+    'ios/**/*.{m,mm}',
     # Implementation (C++ objects)
-    "cpp/**/*.{hpp,cpp}",
+    'cpp/**/*.{hpp,cpp}',
   ]
-  s.frameworks = ["AVFoundation"]
+  s.frameworks = ['AVFoundation']
 
   load 'nitrogen/generated/ios/VisionCameraFaceDetector+autolinking.rb'
   add_nitrogen_files(s)
 
   s.dependency 'React-jsi'
   s.dependency 'React-callinvoker'
-  s.dependency "GoogleMLKit/FaceDetection" , "9.0.0"
-  s.dependency "VisionCamera"
+  s.dependency 'GoogleMLKit/FaceDetection' , '9.0.0'
+  s.dependency 'VisionCamera'
   install_modules_dependencies(s)
 end
