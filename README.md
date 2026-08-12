@@ -296,7 +296,7 @@ If you find other errors while using this package you're wellcome to open a new 
 
 - [React Native](https://reactnative.dev/)
 - [Google MLKit](https://developers.google.com/ml-kit)
-- [Vision Camera](https://react-native-vision-camera.com/)
+- [Vision Camera](https://visioncamera.margelo.com/)
 
 ## 📚 Author
 
