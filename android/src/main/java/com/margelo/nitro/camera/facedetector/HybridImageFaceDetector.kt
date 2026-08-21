@@ -22,14 +22,11 @@ class HybridImageFaceDetector(
   )
 
   private fun resolveInputImage(
-    input: Any?
+    input: InputImage
   ): String {
     return when (input) {
-      is String -> input
-      is Map<*, *> -> {
-        val uri = input["uri"] as? String
-        uri ?: throw IllegalArgumentException("Invalid image object: missing 'uri'")
-      }
+      is InputImage.First -> input.value
+      is InputImage.Third -> input.value.uri
       else -> throw IllegalArgumentException("Invalid image type. Expected string or { uri }")
     }
   }
