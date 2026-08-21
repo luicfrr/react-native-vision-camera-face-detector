@@ -89,7 +89,7 @@ NativeCameraOutput {
       ))
       return
     }
-    // ML Kit returns Face coordinates in this unrotated buffer's pixel space.
+    // ML Kit returns Face coordinates in this raw output buffer's pixel space.
     let frameWidth = Double(CVPixelBufferGetWidth(pixelBuffer))
     let frameHeight = Double(CVPixelBufferGetHeight(pixelBuffer))
     let relativeOrientation = bufferOrientation.relativeToOutput(outputOrientation)
@@ -101,10 +101,10 @@ NativeCameraOutput {
       frameWidth,
       frameHeight,
       autoMode,
-      createFrameToCameraPointTransformer(
+      createOutputToCameraPointTransformer(
+        output: output,
         frameWidth: frameWidth,
-        frameHeight: frameHeight,
-        orientation: imageOrientation
+        frameHeight: frameHeight
       ),
       runLandmarks,
       runContours,

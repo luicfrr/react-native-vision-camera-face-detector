@@ -1,5 +1,6 @@
 import MLKitFaceDetection
 import NitroModules
+import AVFoundation
 import Foundation
 import UIKit
 
@@ -17,48 +18,43 @@ func createIdentityPointTransformer() -> (Double, Double) -> Point {
   return { x, y in Point(x: x, y: y) }
 }
 
-/// Converts raw CMSampleBuffer coordinates into VisionCamera camera coordinates.
-/// ML Kit keeps its result coordinates in the raw buffer coordinate system even
-/// when `MLImage.orientation` is set, so rotation has to be applied here.
-func createFrameToCameraPointTransformer(
+/// Converts points from an AVCaptureOutput's pixel coordinate system into
+/// normalized capture-device coordinates.
+///
+/// ML Kit returns face coordinates relative to the raw pixel buffer. Unlike a
+/// VisionCamera `Frame`, that buffer can have a different physical orientation
+/// or mirroring from the preview. `AVCaptureOutput` owns the native conversion
+/// for exactly that boundary, so use it instead of applying the ML image
+/// orientation a second time.
+func createOutputToCameraPointTransformer(
+  output: AVCaptureOutput,
   frameWidth: Double,
-  frameHeight: Double,
-  orientation: UIImage.Orientation
+  frameHeight: Double
 ) -> (Double, Double) -> Point {
-  let isMirrored: Bool
-  let rotation: UIImage.Orientation
-  switch orientation {
-    case .upMirrored:
-      isMirrored = true
-      rotation = .up
-    case .downMirrored:
-      isMirrored = true
-      rotation = .down
-    case .leftMirrored:
-      isMirrored = true
-      rotation = .left
-    case .rightMirrored:
-      isMirrored = true
-      rotation = .right
-    default:
-      isMirrored = false
-      rotation = orientation
+  func convert(_ x: Double, _ y: Double) -> CGPoint {
+    let rect = output.metadataOutputRectConverted(
+      fromOutputRect: CGRect(x: CGFloat(x), y: CGFloat(y), width: 0, height: 0)
+    )
+    return rect.origin
   }
 
-  return { x, y in
-    let normalizedX = (isMirrored ? frameWidth - x : x) / frameWidth
-    let normalizedY = y / frameHeight
+  // Sample the native affine mapping while handling the sample buffer. Face
+  // properties can be read later on another thread, after the output changed.
+  let origin = convert(0, 0)
+  let xAxis = convert(frameWidth, 0)
+  let yAxis = convert(0, frameHeight)
+  let originX = Double(origin.x)
+  let originY = Double(origin.y)
+  let xAxisDeltaX = Double(xAxis.x - origin.x) / frameWidth
+  let xAxisDeltaY = Double(xAxis.y - origin.y) / frameWidth
+  let yAxisDeltaX = Double(yAxis.x - origin.x) / frameHeight
+  let yAxisDeltaY = Double(yAxis.y - origin.y) / frameHeight
 
-    switch rotation {
-      case .down:
-        return Point(x: 1.0 - normalizedX, y: 1.0 - normalizedY)
-      case .left:
-        return Point(x: 1.0 - normalizedY, y: normalizedX)
-      case .right:
-        return Point(x: normalizedY, y: 1.0 - normalizedX)
-      default:
-        return Point(x: normalizedX, y: normalizedY)
-    }
+  return { x, y in
+    return Point(
+      x: originX + xAxisDeltaX * x + yAxisDeltaX * y,
+      y: originY + xAxisDeltaY * x + yAxisDeltaY * y
+    )
   }
 }
 
