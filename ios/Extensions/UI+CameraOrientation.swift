@@ -1,3 +1,4 @@
+import AVFoundation
 import UIKit
 import VisionCamera
 
@@ -23,6 +24,28 @@ extension CameraOrientation {
       case .down: return isMirrored ? .downMirrored : .down
       case .left: return isMirrored ? .leftMirrored : .left
       case .right: return isMirrored ? .rightMirrored : .right
+    }
+  }
+
+  /// Returns the orientation of an unrotated camera buffer for ML Kit.
+  ///
+  /// `CameraOutput` leaves its AVCaptureVideoDataOutput in the sensor's native
+  /// orientation for performance. ML Kit therefore needs the target device
+  /// orientation and camera position, rather than the output-to-preview
+  /// coordinate transform used later for drawing.
+  func toMLKitBufferOrientation(
+    cameraPosition: AVCaptureDevice.Position
+  ) -> UIImage.Orientation {
+    switch (cameraPosition, self) {
+      case (.back, .up): return .right
+      case (.back, .left): return .up
+      case (.back, .down): return .left
+      case (.back, .right): return .down
+      case (.front, .up): return .leftMirrored
+      case (.front, .left): return .downMirrored
+      case (.front, .down): return .rightMirrored
+      case (.front, .right): return .upMirrored
+      default: return .up
     }
   }
 

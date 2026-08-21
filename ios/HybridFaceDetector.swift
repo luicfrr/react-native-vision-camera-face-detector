@@ -35,11 +35,11 @@ class HybridFaceDetector: HybridFaceDetectorSpec {
       frame.width,
       frame.height,
       autoMode,
-      try createFrameToCameraPointTransformer(frame),
       runLandmarks,
       runContours,
       runClassifications,
-      trackingEnabled
+      trackingEnabled,
+      try createFrameToCameraPointTransformer(frame)
     )
 
     let faces = try faceDetector.results(in: image)

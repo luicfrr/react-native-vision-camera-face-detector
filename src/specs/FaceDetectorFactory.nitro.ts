@@ -2,11 +2,11 @@ import type {
   CameraOutput,
   CameraPosition,
   MirrorMode,
-} from 'react-native-vision-camera';
-import type { HybridObject } from 'react-native-nitro-modules';
-import type { Face } from './Face.nitro';
-import type { FaceDetector } from './FaceDetector.nitro';
-import type { ImageFaceDetectorOptions } from './ImageFaceDetectorFactory.nitro';
+} from 'react-native-vision-camera'
+import type { HybridObject } from 'react-native-nitro-modules'
+import type { Face } from './Face.nitro'
+import type { FaceDetector } from './FaceDetector.nitro'
+import type { ImageFaceDetectorOptions } from './ImageFaceDetectorFactory.nitro'
 
 export interface FaceDetectorOptions extends ImageFaceDetectorOptions {
   /**
@@ -14,14 +14,14 @@ export interface FaceDetectorOptions extends ImageFaceDetectorOptions {
    *
    * @default front
    */
-  cameraFacing?: CameraPosition;
+  cameraFacing?: CameraPosition
 
   /**
    * VisionCamera's `mirrorMode` prop.
    *
    * @default auto
    */
-  mirrorMode?: MirrorMode;
+  mirrorMode?: MirrorMode
 
   /**
    * Converts face bounds, contours and landmarks from frame coordinates into
@@ -37,19 +37,7 @@ export interface FaceDetectorOptions extends ImageFaceDetectorOptions {
    *
    * @default false
    */
-  autoMode?: boolean;
-
-  /**
-   * @deprecated Preview dimensions are calculated by VisionCamera when using
-   * this package's `<Camera />`. Kept for backwards compatibility.
-   */
-  windowWidth?: number;
-
-  /**
-   * @deprecated Preview dimensions are calculated by VisionCamera when using
-   * this package's `<Camera />`. Kept for backwards compatibility.
-   */
-  windowHeight?: number;
+  autoMode?: boolean
 }
 
 /**
@@ -58,7 +46,7 @@ export interface FaceDetectorOptions extends ImageFaceDetectorOptions {
  * - `'preview'`: Prefer preview-sized buffers for lower latency.
  * - `'full'`: Prefer full/highest available buffers for better detail.
  */
-export type FaceDetectorOutputResolution = 'preview' | 'full';
+export type FaceDetectorOutputResolution = 'preview' | 'full'
 
 export interface FaceDetectorOutputOptions extends FaceDetectorOptions {
   /**
@@ -69,30 +57,31 @@ export interface FaceDetectorOutputOptions extends FaceDetectorOptions {
    *
    * @default 'preview'
    */
-  outputResolution?: FaceDetectorOutputResolution;
+  outputResolution?: FaceDetectorOutputResolution
+
   /**
    * Called whenever faces have been detected.
    */
-  onFacesDetected: (faces: Face[]) => void;
+  onFacesDetected: ( faces: Face[] ) => void
 
   /**
    * Called when there was an error detecting faces.
    */
-  onError: (error: Error) => void;
+  onError: ( error: Error ) => void
 }
 
 export interface FaceDetectorFactory extends HybridObject<{
-  ios: 'swift';
-  android: 'kotlin';
+  ios: 'swift'
+  android: 'kotlin'
 }> {
   /**
    * Create a new {@linkcode FaceDetector}.
    */
-  createFaceDetector(options: FaceDetectorOptions): FaceDetector;
+  createFaceDetector( options: FaceDetectorOptions ): FaceDetector
 
   /**
    * Create a new {@linkcode CameraOutput} that can
    * detect Barcodes.
    */
-  createFaceDetectorOutput(options: FaceDetectorOutputOptions): CameraOutput;
+  createFaceDetectorOutput( options: FaceDetectorOutputOptions ): CameraOutput
 }

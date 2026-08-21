@@ -36,11 +36,11 @@ class HybridImageFaceDetector: HybridImageFaceDetectorSpec {
       frameWidth,
       frameHeight,
       false,
-      createIdentityPointTransformer(),
       runLandmarks,
       runContours,
       runClassifications,
-      trackingEnabled
+      trackingEnabled,
+      createIdentityPointTransformer()
     )
 
     let faces = try faceDetector.results(in: mlImage)

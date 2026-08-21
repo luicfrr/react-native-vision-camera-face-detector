@@ -6,9 +6,7 @@ class HybridFaceDetectorFactory: HybridFaceDetectorFactorySpec {
     return HybridFaceDetector(options)
   }
 
-  func createFaceDetectorOutput(options: FaceDetectorOutputOptions) throws
-    -> any HybridCameraOutputSpec
-  {
-    return HybridFaceDetectorOutput(options: options)
+  func createFaceDetectorOutput(options: FaceDetectorOutputOptions) throws -> any HybridCameraOutputSpec {
+    return HybridFaceDetectorOutput(options)
   }
 }

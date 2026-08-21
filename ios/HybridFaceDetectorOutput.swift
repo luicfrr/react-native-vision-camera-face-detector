@@ -15,7 +15,7 @@ NativeCameraOutput {
   private let runContours: Bool
   private let runClassifications: Bool
   private let trackingEnabled: Bool
-  private let mirrorMode: MirrorMode
+  private let cameraFacing: CameraPosition
   private var delegate: FaceDetectorDelegate? = nil
   private var isBusy = false
   let output: AVCaptureVideoDataOutput
@@ -35,7 +35,7 @@ NativeCameraOutput {
   }
   private let faceDetector: FaceDetector
 
-  init(options: FaceDetectorOutputOptions) {
+  init(_ options: FaceDetectorOutputOptions) {
     self.queue = DispatchQueue(label: "FaceDetectorQueue")
     self.output = AVCaptureVideoDataOutput()
     self.onFacesDetected = options.onFacesDetected
@@ -45,19 +45,16 @@ NativeCameraOutput {
     self.runContours = options.runContours ?? false
     self.runClassifications = options.runClassifications ?? false
     self.trackingEnabled = options.trackingEnabled ?? false
-    self.mirrorMode = options.mirrorMode ?? .auto
+    self.cameraFacing = options.cameraFacing ?? .front
     self.faceDetector = FaceDetector.faceDetector(
       options: options.toMLFaceDetectorOptions()
     )
     
     super.init()
 
-    self.delegate = FaceDetectorDelegate(onSampleBuffer: { [weak self] buffer, bufferOrientation, isMirrored in
-      self?.detectFaces(
-        buffer,
-        bufferOrientation,
-        isMirrored
-      )
+    self.delegate = FaceDetectorDelegate(onSampleBuffer: {
+      [weak self] buffer, _, _ in
+        self?.detectFaces(buffer)
     })
     self.output.setSampleBufferDelegate(delegate, queue: queue)
     self.output.alwaysDiscardsLateVideoFrames = true
@@ -68,9 +65,7 @@ NativeCameraOutput {
   }
 
   private func detectFaces(
-    _ buffer: CMSampleBuffer,
-    _ bufferOrientation: CameraOrientation,
-    _ isBufferMirrored: Bool
+    _ buffer: CMSampleBuffer
   ) {
     if isBusy { return }
 
@@ -92,24 +87,22 @@ NativeCameraOutput {
     // ML Kit returns Face coordinates in this raw output buffer's pixel space.
     let frameWidth = Double(CVPixelBufferGetWidth(pixelBuffer))
     let frameHeight = Double(CVPixelBufferGetHeight(pixelBuffer))
-    let relativeOrientation = bufferOrientation.relativeToOutput(outputOrientation)
-    let imageOrientation = relativeOrientation.toMLKitImageOrientation(
-      isMirrored: getRelativeMirrorTransform(isBufferMirrored)
+    image.orientation = outputOrientation.toMLKitBufferOrientation(
+      cameraPosition: getCameraPosition()
     )
-    image.orientation = imageOrientation
     let config = createFaceProcessConfig(
       frameWidth,
       frameHeight,
       autoMode,
+      runLandmarks,
+      runContours,
+      runClassifications,
+      trackingEnabled,
       createOutputToCameraPointTransformer(
         output: output,
         frameWidth: frameWidth,
         frameHeight: frameHeight
-      ),
-      runLandmarks,
-      runContours,
-      runClassifications,
-      trackingEnabled
+      )
     )
 
     self.faceDetector.process(image) { [weak self] faces, error in
@@ -131,23 +124,25 @@ NativeCameraOutput {
   }
 
   func configure(config _: OutputConfiguration) {
-    // Keep the analysis buffer aligned with the preview's unstabilized camera
-    // coordinates. Mirroring stays relative metadata, like VisionCamera's
-    // native FrameOutput, and must not be applied physically here.
+    // Keep source buffers unrotated. ML Kit receives the physical orientation
+    // as image metadata, and AVFoundation converts its raw result points to
+    // the camera coordinate system.
     output.connection(with: .video)?.preferredVideoStabilizationMode = .off
   }
 
-  private func getRelativeMirrorTransform(
-    _ isBufferMirrored: Bool
-  ) -> Bool {
-    switch mirrorMode {
-      // The camera coordinates already follow the connection's physical mirror
-      // state in auto mode, so no counter-mirror is needed.
-      case .auto: return false
-      // Mirror mode is relative to the buffer: only counter-mirror when the
-      // buffer does not already have the requested state.
-      case .on: return isBufferMirrored == false
-      case .off: return isBufferMirrored == true
+  private func getCameraPosition() -> AVCaptureDevice.Position {
+    if let cameraPosition = output.connection(with: .video)?
+      .inputPorts
+      .compactMap({ ($0.input as? AVCaptureDeviceInput)?.device.position })
+      .first
+    {
+      return cameraPosition
+    }
+
+    switch cameraFacing {
+      case .front: return .front
+      case .back: return .back
+      default: return .unspecified
     }
   }
 }

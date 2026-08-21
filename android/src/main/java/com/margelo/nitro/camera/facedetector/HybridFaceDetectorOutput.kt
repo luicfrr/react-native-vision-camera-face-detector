@@ -110,7 +110,10 @@ class HybridFaceDetectorOutput(
 
     try {
       val mediaImage = imageProxy.image ?: throw Error("`ImageProxy` does not have an `Image`!")
-      val inputImage = InputImage.fromMediaImage(mediaImage, imageProxy.imageInfo.rotationDegrees)
+      val inputImage = InputImage.fromMediaImage(
+        mediaImage, 
+        imageProxy.imageInfo.rotationDegrees
+      )
       val (mlKitFrameWidth, mlKitFrameHeight) = getMLKitCoordinateDimensions(
         inputImage.width.toDouble(),
         inputImage.height.toDouble(),
@@ -127,11 +130,11 @@ class HybridFaceDetectorOutput(
         frameWidth = mlKitFrameWidth,
         frameHeight = mlKitFrameHeight,
         autoMode = autoMode,
-        pointTransformer = pointTransformer,
         runLandmarks = runLandmarks,
         runContours = runContours,
         runClassifications = runClassifications,
-        trackingEnabled = trackingEnabled
+        trackingEnabled = trackingEnabled,
+        pointTransformer = pointTransformer
       )
 
       val task = faceDetector.process(inputImage)

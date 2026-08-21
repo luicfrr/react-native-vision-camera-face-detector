@@ -18,22 +18,30 @@ func createIdentityPointTransformer() -> (Double, Double) -> Point {
   return { x, y in Point(x: x, y: y) }
 }
 
-/// Converts points from an AVCaptureOutput's pixel coordinate system into
-/// normalized capture-device coordinates.
-///
-/// ML Kit returns face coordinates relative to the raw pixel buffer. Unlike a
-/// VisionCamera `Frame`, that buffer can have a different physical orientation
-/// or mirroring from the preview. `AVCaptureOutput` owns the native conversion
-/// for exactly that boundary, so use it instead of applying the ML image
-/// orientation a second time.
+// Converts points from an AVCaptureOutput's pixel coordinate system into
+// normalized capture-device coordinates.
+//
+// ML Kit returns face coordinates relative to the raw pixel buffer. Unlike a
+// VisionCamera `Frame`, that buffer can have a different physical orientation
+// or mirroring from the preview. `AVCaptureOutput` owns the native conversion
+// for exactly that boundary, so use it instead of applying the ML image
+// orientation a second time.
 func createOutputToCameraPointTransformer(
   output: AVCaptureOutput,
   frameWidth: Double,
   frameHeight: Double
 ) -> (Double, Double) -> Point {
-  func convert(_ x: Double, _ y: Double) -> CGPoint {
+  func convert(
+    _ x: Double, 
+    _ y: Double
+  ) -> CGPoint {
     let rect = output.metadataOutputRectConverted(
-      fromOutputRect: CGRect(x: CGFloat(x), y: CGFloat(y), width: 0, height: 0)
+      fromOutputRect: CGRect(
+        x: CGFloat(x), 
+        y: CGFloat(y),
+        width: 0, 
+        height: 0
+      )
     )
     return rect.origin
   }
@@ -62,11 +70,11 @@ func createFaceProcessConfig(
   _ frameWidth: Double,
   _ frameHeight: Double,
   _ autoMode: Bool,
-  _ pointTransformer: @escaping (Double, Double) -> Point,
   _ runLandmarks: Bool,
   _ runContours: Bool,
   _ runClassifications: Bool,
-  _ trackingEnabled: Bool
+  _ trackingEnabled: Bool,
+  _ pointTransformer: @escaping (Double, Double) -> Point
 ) -> FaceProcessConfig {
   return FaceProcessConfig(
     frameWidth: frameWidth,

@@ -16,28 +16,28 @@ data class FaceProcessConfig(
   val trackingEnabled: Boolean
 )
 
-fun createIdentityPointTransformer(): (Double, Double) -> Pair<Double, Double> = { x, y ->
-  Pair(x, y)
+fun createIdentityPointTransformer(): (Double, Double) -> Pair<Double, Double> = { 
+  x, y -> Pair(x, y)
 }
 
 fun createFaceProcessConfig(
   frameWidth: Double,
   frameHeight: Double,
   autoMode: Boolean,
-  pointTransformer: (Double, Double) -> Pair<Double, Double>,
   runLandmarks: Boolean,
   runContours: Boolean,
   runClassifications: Boolean,
-  trackingEnabled: Boolean
+  trackingEnabled: Boolean,
+  pointTransformer: (Double, Double) -> Pair<Double, Double>
 ): FaceProcessConfig {
   return FaceProcessConfig(
     frameWidth = frameWidth,
     frameHeight = frameHeight,
-    pointTransformer = if (autoMode) pointTransformer else createIdentityPointTransformer(),
     runLandmarks = runLandmarks,
     runContours = runContours,
     runClassifications = runClassifications,
-    trackingEnabled = trackingEnabled
+    trackingEnabled = trackingEnabled,
+    pointTransformer = if (autoMode) pointTransformer else createIdentityPointTransformer()
   )
 }
 
@@ -56,10 +56,22 @@ class HybridFace(
     boundingBox: Rect
   ): Bounds {
     val points = arrayOf(
-      transformPoint(boundingBox.left.toDouble(), boundingBox.top.toDouble()),
-      transformPoint(boundingBox.right.toDouble(), boundingBox.top.toDouble()),
-      transformPoint(boundingBox.left.toDouble(), boundingBox.bottom.toDouble()),
-      transformPoint(boundingBox.right.toDouble(), boundingBox.bottom.toDouble())
+      transformPoint(
+        boundingBox.left.toDouble(), 
+        boundingBox.top.toDouble()
+      ),
+      transformPoint(
+        boundingBox.right.toDouble(), 
+        boundingBox.top.toDouble()
+      ),
+      transformPoint(
+        boundingBox.left.toDouble(), 
+        boundingBox.bottom.toDouble()
+      ),
+      transformPoint(
+        boundingBox.right.toDouble(), 
+        boundingBox.bottom.toDouble()
+      )
     )
     val minX = points.minOf { it.first }
     val maxX = points.maxOf { it.first }

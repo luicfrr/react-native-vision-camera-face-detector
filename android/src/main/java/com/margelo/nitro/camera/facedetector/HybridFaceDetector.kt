@@ -34,26 +34,24 @@ class HybridFaceDetector(
     )
     // ML Kit returns points after applying InputImage.rotationDegrees. Undo that
     // rotation before sampling VisionCamera's native raw-frame -> camera transform.
-    val pointTransformer =
-      if (autoMode) {
-        createMLKitToCameraPointTransformer(
-          frame,
-          frame.width.toInt(),
-          frame.height.toInt(),
-          image.rotationDegrees
-        )
-      }
-      else createIdentityPointTransformer()
+    val pointTransformer = if (autoMode) {
+      createMLKitToCameraPointTransformer(
+        frame,
+        frame.width.toInt(),
+        frame.height.toInt(),
+        image.rotationDegrees
+      )
+    } else createIdentityPointTransformer()
 
     val config = createFaceProcessConfig(
       frameWidth = mlKitFrameWidth,
       frameHeight = mlKitFrameHeight,
       autoMode = autoMode,
-      pointTransformer = pointTransformer,
       runLandmarks = runLandmarks,
       runContours = runContours,
       runClassifications = runClassifications,
-      trackingEnabled = trackingEnabled
+      trackingEnabled = trackingEnabled,
+      pointTransformer = pointTransformer
     )
     val task = faceDetector.process(image)
     val faces = Tasks.await(task).map {
@@ -98,8 +96,8 @@ class HybridFaceDetector(
     val xAxis = convertPoint(1.0, 0.0)
     val yAxis = convertPoint(0.0, 1.0)
 
-    return { x, y ->
-      Pair(
+    return { 
+      x, y -> Pair(
         origin.x + (xAxis.x - origin.x) * x + (yAxis.x - origin.x) * y,
         origin.y + (xAxis.y - origin.y) * x + (yAxis.y - origin.y) * y
       )
