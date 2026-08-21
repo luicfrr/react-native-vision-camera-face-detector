@@ -1,13 +1,14 @@
-export * from './factory'
-export * from './hooks/useFaceDetector'
-export * from './hooks/useFaceDetectorOutput'
-export * from './hooks/useImageFaceDetector'
-export * from './specs/Bounds'
-export * from './specs/Contours'
-export * from './specs/Landmarks'
-export * from './specs/Face.nitro'
-export * from './specs/FaceDetector.nitro'
-export * from './specs/ImageFaceDetector.nitro'
-export * from './specs/FaceDetectorFactory.nitro'
-export * from './specs/ImageFaceDetectorFactory.nitro'
-export { default as Camera } from './views/Camera'
+export * from './factory';
+export * from './hooks/useFaceDetector';
+export * from './hooks/useFaceDetectorOutput';
+export * from './hooks/useImageFaceDetector';
+export * from './specs/Bounds';
+export * from './specs/Contours';
+export * from './specs/Landmarks';
+export * from './specs/Face.nitro';
+export * from './specs/FaceDetector.nitro';
+export * from './specs/ImageFaceDetector.nitro';
+export * from './specs/FaceDetectorFactory.nitro';
+export * from './specs/ImageFaceDetectorFactory.nitro';
+export * from './utils/transformFacesToPreviewCoordinates';
+export { default as Camera } from './views/Camera';

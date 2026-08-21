@@ -3,7 +3,7 @@ import VisionCamera
 
 class HybridFaceDetectorFactory: HybridFaceDetectorFactorySpec {
   func createFaceDetector(options: FaceDetectorOptions) throws -> any HybridFaceDetectorSpec {
-    return HybridFaceDetector(options: options)
+    return HybridFaceDetector(options)
   }
 
   func createFaceDetectorOutput(options: FaceDetectorOutputOptions) throws

@@ -49,15 +49,15 @@ class HybridImageFaceDetector(
   ): Array<HybridFaceSpec> {
     val uri = resolveInputImage(image)
     val mlImage = createInputImage(uri)
-    val config = FaceProcessConfig(
-      width = mlImage.width.toDouble(),
-      height = mlImage.height.toDouble(),
-      scaleX = 1.0,
-      scaleY = 1.0,
-      runLandmarks,
-      runContours,
-      runClassifications,
-      trackingEnabled
+    val config = createFaceProcessConfig(
+      frameWidth = mlImage.width.toDouble(),
+      frameHeight = mlImage.height.toDouble(),
+      autoMode = false,
+      pointTransformer = createIdentityPointTransformer(),
+      runLandmarks = runLandmarks,
+      runContours = runContours,
+      runClassifications = runClassifications,
+      trackingEnabled = trackingEnabled
     )
     val task = faceDetector.process(mlImage)
     val faces = Tasks.await(task).map {

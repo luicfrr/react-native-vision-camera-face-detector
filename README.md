@@ -276,9 +276,9 @@ console.log({
 | Option  | Description | Default | Options |
 | ------------- | ------------- | ------------- | ------------- |
 | `cameraFacing` | Current active camera | `front` | `front`, `back` |
-| `autoMode` | Should handle auto scale (face bounds, contour and landmarks) and rotation on native side? If this option is disabled all detection results will be relative to frame coordinates, not to screen/preview. You should NOT use this option if you want to draw on screen using `Skia Frame Processor`. See [this](https://github.com/luicfrr/react-native-vision-camera-face-detector/issues/30#issuecomment-2058805546) and [this](https://github.com/luicfrr/react-native-vision-camera-face-detector/issues/35) for more details. | `false` | `boolean` |
-| `windowWidth` | * Required if you want to use `autoMode`. You must handle your own logic to get screen sizes, with or without statusbar size, etc... | `1.0` | `number` |
-| `windowHeight` | * Required if you want to use `autoMode`. You must handle your own logic to get screen sizes, with or without statusbar size, etc... | `1.0` | `number` |
+| `autoMode` | Converts native frame coordinates to VisionCamera camera coordinates. With this package's `<Camera />`, coordinates are then converted to preview coordinates automatically. With `useFaceDetectorOutput()`, use the same `mirrorMode` on the output and `<VisionCamera />`, then convert points with `cameraRef.current.convertCameraPointToViewPoint(...)` before drawing on a preview. Keep it disabled with `useFaceDetector()` when drawing in a frame processor. `frameWidth`/`frameHeight` always describe the source frame, not the preview. | `false` | `boolean` |
+| `windowWidth` | Deprecated. Preview dimensions are calculated by VisionCamera when using this package's `<Camera />`; retained for backwards compatibility. | — | `number` |
+| `windowHeight` | Deprecated. Preview dimensions are calculated by VisionCamera when using this package's `<Camera />`; retained for backwards compatibility. | — | `number` |
 
 ## 🔧 Troubleshooting
 

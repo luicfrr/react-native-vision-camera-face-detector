@@ -4,43 +4,83 @@ import Foundation
 import UIKit
 
 struct FaceProcessConfig {
-  let width: Double
-  let height: Double
-  let scaleX: Double
-  let scaleY: Double
+  let frameWidth: Double
+  let frameHeight: Double
+  let pointTransformer: (Double, Double) -> Point
   let runLandmarks: Bool
   let runContours: Bool
   let runClassifications: Bool
   let trackingEnabled: Bool
-  let autoMode: Bool?
-  let cameraFacing: CameraPosition?
-  let orientation: UIInterfaceOrientation?
+}
 
-  init(
-    width: Double,
-    height: Double,
-    scaleX: Double,
-    scaleY: Double,
-    runLandmarks: Bool,
-    runContours: Bool,
-    runClassifications: Bool,
-    trackingEnabled: Bool,
-    autoMode: Bool? = nil,
-    cameraFacing: CameraPosition? = nil,
-    orientation: UIInterfaceOrientation? = nil
-  ) {
-    self.width = width
-    self.height = height
-    self.scaleX = scaleX
-    self.scaleY = scaleY
-    self.runLandmarks = runLandmarks
-    self.runContours = runContours
-    self.runClassifications = runClassifications
-    self.trackingEnabled = trackingEnabled
-    self.autoMode = autoMode
-    self.cameraFacing = cameraFacing
-    self.orientation = orientation
+func createIdentityPointTransformer() -> (Double, Double) -> Point {
+  return { x, y in Point(x: x, y: y) }
+}
+
+/// Converts raw CMSampleBuffer coordinates into VisionCamera camera coordinates.
+/// ML Kit keeps its result coordinates in the raw buffer coordinate system even
+/// when `MLImage.orientation` is set, so rotation has to be applied here.
+func createFrameToCameraPointTransformer(
+  frameWidth: Double,
+  frameHeight: Double,
+  orientation: UIImage.Orientation
+) -> (Double, Double) -> Point {
+  let isMirrored: Bool
+  let rotation: UIImage.Orientation
+  switch orientation {
+    case .upMirrored:
+      isMirrored = true
+      rotation = .up
+    case .downMirrored:
+      isMirrored = true
+      rotation = .down
+    case .leftMirrored:
+      isMirrored = true
+      rotation = .left
+    case .rightMirrored:
+      isMirrored = true
+      rotation = .right
+    default:
+      isMirrored = false
+      rotation = orientation
   }
+
+  return { x, y in
+    let normalizedX = (isMirrored ? frameWidth - x : x) / frameWidth
+    let normalizedY = y / frameHeight
+
+    switch rotation {
+      case .down:
+        return Point(x: 1.0 - normalizedX, y: 1.0 - normalizedY)
+      case .left:
+        return Point(x: 1.0 - normalizedY, y: normalizedX)
+      case .right:
+        return Point(x: normalizedY, y: 1.0 - normalizedX)
+      default:
+        return Point(x: normalizedX, y: normalizedY)
+    }
+  }
+}
+
+func createFaceProcessConfig(
+  _ frameWidth: Double,
+  _ frameHeight: Double,
+  _ autoMode: Bool,
+  _ pointTransformer: @escaping (Double, Double) -> Point,
+  _ runLandmarks: Bool,
+  _ runContours: Bool,
+  _ runClassifications: Bool,
+  _ trackingEnabled: Bool
+) -> FaceProcessConfig {
+  return FaceProcessConfig(
+    frameWidth: frameWidth,
+    frameHeight: frameHeight,
+    pointTransformer: autoMode ? pointTransformer : createIdentityPointTransformer(),
+    runLandmarks: runLandmarks,
+    runContours: runContours,
+    runClassifications: runClassifications,
+    trackingEnabled: trackingEnabled
+  )
 }
 
 final class HybridFace: HybridFaceSpec {
@@ -59,33 +99,35 @@ final class HybridFace: HybridFaceSpec {
   private func processBoundingBox(
     _ boundingBox: CGRect
   ) -> Bounds {
-    let scaleX = config.scaleX
-    let scaleY = config.scaleY
-    var width: Double
-    var height: Double
-    switch config.orientation {
-      case .landscapeLeft, .landscapeRight:
-        width = boundingBox.height * scaleY
-        height = boundingBox.width * scaleX
-      default:
-        width = boundingBox.width * scaleX
-        height = boundingBox.height * scaleY
-    }
+    let points = [
+      transformPoint(x: Double(boundingBox.minX), y: Double(boundingBox.minY)),
+      transformPoint(x: Double(boundingBox.maxX), y: Double(boundingBox.minY)),
+      transformPoint(x: Double(boundingBox.minX), y: Double(boundingBox.maxY)),
+      transformPoint(x: Double(boundingBox.maxX), y: Double(boundingBox.maxY))
+    ]
+    let minX = points.map(\.x).min() ?? 0.0
+    let maxX = points.map(\.x).max() ?? 0.0
+    let minY = points.map(\.y).min() ?? 0.0
+    let maxY = points.map(\.y).max() ?? 0.0
 
     return Bounds(
-      width: width,
-      height: height,
-      x: boundingBox.minY * scaleX,
-      y: boundingBox.minX * scaleY
+      width: maxX - minX,
+      height: maxY - minY,
+      x: minX,
+      y: minY
     )
+  }
+
+  private func transformPoint(
+    x: Double,
+    y: Double
+  ) -> Point {
+    return config.pointTransformer(x, y)
   }
 
   private func processLandmarks(
       _ face: Face
   ) -> Landmarks {
-    let scaleX = config.scaleX
-    let scaleY = config.scaleY
-
     func getPoint(
       _ type: FaceLandmarkType
     ) -> Point? {
@@ -94,9 +136,9 @@ final class HybridFace: HybridFaceSpec {
       }
 
       let position = landmark.position
-      return Point(
-        x: Double(position.y) * scaleX,
-        y: Double(position.x) * scaleY
+      return transformPoint(
+        x: Double(position.x),
+        y: Double(position.y)
       )
     }
 
@@ -117,9 +159,6 @@ final class HybridFace: HybridFaceSpec {
   private func processFaceContours(
     _ face: Face
   ) -> Contours {
-    let scaleX = config.scaleX
-    let scaleY = config.scaleY
-
     func getContour(
         _ type: FaceContourType
     ) -> [Point]? {
@@ -128,9 +167,9 @@ final class HybridFace: HybridFaceSpec {
       }
 
       return contour.points.map { point in
-        return Point(
-          x: Double(point.y) * scaleX, 
-          y: Double(point.x) * scaleY
+        return transformPoint(
+          x: Double(point.x),
+          y: Double(point.y)
         )
       }
     }
@@ -201,10 +240,10 @@ final class HybridFace: HybridFaceSpec {
   }
 
   var frameWidth: Double {
-    return config.width
+    return config.frameWidth
   }
 
   var frameHeight: Double {
-    return config.height
+    return config.frameHeight
   }
 }
