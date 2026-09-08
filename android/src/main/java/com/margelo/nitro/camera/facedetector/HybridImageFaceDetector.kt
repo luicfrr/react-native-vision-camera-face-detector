@@ -22,14 +22,11 @@ class HybridImageFaceDetector(
   )
 
   private fun resolveInputImage(
-    input: Any?
+    input: InputImage
   ): String {
     return when (input) {
-      is String -> input
-      is Map<*, *> -> {
-        val uri = input["uri"] as? String
-        uri ?: throw IllegalArgumentException("Invalid image object: missing 'uri'")
-      }
+      is InputImage.First -> input.value
+      is InputImage.Third -> input.value.uri
       else -> throw IllegalArgumentException("Invalid image type. Expected string or { uri }")
     }
   }
@@ -49,15 +46,15 @@ class HybridImageFaceDetector(
   ): Array<HybridFaceSpec> {
     val uri = resolveInputImage(image)
     val mlImage = createInputImage(uri)
-    val config = FaceProcessConfig(
-      width = mlImage.width.toDouble(),
-      height = mlImage.height.toDouble(),
-      scaleX = 1.0,
-      scaleY = 1.0,
-      runLandmarks,
-      runContours,
-      runClassifications,
-      trackingEnabled
+    val config = createFaceProcessConfig(
+      frameWidth = mlImage.width.toDouble(),
+      frameHeight = mlImage.height.toDouble(),
+      autoMode = false,
+      runLandmarks = runLandmarks,
+      runContours = runContours,
+      runClassifications = runClassifications,
+      trackingEnabled = trackingEnabled,
+      pointTransformer = createIdentityPointTransformer()
     )
     val task = faceDetector.process(mlImage)
     val faces = Tasks.await(task).map {

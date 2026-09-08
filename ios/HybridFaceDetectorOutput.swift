@@ -11,8 +11,6 @@ NativeCameraOutput {
   private let onFacesDetected: (_ faces: [any HybridFaceSpec]) -> Void
   private let onError: (_ error: Error) -> Void
   private let autoMode: Bool
-  private let windowWidth: Double
-  private let windowHeight: Double
   private let runLandmarks: Bool
   private let runContours: Bool
   private let runClassifications: Bool
@@ -35,17 +33,14 @@ NativeCameraOutput {
       Size(width: 720.0, height: 1280.0)
     )
   }
-  private let orientationManager = FaceDetectorOrientation()
   private let faceDetector: FaceDetector
 
-  init(options: FaceDetectorOutputOptions) {
+  init(_ options: FaceDetectorOutputOptions) {
     self.queue = DispatchQueue(label: "FaceDetectorQueue")
     self.output = AVCaptureVideoDataOutput()
     self.onFacesDetected = options.onFacesDetected
     self.onError = options.onError
     self.autoMode = options.autoMode ?? false
-    self.windowWidth = options.windowWidth ?? 1.0
-    self.windowHeight = options.windowHeight ?? 1.0 
     self.runLandmarks = options.runLandmarks ?? false
     self.runContours = options.runContours ?? false
     self.runClassifications = options.runClassifications ?? false
@@ -57,8 +52,9 @@ NativeCameraOutput {
     
     super.init()
 
-    self.delegate = FaceDetectorDelegate(onSampleBuffer: { [weak self] buffer in
-      self?.detectFaces(buffer)
+    self.delegate = FaceDetectorDelegate(onSampleBuffer: {
+      [weak self] buffer, _, _ in
+        self?.detectFaces(buffer)
     })
     self.output.setSampleBufferDelegate(delegate, queue: queue)
     self.output.alwaysDiscardsLateVideoFrames = true
@@ -68,7 +64,9 @@ NativeCameraOutput {
     }
   }
 
-  private func detectFaces(_ buffer: CMSampleBuffer) {
+  private func detectFaces(
+    _ buffer: CMSampleBuffer
+  ) {
     if isBusy { return }
 
     isBusy = true
@@ -79,24 +77,32 @@ NativeCameraOutput {
       ))
       return
     }
-    image.orientation = outputOrientation.toUIImageOrientation(
-      orientation: orientationManager.orientation,
-      cameraFacing: cameraFacing
+    guard let pixelBuffer = CMSampleBufferGetImageBuffer(buffer) else {
+      isBusy = false
+      onError(RuntimeError.error(
+        withMessage: "CMSampleBuffer does not contain a CVPixelBuffer!"
+      ))
+      return
+    }
+    // ML Kit returns Face coordinates in this raw output buffer's pixel space.
+    let frameWidth = Double(CVPixelBufferGetWidth(pixelBuffer))
+    let frameHeight = Double(CVPixelBufferGetHeight(pixelBuffer))
+    image.orientation = outputOrientation.toMLKitBufferOrientation(
+      cameraPosition: getCameraPosition()
     )
-    let width = image.height
-    let height = image.width
-    let config = FaceProcessConfig(
-      width: width,
-      height: height,
-      scaleX: autoMode ? windowWidth / width : 1.0,
-      scaleY: autoMode ? windowHeight / height : 1.0,
-      runLandmarks: runLandmarks,
-      runContours: runContours,
-      runClassifications: runClassifications,
-      trackingEnabled: trackingEnabled,
-      autoMode: autoMode,
-      cameraFacing: cameraFacing,
-      orientation: orientationManager.orientation
+    let config = createFaceProcessConfig(
+      frameWidth,
+      frameHeight,
+      autoMode,
+      runLandmarks,
+      runContours,
+      runClassifications,
+      trackingEnabled,
+      createOutputToCameraPointTransformer(
+        output: output,
+        frameWidth: frameWidth,
+        frameHeight: frameHeight
+      )
     )
 
     self.faceDetector.process(image) { [weak self] faces, error in
@@ -117,10 +123,26 @@ NativeCameraOutput {
     }
   }
 
-  func configure(config: OutputConfiguration) {
-    guard let connection = self.output.connection(with: .video) else {
-      return
+  func configure(config _: OutputConfiguration) {
+    // Keep source buffers unrotated. ML Kit receives the physical orientation
+    // as image metadata, and AVFoundation converts its raw result points to
+    // the camera coordinate system.
+    output.connection(with: .video)?.preferredVideoStabilizationMode = .off
+  }
+
+  private func getCameraPosition() -> AVCaptureDevice.Position {
+    if let cameraPosition = output.connection(with: .video)?
+      .inputPorts
+      .compactMap({ ($0.input as? AVCaptureDeviceInput)?.device.position })
+      .first
+    {
+      return cameraPosition
     }
-    connection.preferredVideoStabilizationMode = .off
+
+    switch cameraFacing {
+      case .front: return .front
+      case .back: return .back
+      default: return .unspecified
+    }
   }
 }

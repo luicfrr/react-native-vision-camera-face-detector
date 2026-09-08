@@ -9,7 +9,7 @@ class HybridImageFaceDetector: HybridImageFaceDetectorSpec {
   private let trackingEnabled: Bool
   private let faceDetector: FaceDetector
 
-  init(options: ImageFaceDetectorOptions) {
+  init(_ options: ImageFaceDetectorOptions) {
     self.runLandmarks = options.runLandmarks ?? false
     self.runContours = options.runContours ?? false
     self.runClassifications = options.runClassifications ?? false
@@ -28,18 +28,19 @@ class HybridImageFaceDetector: HybridImageFaceDetectorSpec {
       uri: try resolveInputImage(image)
     )
     let mlImage = VisionImage(image: uiImage)
-    let width = Double(uiImage.size.height)
-    let height = Double(uiImage.size.width)
+    // ML Kit face coordinates are expressed in image pixels, not UIKit points.
+    let frameWidth = Double(uiImage.cgImage?.width ?? Int(uiImage.size.width * uiImage.scale))
+    let frameHeight = Double(uiImage.cgImage?.height ?? Int(uiImage.size.height * uiImage.scale))
 
-    let config = FaceProcessConfig(
-      width: width,
-      height: height,
-      scaleX: 1.0,
-      scaleY: 1.0,
-      runLandmarks: runLandmarks,
-      runContours: runContours,
-      runClassifications: runClassifications,
-      trackingEnabled: trackingEnabled
+    let config = createFaceProcessConfig(
+      frameWidth,
+      frameHeight,
+      false,
+      runLandmarks,
+      runContours,
+      runClassifications,
+      trackingEnabled,
+      createIdentityPointTransformer()
     )
 
     let faces = try faceDetector.results(in: mlImage)
@@ -52,15 +53,15 @@ class HybridImageFaceDetector: HybridImageFaceDetectorSpec {
   }
 
   private func resolveInputImage(
-    _ input: Any
+    _ input: InputImage
   ) throws -> String {
-    if let uri = input as? String {
-      return uri
-    }
-
-    if let object = input as? [String: Any],
-      let uri = object["uri"] as? String {
-      return uri
+    switch input {
+      case .first(let uri):
+        return uri
+      case .third(let object):
+        return object.uri
+      case .second:
+        break
     }
 
     throw NSError(

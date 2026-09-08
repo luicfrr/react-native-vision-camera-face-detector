@@ -1,5 +1,6 @@
 package com.margelo.nitro.camera.facedetector
 
+import android.graphics.Matrix
 import android.util.Size
 import androidx.annotation.OptIn
 import androidx.camera.core.ExperimentalGetImage
@@ -12,7 +13,6 @@ import com.google.android.gms.tasks.Tasks
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.face.FaceDetection
 import com.google.mlkit.vision.face.Face
-import com.margelo.nitro.NitroModules
 import com.margelo.nitro.camera.CameraOrientation
 import com.margelo.nitro.camera.HybridCameraOutputSpec
 import com.margelo.nitro.camera.MediaType
@@ -31,7 +31,7 @@ class HybridFaceDetectorOutput(
   ImageAnalysis.Analyzer,
   NativeCameraOutput {
   override val mediaType: MediaType = MediaType.VIDEO
-  override val mirrorMode: MirrorMode = MirrorMode.AUTO
+  override var mirrorMode: MirrorMode = MirrorMode.AUTO
   override var outputOrientation: CameraOrientation = CameraOrientation.UP
     set(value) {
       field = value
@@ -39,16 +39,11 @@ class HybridFaceDetectorOutput(
     }
   override val currentResolution: com.margelo.nitro.camera.Size?
     get() = imageAnalysis?.resolutionInfo?.resolution?.toSize()
-  private val context = NitroModules.applicationContext ?: throw Error("Face Detector - No Context available!")
-  private val orientationManager = FaceDetectorOrientation.get(context.applicationContext)
   private val runLandmarks = options.runLandmarks ?: false
   private val runContours = options.runContours ?: false
   private val runClassifications = options.runClassifications ?: false
   private val trackingEnabled = options.trackingEnabled ?: false
   private val autoMode = options.autoMode ?: false
-  private val cameraFacing: CameraPosition = options.cameraFacing ?: CameraPosition.FRONT
-  private val windowWidth = options.windowWidth ?: 1.0
-  private val windowHeight = options.windowHeight ?: 1.0
   private val faceDetector = FaceDetection.getClient(
     options.toMLFaceDetectorOptions()
   )
@@ -81,12 +76,14 @@ class HybridFaceDetectorOutput(
       ImageAnalysis
         .Builder()
         .setOutputImageFormat(ImageAnalysis.OUTPUT_IMAGE_FORMAT_YUV_420_888)
+        .setTargetRotation(outputOrientation.surfaceRotation)
         .setOutputImageRotationEnabled(false)
         .setResolutionSelector(resolutionSelector)
         .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
         .build()
     return NativeCameraOutput.PreparedUseCase(imageAnalysis) {
       this.imageAnalysis = imageAnalysis
+      this.mirrorMode = mirrorMode
       imageAnalysis.setAnalyzer(executor, this)
     }
   }
@@ -98,7 +95,6 @@ class HybridFaceDetectorOutput(
       } catch (_: Exception) {}
     }
 
-    orientationManager.stopDeviceOrientationListener()
     faceDetector.close()
     executor.close()
     super.dispose()
@@ -114,23 +110,31 @@ class HybridFaceDetectorOutput(
 
     try {
       val mediaImage = imageProxy.image ?: throw Error("`ImageProxy` does not have an `Image`!")
-      val inputImage = InputImage.fromMediaImage(mediaImage, imageProxy.imageInfo.rotationDegrees)
-      val width = inputImage.height.toDouble()
-      val height = inputImage.width.toDouble()
-      val scaleX = if(autoMode) windowWidth / width else 1.0
-      val scaleY = if(autoMode) windowHeight / height else 1.0
-      val config = FaceProcessConfig(
-        width,
-        height,
-        scaleX,
-        scaleY,
-        runLandmarks,
-        runContours,
-        runClassifications,
-        trackingEnabled,
-        autoMode,
-        cameraFacing,
-        orientation = orientationManager.orientation
+      val inputImage = InputImage.fromMediaImage(
+        mediaImage, 
+        imageProxy.imageInfo.rotationDegrees
+      )
+      val (mlKitFrameWidth, mlKitFrameHeight) = getMLKitCoordinateDimensions(
+        inputImage.width.toDouble(),
+        inputImage.height.toDouble(),
+        imageProxy.imageInfo.rotationDegrees
+      )
+      // ML Kit rotates results according to InputImage.rotationDegrees. Compose
+      // that rotation with CameraX's sensor-to-buffer matrix, then invert the
+      // complete transform to obtain ML Kit -> VisionCamera camera coordinates.
+      // Capture it before the proxy is closed by the asynchronous detector task.
+      val pointTransformer =
+        if (autoMode) createMLKitToCameraPointTransformer(imageProxy)
+        else createIdentityPointTransformer()
+      val config = createFaceProcessConfig(
+        frameWidth = mlKitFrameWidth,
+        frameHeight = mlKitFrameHeight,
+        autoMode = autoMode,
+        runLandmarks = runLandmarks,
+        runContours = runContours,
+        runClassifications = runClassifications,
+        trackingEnabled = trackingEnabled,
+        pointTransformer = pointTransformer
       )
 
       val task = faceDetector.process(inputImage)
@@ -153,6 +157,31 @@ class HybridFaceDetectorOutput(
       imageProxy.close()
       isBusy.set(false)
       options.onError(error)
+    }
+  }
+
+  private fun createMLKitToCameraPointTransformer(
+    imageProxy: ImageProxy
+  ): (Double, Double) -> Pair<Double, Double> {
+    // Mirrors AndroidX MlKitAnalyzer: sensor -> buffer -> ML Kit coordinates.
+    val sensorToMLKit = Matrix(imageProxy.imageInfo.sensorToBufferTransformMatrix).apply {
+      postConcat(
+        createBufferToMLKitRotationMatrix(
+          imageProxy.width,
+          imageProxy.height,
+          imageProxy.imageInfo.rotationDegrees
+        )
+      )
+    }
+    val mlKitToSensor = Matrix()
+    check(sensorToMLKit.invert(mlKitToSensor)) {
+      "Could not invert the CameraX/ML Kit coordinate transform matrix."
+    }
+
+    return { x, y ->
+      val point = floatArrayOf(x.toFloat(), y.toFloat())
+      mlKitToSensor.mapPoints(point)
+      Pair(point[0].toDouble(), point[1].toDouble())
     }
   }
 }

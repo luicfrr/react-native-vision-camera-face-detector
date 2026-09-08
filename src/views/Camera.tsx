@@ -1,14 +1,19 @@
-import React from 'react'
+import React, {
+  useCallback,
+  useRef
+} from 'react'
 import { Camera as VisionCamera } from 'react-native-vision-camera'
+import { transformFacesToPreviewCoordinates } from '../utils/transformFacesToPreviewCoordinates'
+import useFaceDetectorOutput from '../hooks/useFaceDetectorOutput'
 
 // types
 import type { RefObject } from 'react'
 import type {
   CameraViewProps,
   CameraRef
-} from 'react-native-vision-camera'
+}
+  from 'react-native-vision-camera'
 import type { FaceDetectorOutputOptions } from '../specs/FaceDetectorFactory.nitro'
-import useFaceDetectorOutput from '../hooks/useFaceDetectorOutput'
 
 interface ComponentType
   extends Omit<CameraViewProps, 'onError'>,
@@ -30,7 +35,8 @@ interface ComponentType
  *   return (
  *     <Camera
  *       isActive={isActive}
- *       barcodeFormats={['all']}
+ *       performanceMode={'fast'}
+ *       runClassifications={true}
  *       onFacesDetected={(faces) => {
  *         console.log(`Detected ${faces.length} faces!`)
  *       }}
@@ -47,9 +53,9 @@ export function Camera( {
   onError,
   outputResolution,
   cameraFacing,
+  mirrorMode,
+  resizeMode,
   autoMode,
-  windowWidth,
-  windowHeight,
   performanceMode,
   runLandmarks,
   runContours,
@@ -57,16 +63,53 @@ export function Camera( {
   minFaceSize,
   trackingEnabled,
   outputs,
+  ref,
   ...cameraProps
 }: ComponentType ) {
+  const cameraRef = useRef<CameraRef | null>( null )
+
+  const setCameraRef = useCallback( (
+    camera: CameraRef | null
+  ) => {
+    cameraRef.current = camera
+
+    if ( ref != null ) {
+      ref.current = camera
+    }
+  }, [ ref ] )
+
+  const handleFacesDetected = useCallback( (
+    faces: Parameters<typeof onFacesDetected>[ 0 ]
+  ) => {
+    if (
+      !autoMode ||
+      faces.length === 0
+    ) {
+      onFacesDetected( faces )
+      return
+    }
+
+    const camera = cameraRef.current
+    if ( camera?.preview == null ) return
+
+    onFacesDetected(
+      transformFacesToPreviewCoordinates(
+        faces,
+        camera
+      )
+    )
+  }, [
+    autoMode,
+    onFacesDetected
+  ] )
+
   const output = useFaceDetectorOutput( {
-    onFacesDetected,
+    onFacesDetected: handleFacesDetected,
     onError,
     outputResolution,
     cameraFacing,
+    mirrorMode,
     autoMode,
-    windowWidth,
-    windowHeight,
     performanceMode,
     runLandmarks,
     runContours,
@@ -75,14 +118,16 @@ export function Camera( {
     trackingEnabled,
   } )
 
-  return <VisionCamera
-    { ...cameraProps }
-    outputs={ [
-      output,
-      ...( outputs ?? [] )
-    ] }
-    onError={ onError }
-  />
+  return (
+    <VisionCamera
+      { ...cameraProps }
+      ref={ setCameraRef }
+      mirrorMode={ mirrorMode }
+      resizeMode={ resizeMode }
+      outputs={ [ output, ...( outputs ?? [] ) ] }
+      onError={ onError }
+    />
+  )
 }
 
 export default Camera

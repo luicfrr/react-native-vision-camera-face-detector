@@ -1,46 +1,90 @@
 import MLKitFaceDetection
 import NitroModules
+import AVFoundation
 import Foundation
 import UIKit
 
 struct FaceProcessConfig {
-  let width: Double
-  let height: Double
-  let scaleX: Double
-  let scaleY: Double
+  let frameWidth: Double
+  let frameHeight: Double
+  let pointTransformer: (Double, Double) -> Point
   let runLandmarks: Bool
   let runContours: Bool
   let runClassifications: Bool
   let trackingEnabled: Bool
-  let autoMode: Bool?
-  let cameraFacing: CameraPosition?
-  let orientation: UIInterfaceOrientation?
+}
 
-  init(
-    width: Double,
-    height: Double,
-    scaleX: Double,
-    scaleY: Double,
-    runLandmarks: Bool,
-    runContours: Bool,
-    runClassifications: Bool,
-    trackingEnabled: Bool,
-    autoMode: Bool? = nil,
-    cameraFacing: CameraPosition? = nil,
-    orientation: UIInterfaceOrientation? = nil
-  ) {
-    self.width = width
-    self.height = height
-    self.scaleX = scaleX
-    self.scaleY = scaleY
-    self.runLandmarks = runLandmarks
-    self.runContours = runContours
-    self.runClassifications = runClassifications
-    self.trackingEnabled = trackingEnabled
-    self.autoMode = autoMode
-    self.cameraFacing = cameraFacing
-    self.orientation = orientation
+func createIdentityPointTransformer() -> (Double, Double) -> Point {
+  return { x, y in Point(x: x, y: y) }
+}
+
+// Converts points from an AVCaptureOutput's pixel coordinate system into
+// normalized capture-device coordinates.
+//
+// ML Kit returns face coordinates relative to the raw pixel buffer. Unlike a
+// VisionCamera `Frame`, that buffer can have a different physical orientation
+// or mirroring from the preview. `AVCaptureOutput` owns the native conversion
+// for exactly that boundary, so use it instead of applying the ML image
+// orientation a second time.
+func createOutputToCameraPointTransformer(
+  output: AVCaptureOutput,
+  frameWidth: Double,
+  frameHeight: Double
+) -> (Double, Double) -> Point {
+  func convert(
+    _ x: Double, 
+    _ y: Double
+  ) -> CGPoint {
+    let rect = output.metadataOutputRectConverted(
+      fromOutputRect: CGRect(
+        x: CGFloat(x), 
+        y: CGFloat(y),
+        width: 0, 
+        height: 0
+      )
+    )
+    return rect.origin
   }
+
+  // Sample the native affine mapping while handling the sample buffer. Face
+  // properties can be read later on another thread, after the output changed.
+  let origin = convert(0, 0)
+  let xAxis = convert(frameWidth, 0)
+  let yAxis = convert(0, frameHeight)
+  let originX = Double(origin.x)
+  let originY = Double(origin.y)
+  let xAxisDeltaX = Double(xAxis.x - origin.x) / frameWidth
+  let xAxisDeltaY = Double(xAxis.y - origin.y) / frameWidth
+  let yAxisDeltaX = Double(yAxis.x - origin.x) / frameHeight
+  let yAxisDeltaY = Double(yAxis.y - origin.y) / frameHeight
+
+  return { x, y in
+    return Point(
+      x: originX + xAxisDeltaX * x + yAxisDeltaX * y,
+      y: originY + xAxisDeltaY * x + yAxisDeltaY * y
+    )
+  }
+}
+
+func createFaceProcessConfig(
+  _ frameWidth: Double,
+  _ frameHeight: Double,
+  _ autoMode: Bool,
+  _ runLandmarks: Bool,
+  _ runContours: Bool,
+  _ runClassifications: Bool,
+  _ trackingEnabled: Bool,
+  _ pointTransformer: @escaping (Double, Double) -> Point
+) -> FaceProcessConfig {
+  return FaceProcessConfig(
+    frameWidth: frameWidth,
+    frameHeight: frameHeight,
+    pointTransformer: autoMode ? pointTransformer : createIdentityPointTransformer(),
+    runLandmarks: runLandmarks,
+    runContours: runContours,
+    runClassifications: runClassifications,
+    trackingEnabled: trackingEnabled
+  )
 }
 
 final class HybridFace: HybridFaceSpec {
@@ -59,33 +103,35 @@ final class HybridFace: HybridFaceSpec {
   private func processBoundingBox(
     _ boundingBox: CGRect
   ) -> Bounds {
-    let scaleX = config.scaleX
-    let scaleY = config.scaleY
-    var width: Double
-    var height: Double
-    switch config.orientation {
-      case .landscapeLeft, .landscapeRight:
-        width = boundingBox.height * scaleY
-        height = boundingBox.width * scaleX
-      default:
-        width = boundingBox.width * scaleX
-        height = boundingBox.height * scaleY
-    }
+    let points = [
+      transformPoint(x: Double(boundingBox.minX), y: Double(boundingBox.minY)),
+      transformPoint(x: Double(boundingBox.maxX), y: Double(boundingBox.minY)),
+      transformPoint(x: Double(boundingBox.minX), y: Double(boundingBox.maxY)),
+      transformPoint(x: Double(boundingBox.maxX), y: Double(boundingBox.maxY))
+    ]
+    let minX = points.map(\.x).min() ?? 0.0
+    let maxX = points.map(\.x).max() ?? 0.0
+    let minY = points.map(\.y).min() ?? 0.0
+    let maxY = points.map(\.y).max() ?? 0.0
 
     return Bounds(
-      width: width,
-      height: height,
-      x: boundingBox.minY * scaleX,
-      y: boundingBox.minX * scaleY
+      width: maxX - minX,
+      height: maxY - minY,
+      x: minX,
+      y: minY
     )
+  }
+
+  private func transformPoint(
+    x: Double,
+    y: Double
+  ) -> Point {
+    return config.pointTransformer(x, y)
   }
 
   private func processLandmarks(
       _ face: Face
   ) -> Landmarks {
-    let scaleX = config.scaleX
-    let scaleY = config.scaleY
-
     func getPoint(
       _ type: FaceLandmarkType
     ) -> Point? {
@@ -94,9 +140,9 @@ final class HybridFace: HybridFaceSpec {
       }
 
       let position = landmark.position
-      return Point(
-        x: Double(position.y) * scaleX,
-        y: Double(position.x) * scaleY
+      return transformPoint(
+        x: Double(position.x),
+        y: Double(position.y)
       )
     }
 
@@ -117,9 +163,6 @@ final class HybridFace: HybridFaceSpec {
   private func processFaceContours(
     _ face: Face
   ) -> Contours {
-    let scaleX = config.scaleX
-    let scaleY = config.scaleY
-
     func getContour(
         _ type: FaceContourType
     ) -> [Point]? {
@@ -128,9 +171,9 @@ final class HybridFace: HybridFaceSpec {
       }
 
       return contour.points.map { point in
-        return Point(
-          x: Double(point.y) * scaleX, 
-          y: Double(point.x) * scaleY
+        return transformPoint(
+          x: Double(point.x),
+          y: Double(point.y)
         )
       }
     }
@@ -201,10 +244,10 @@ final class HybridFace: HybridFaceSpec {
   }
 
   var frameWidth: Double {
-    return config.width
+    return config.frameWidth
   }
 
   var frameHeight: Double {
-    return config.height
+    return config.frameHeight
   }
 }

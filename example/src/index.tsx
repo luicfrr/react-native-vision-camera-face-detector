@@ -8,8 +8,7 @@ import {
   StyleSheet,
   Text,
   Button,
-  View,
-  useWindowDimensions
+  View
 } from 'react-native'
 import {
   CameraPosition,
@@ -60,10 +59,6 @@ function Index(): ReactNode {
 function FaceDetection(): ReactNode {
   const insets = useSafeAreaInsets()
   const {
-    width,
-    height
-  } = useWindowDimensions()
-  const {
     hasPermission,
     requestPermission
   } = useCameraPermission()
@@ -85,11 +80,9 @@ function FaceDetection(): ReactNode {
   ] = useState<Extract<CameraPosition, 'front' | 'back'>>( 'front' )
   const faceDetectorOptions = useRef<FaceDetectorOptions>( {
     performanceMode: 'fast',
-    runClassifications: true,
-    runContours: true,
-    runLandmarks: true,
-    windowWidth: width,
-    windowHeight: height
+    runClassifications: false,
+    runContours: false,
+    runLandmarks: false
   } ).current
   const isFocused = useIsFocused()
   const appState = useAppState()
@@ -174,8 +167,7 @@ function FaceDetection(): ReactNode {
     const {
       width,
       height,
-      x,
-      y
+      x, y
     } = bounds
     aFaceW.value = width
     aFaceH.value = height
@@ -234,7 +226,6 @@ function FaceDetection(): ReactNode {
             style={ StyleSheet.absoluteFill }
             isActive={ isCameraActive }
             device={ cameraDevice }
-            orientationSource={ 'device' }
             onError={ handleCameraMountError }
             onFacesDetected={ handleFacesDetected }
             { ...faceDetectorOptions }

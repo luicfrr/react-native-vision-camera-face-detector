@@ -2,24 +2,44 @@ package com.margelo.nitro.camera.facedetector
 
 
 import android.graphics.Rect
-import android.view.Surface
 import com.google.mlkit.vision.face.Face
 import com.google.mlkit.vision.face.FaceContour
 import com.google.mlkit.vision.face.FaceLandmark
 
 data class FaceProcessConfig(
-  val width: Double,
-  val height: Double,
-  val scaleX: Double,
-  val scaleY: Double,
+  val frameWidth: Double,
+  val frameHeight: Double,
+  val pointTransformer: (Double, Double) -> Pair<Double, Double>,
   val runLandmarks: Boolean,
   val runContours: Boolean,
   val runClassifications: Boolean,
-  val trackingEnabled: Boolean,
-  val autoMode: Boolean? = null,
-  val cameraFacing: CameraPosition? = null,
-  val orientation: Int? = null
+  val trackingEnabled: Boolean
 )
+
+fun createIdentityPointTransformer(): (Double, Double) -> Pair<Double, Double> = { 
+  x, y -> Pair(x, y)
+}
+
+fun createFaceProcessConfig(
+  frameWidth: Double,
+  frameHeight: Double,
+  autoMode: Boolean,
+  runLandmarks: Boolean,
+  runContours: Boolean,
+  runClassifications: Boolean,
+  trackingEnabled: Boolean,
+  pointTransformer: (Double, Double) -> Pair<Double, Double>
+): FaceProcessConfig {
+  return FaceProcessConfig(
+    frameWidth = frameWidth,
+    frameHeight = frameHeight,
+    runLandmarks = runLandmarks,
+    runContours = runContours,
+    runClassifications = runClassifications,
+    trackingEnabled = trackingEnabled,
+    pointTransformer = if (autoMode) pointTransformer else createIdentityPointTransformer()
+  )
+}
 
 class HybridFace(
   private val face: Face,
@@ -27,101 +47,42 @@ class HybridFace(
 ) : HybridFaceSpec() {
   private fun transformPoint(
     x: Double,
-    y: Double,
-    width: Double,
-    height: Double
+    y: Double
   ): Pair<Double, Double> {
-    val scaleX = config.scaleX
-    val scaleY = config.scaleY
-
-    if (config.autoMode != true) {
-      return Pair(x * scaleX, y * scaleY)
-    }
-
-    return when (config.cameraFacing) {
-      CameraPosition.FRONT -> when (config.orientation) {
-        Surface.ROTATION_0 ->
-          Pair(
-            ((-x * scaleX) + config.width * scaleX) - width, 
-            y * scaleY
-          )
-
-        Surface.ROTATION_270 ->
-          Pair(
-            y * scaleX, 
-            x * scaleY
-          )
-
-        Surface.ROTATION_180 ->
-          Pair(
-            x * scaleX, 
-            ((-y * scaleY) + config.height * scaleY) - height
-          )
-
-        Surface.ROTATION_90 ->
-          Pair(
-            ((-y * scaleX) + config.width * scaleX) - width,
-            ((-x * scaleY) + config.height * scaleY) - height
-          )
-
-        else ->
-          Pair(
-            x * scaleX, 
-            y * scaleY
-          )
-      } else -> when (config.orientation) {
-        Surface.ROTATION_0 ->
-          Pair(
-            x * scaleX, 
-            y * scaleY
-          )
-
-        Surface.ROTATION_270 ->
-          Pair(
-            y * scaleX, 
-            ((-x * scaleY) + config.height * scaleY) - height
-          )
-
-        Surface.ROTATION_180 ->
-          Pair(
-            ((-x * scaleX) + config.width * scaleX) - width,
-            ((-y * scaleY) + config.height * scaleY) - height
-          )
-
-        Surface.ROTATION_90 ->
-          Pair(
-            ((-y * scaleX) + config.width * scaleX) - width,
-            x * scaleY
-          )
-
-        else ->
-          Pair(
-            x * scaleX, 
-            y * scaleY
-          )
-      }
-    }
+    return config.pointTransformer(x, y)
   }
 
   private fun processBoundingBox(
     boundingBox: Rect
   ): Bounds {
-    val scaleX = config.scaleX
-    val scaleY = config.scaleY
-    val width = boundingBox.width().toDouble() * scaleX
-    val height = boundingBox.height().toDouble() * scaleY
-    val (x, y) = transformPoint(
-      boundingBox.left.toDouble(), 
-      boundingBox.top.toDouble(), 
-      width, 
-      height
+    val points = arrayOf(
+      transformPoint(
+        boundingBox.left.toDouble(), 
+        boundingBox.top.toDouble()
+      ),
+      transformPoint(
+        boundingBox.right.toDouble(), 
+        boundingBox.top.toDouble()
+      ),
+      transformPoint(
+        boundingBox.left.toDouble(), 
+        boundingBox.bottom.toDouble()
+      ),
+      transformPoint(
+        boundingBox.right.toDouble(), 
+        boundingBox.bottom.toDouble()
+      )
     )
+    val minX = points.minOf { it.first }
+    val maxX = points.maxOf { it.first }
+    val minY = points.minOf { it.second }
+    val maxY = points.maxOf { it.second }
 
     return Bounds(
-      x = x,
-      y = y,
-      width = width,
-      height = height
+      x = minX,
+      y = minY,
+      width = maxX - minX,
+      height = maxY - minY
     )
   }
 
@@ -135,10 +96,8 @@ class HybridFace(
       val pos = landmark.position
 
       val (x, y) = transformPoint(
-        pos.x.toDouble(), 
-        pos.y.toDouble(), 
-        0.0, 
-        0.0
+        pos.x.toDouble(),
+        pos.y.toDouble()
       )
 
       return Point(x, y)
@@ -168,10 +127,8 @@ class HybridFace(
 
       return contour.points.map { p ->
         val (x, y) = transformPoint(
-          p.x.toDouble(), 
-          p.y.toDouble(), 
-          0.0, 
-          0.0
+          p.x.toDouble(),
+          p.y.toDouble()
         )
 
         Point(x, y)
@@ -246,8 +203,8 @@ class HybridFace(
     get() = face.headEulerAngleY.toDouble()
 
   override val frameWidth: Double
-    get() = config.width
+    get() = config.frameWidth
 
   override val frameHeight: Double
-    get() = config.height
+    get() = config.frameHeight
 }
