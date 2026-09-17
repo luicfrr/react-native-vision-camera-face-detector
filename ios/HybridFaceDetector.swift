@@ -1,6 +1,6 @@
-import MLKitFaceDetection
-import MLKitVision
+import CoreImage
 import NitroModules
+import Vision
 import VisionCamera
 
 private typealias VisionCameraPoint = margelo.nitro.camera.Point
@@ -11,7 +11,6 @@ class HybridFaceDetector: HybridFaceDetectorSpec {
   private let runClassifications: Bool
   private let trackingEnabled: Bool
   private let autoMode: Bool
-  private let faceDetector: FaceDetector
 
   init(_ options: FaceDetectorOptions) {
     self.runLandmarks = options.runLandmarks ?? false
@@ -19,17 +18,25 @@ class HybridFaceDetector: HybridFaceDetectorSpec {
     self.runClassifications = options.runClassifications ?? false
     self.trackingEnabled = options.trackingEnabled ?? false
     self.autoMode = options.autoMode ?? false
-    self.faceDetector = FaceDetector.faceDetector(
-      options: options.toMLFaceDetectorOptions()
-    )
-
     super.init()
   }
 
-  func detectFaces(
-    frame: any HybridFrameSpec
-  ) throws -> [any HybridFaceSpec] {
-    let image = try frame.toMLImage()
+  func detectFaces(frame: any HybridFrameSpec) throws -> [any HybridFaceSpec] {
+    guard let nativeFrame = frame as? any NativeFrame else {
+      throw RuntimeError.error(withMessage: "Frame is not of type `NativeFrame`!")
+    }
+    guard let sampleBuffer = nativeFrame.sampleBuffer,
+          let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) else {
+      throw RuntimeError.error(withMessage: "Frame doesn't contain a valid CVPixelBuffer!")
+    }
+
+    let request = VNDetectFaceLandmarksRequest()
+    let handler = VNImageRequestHandler(
+      cvPixelBuffer: pixelBuffer,
+      orientation: frame.orientation.toCGImagePropertyOrientation(isMirrored: frame.isMirrored),
+      options: [:]
+    )
+    try handler.perform([request])
 
     let config = createFaceProcessConfig(
       frame.width,
@@ -42,28 +49,15 @@ class HybridFaceDetector: HybridFaceDetectorSpec {
       try createFrameToCameraPointTransformer(frame)
     )
 
-    let faces = try faceDetector.results(in: image)
-    return faces.map {
-      HybridFace(
-        face: $0,
-        config: config
-      )
-    }
+    return (request.results ?? []).map { HybridFace(face: $0, config: config) }
   }
 
   private func createFrameToCameraPointTransformer(
     _ frame: any HybridFrameSpec
   ) throws -> (Double, Double) -> Point {
-    let origin = try frame.convertFramePointToCameraPoint(
-      framePoint: VisionCameraPoint(0.0, 0.0)
-    )
-    let xAxis = try frame.convertFramePointToCameraPoint(
-      framePoint: VisionCameraPoint(1.0, 0.0)
-    )
-    let yAxis = try frame.convertFramePointToCameraPoint(
-      framePoint: VisionCameraPoint(0.0, 1.0)
-    )
-
+    let origin = try frame.convertFramePointToCameraPoint(framePoint: VisionCameraPoint(0.0, 0.0))
+    let xAxis = try frame.convertFramePointToCameraPoint(framePoint: VisionCameraPoint(1.0, 0.0))
+    let yAxis = try frame.convertFramePointToCameraPoint(framePoint: VisionCameraPoint(0.0, 1.0))
     let originX = origin.x
     let originY = origin.y
     let xAxisDeltaX = xAxis.x - originX
