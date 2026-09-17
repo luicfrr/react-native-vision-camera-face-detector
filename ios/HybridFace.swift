@@ -101,6 +101,35 @@ final class HybridFace: HybridFaceSpec {
     )
   }
 
+  // Apple Vision does not expose ML Kit's eye-open classifier. Estimate eye
+  // openness from the eye landmark's vertical-to-horizontal aspect ratio and
+  // normalize it to the package's existing 0...1 probability-shaped API.
+  // This is an estimate, not an ML Kit-equivalent confidence value.
+  private func eyeOpenProbability(_ region: VNFaceLandmarkRegion2D?) -> Double? {
+    guard let region, region.pointCount >= 6 else { return nil }
+
+    let points = region.normalizedPoints
+    guard
+      let minX = points.map({ Double($0.x) }).min(),
+      let maxX = points.map({ Double($0.x) }).max(),
+      let minY = points.map({ Double($0.y) }).min(),
+      let maxY = points.map({ Double($0.y) }).max()
+    else {
+      return nil
+    }
+
+    let width = maxX - minX
+    let height = maxY - minY
+    guard width > .ulpOfOne else { return nil }
+
+    let aspectRatio = height / width
+    let closedAspectRatio = 0.08
+    let openAspectRatio = 0.28
+    let normalized = (aspectRatio - closedAspectRatio) / (openAspectRatio - closedAspectRatio)
+
+    return min(max(normalized, 0.0), 1.0)
+  }
+
   var bounds: Bounds {
     let box = face.boundingBox
     let topLeft = imagePoint(normalizedX: Double(box.minX), normalizedY: Double(box.maxY))
@@ -150,9 +179,17 @@ final class HybridFace: HybridFaceSpec {
     )
   }
 
-  // Apple Vision does not expose ML Kit's smile/eye-open classifiers.
-  var leftEyeOpenProbability: Double? { nil }
-  var rightEyeOpenProbability: Double? { nil }
+  var leftEyeOpenProbability: Double? {
+    guard config.runClassifications else { return nil }
+    return eyeOpenProbability(face.landmarks?.leftEye)
+  }
+
+  var rightEyeOpenProbability: Double? {
+    guard config.runClassifications else { return nil }
+    return eyeOpenProbability(face.landmarks?.rightEye)
+  }
+
+  // Apple Vision does not expose ML Kit's smile classifier.
   var smilingProbability: Double? { nil }
 
   // VNFaceObservation has a UUID but no stable numeric tracking identifier.
