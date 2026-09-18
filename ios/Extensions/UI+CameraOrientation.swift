@@ -1,11 +1,9 @@
 import AVFoundation
+import ImageIO
 import UIKit
 import VisionCamera
 
 extension CameraOrientation {
-  /// Returns this buffer orientation relative to VisionCamera's target output
-  /// orientation. This mirrors VisionCamera's internal coordinate metadata
-  /// calculation without relying on an internal API from that module.
   func relativeToOutput(_ outputOrientation: CameraOrientation) -> CameraOrientation {
     let relativeDegrees = (degrees - outputOrientation.degrees + 360) % 360
     switch relativeDegrees {
@@ -16,9 +14,7 @@ extension CameraOrientation {
     }
   }
 
-  func toMLKitImageOrientation(
-    isMirrored: Bool
-  ) -> UIImage.Orientation {
+  func toCGImagePropertyOrientation(isMirrored: Bool) -> CGImagePropertyOrientation {
     switch self {
       case .up: return isMirrored ? .upMirrored : .up
       case .down: return isMirrored ? .downMirrored : .down
@@ -27,15 +23,9 @@ extension CameraOrientation {
     }
   }
 
-  /// Returns the orientation of an unrotated camera buffer for ML Kit.
-  ///
-  /// `CameraOutput` leaves its AVCaptureVideoDataOutput in the sensor's native
-  /// orientation for performance. ML Kit therefore needs the target device
-  /// orientation and camera position, rather than the output-to-preview
-  /// coordinate transform used later for drawing.
-  func toMLKitBufferOrientation(
+  func toVisionBufferOrientation(
     cameraPosition: AVCaptureDevice.Position
-  ) -> UIImage.Orientation {
+  ) -> CGImagePropertyOrientation {
     switch (cameraPosition, self) {
       case (.back, .up): return .right
       case (.back, .left): return .up

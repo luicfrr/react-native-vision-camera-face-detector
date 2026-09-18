@@ -1,8 +1,7 @@
-import MLKitFaceDetection
-import NitroModules
 import AVFoundation
 import Foundation
-import UIKit
+import NitroModules
+import Vision
 
 struct FaceProcessConfig {
   let frameWidth: Double
@@ -15,39 +14,20 @@ struct FaceProcessConfig {
 }
 
 func createIdentityPointTransformer() -> (Double, Double) -> Point {
-  return { x, y in Point(x: x, y: y) }
+  { x, y in Point(x: x, y: y) }
 }
 
-// Converts points from an AVCaptureOutput's pixel coordinate system into
-// normalized capture-device coordinates.
-//
-// ML Kit returns face coordinates relative to the raw pixel buffer. Unlike a
-// VisionCamera `Frame`, that buffer can have a different physical orientation
-// or mirroring from the preview. `AVCaptureOutput` owns the native conversion
-// for exactly that boundary, so use it instead of applying the ML image
-// orientation a second time.
 func createOutputToCameraPointTransformer(
   output: AVCaptureOutput,
   frameWidth: Double,
   frameHeight: Double
 ) -> (Double, Double) -> Point {
-  func convert(
-    _ x: Double, 
-    _ y: Double
-  ) -> CGPoint {
-    let rect = output.metadataOutputRectConverted(
-      fromOutputRect: CGRect(
-        x: CGFloat(x), 
-        y: CGFloat(y),
-        width: 0, 
-        height: 0
-      )
-    )
-    return rect.origin
+  func convert(_ x: Double, _ y: Double) -> CGPoint {
+    output.metadataOutputRectConverted(
+      fromOutputRect: CGRect(x: CGFloat(x), y: CGFloat(y), width: 0, height: 0)
+    ).origin
   }
 
-  // Sample the native affine mapping while handling the sample buffer. Face
-  // properties can be read later on another thread, after the output changed.
   let origin = convert(0, 0)
   let xAxis = convert(frameWidth, 0)
   let yAxis = convert(0, frameHeight)
@@ -59,7 +39,7 @@ func createOutputToCameraPointTransformer(
   let yAxisDeltaY = Double(yAxis.y - origin.y) / frameHeight
 
   return { x, y in
-    return Point(
+    Point(
       x: originX + xAxisDeltaX * x + yAxisDeltaX * y,
       y: originY + xAxisDeltaY * x + yAxisDeltaY * y
     )
@@ -76,7 +56,7 @@ func createFaceProcessConfig(
   _ trackingEnabled: Bool,
   _ pointTransformer: @escaping (Double, Double) -> Point
 ) -> FaceProcessConfig {
-  return FaceProcessConfig(
+  FaceProcessConfig(
     frameWidth: frameWidth,
     frameHeight: frameHeight,
     pointTransformer: autoMode ? pointTransformer : createIdentityPointTransformer(),
@@ -88,166 +68,138 @@ func createFaceProcessConfig(
 }
 
 final class HybridFace: HybridFaceSpec {
-  private let face: Face
+  private let face: VNFaceObservation
   private let config: FaceProcessConfig
 
-  init(
-    face: Face,
-    config: FaceProcessConfig
-  ) {
+  init(face: VNFaceObservation, config: FaceProcessConfig) {
     self.face = face
     self.config = config
     super.init()
   }
 
-  private func processBoundingBox(
-    _ boundingBox: CGRect
-  ) -> Bounds {
-    let points = [
-      transformPoint(x: Double(boundingBox.minX), y: Double(boundingBox.minY)),
-      transformPoint(x: Double(boundingBox.maxX), y: Double(boundingBox.minY)),
-      transformPoint(x: Double(boundingBox.minX), y: Double(boundingBox.maxY)),
-      transformPoint(x: Double(boundingBox.maxX), y: Double(boundingBox.maxY))
-    ]
-    let minX = points.map(\.x).min() ?? 0.0
-    let maxX = points.map(\.x).max() ?? 0.0
-    let minY = points.map(\.y).min() ?? 0.0
-    let maxY = points.map(\.y).max() ?? 0.0
+  // Vision uses normalized coordinates with a bottom-left origin. The package's
+  // public API uses image pixels with a top-left origin, matching the old ML Kit implementation.
+  private func imagePoint(normalizedX x: Double, normalizedY y: Double) -> Point {
+    config.pointTransformer(x * config.frameWidth, (1.0 - y) * config.frameHeight)
+  }
 
-    return Bounds(
-      width: maxX - minX,
-      height: maxY - minY,
-      x: minX,
-      y: minY
+  private func landmarkPoints(_ region: VNFaceLandmarkRegion2D?) -> [Point]? {
+    guard let region else { return nil }
+    let box = face.boundingBox
+    return region.normalizedPoints.map { point in
+      let x = Double(box.minX + CGFloat(point.x) * box.width)
+      let y = Double(box.minY + CGFloat(point.y) * box.height)
+      return imagePoint(normalizedX: x, normalizedY: y)
+    }
+  }
+
+  private func center(_ region: VNFaceLandmarkRegion2D?) -> Point? {
+    guard let points = landmarkPoints(region), !points.isEmpty else { return nil }
+    return Point(
+      x: points.map(\.x).reduce(0, +) / Double(points.count),
+      y: points.map(\.y).reduce(0, +) / Double(points.count)
     )
   }
 
-  private func transformPoint(
-    x: Double,
-    y: Double
-  ) -> Point {
-    return config.pointTransformer(x, y)
-  }
+  // Apple Vision does not expose ML Kit's eye-open classifier. Estimate eye
+  // openness from the eye landmark's vertical-to-horizontal aspect ratio and
+  // normalize it to the package's existing 0...1 probability-shaped API.
+  // This is an estimate, not an ML Kit-equivalent confidence value.
+  private func eyeOpenProbability(_ region: VNFaceLandmarkRegion2D?) -> Double? {
+    guard let region, region.pointCount >= 6 else { return nil }
 
-  private func processLandmarks(
-      _ face: Face
-  ) -> Landmarks {
-    func getPoint(
-      _ type: FaceLandmarkType
-    ) -> Point? {
-      guard let landmark = face.landmark(ofType: type) else {
-        return nil
-      }
-
-      let position = landmark.position
-      return transformPoint(
-        x: Double(position.x),
-        y: Double(position.y)
-      )
+    let points = region.normalizedPoints
+    guard
+      let minX = points.map({ Double($0.x) }).min(),
+      let maxX = points.map({ Double($0.x) }).max(),
+      let minY = points.map({ Double($0.y) }).min(),
+      let maxY = points.map({ Double($0.y) }).max()
+    else {
+      return nil
     }
 
-    return Landmarks(
-      LEFT_CHEEK: getPoint(.leftCheek),
-      LEFT_EAR: getPoint(.leftEar),
-      LEFT_EYE: getPoint(.leftEye),
-      MOUTH_BOTTOM: getPoint(.mouthBottom),
-      MOUTH_LEFT: getPoint(.mouthLeft),
-      MOUTH_RIGHT: getPoint(.mouthRight),
-      NOSE_BASE: getPoint(.noseBase),
-      RIGHT_CHEEK: getPoint(.rightCheek),
-      RIGHT_EAR: getPoint(.rightEar),
-      RIGHT_EYE: getPoint(.rightEye)
-    )
-  }
+    let width = maxX - minX
+    let height = maxY - minY
+    guard width > .ulpOfOne else { return nil }
 
-  private func processFaceContours(
-    _ face: Face
-  ) -> Contours {
-    func getContour(
-        _ type: FaceContourType
-    ) -> [Point]? {
-      guard let contour = face.contour(ofType: type) else {
-        return nil
-      }
+    let aspectRatio = height / width
+    let closedAspectRatio = 0.08
+    let openAspectRatio = 0.28
+    let normalized = (aspectRatio - closedAspectRatio) / (openAspectRatio - closedAspectRatio)
 
-      return contour.points.map { point in
-        return transformPoint(
-          x: Double(point.x),
-          y: Double(point.y)
-        )
-      }
-    }
-
-    return Contours(
-      FACE: getContour(.face),
-      LEFT_EYEBROW_TOP: getContour(.leftEyebrowTop),
-      LEFT_EYEBROW_BOTTOM: getContour(.leftEyebrowBottom),
-      RIGHT_EYEBROW_TOP: getContour(.rightEyebrowTop),
-      RIGHT_EYEBROW_BOTTOM: getContour(.rightEyebrowBottom),
-      LEFT_EYE: getContour(.leftEye),
-      RIGHT_EYE: getContour(.rightEye),
-      UPPER_LIP_TOP: getContour(.upperLipTop),
-      UPPER_LIP_BOTTOM: getContour(.upperLipBottom),
-      LOWER_LIP_TOP: getContour(.lowerLipTop),
-      LOWER_LIP_BOTTOM: getContour(.lowerLipBottom),
-      NOSE_BRIDGE: getContour(.noseBridge),
-      NOSE_BOTTOM: getContour(.noseBottom),
-      LEFT_CHEEK: getContour(.leftCheek),
-      RIGHT_CHEEK: getContour(.rightCheek)
-    )
+    return min(max(normalized, 0.0), 1.0)
   }
 
   var bounds: Bounds {
-    processBoundingBox(face.frame)
+    let box = face.boundingBox
+    let topLeft = imagePoint(normalizedX: Double(box.minX), normalizedY: Double(box.maxY))
+    let bottomRight = imagePoint(normalizedX: Double(box.maxX), normalizedY: Double(box.minY))
+    return Bounds(
+      width: abs(bottomRight.x - topLeft.x),
+      height: abs(bottomRight.y - topLeft.y),
+      x: min(topLeft.x, bottomRight.x),
+      y: min(topLeft.y, bottomRight.y)
+    )
   }
 
   var landmarks: Landmarks? {
-    config.runLandmarks ?
-    processLandmarks(face): nil
+    guard config.runLandmarks, let l = face.landmarks else { return nil }
+    return Landmarks(
+      LEFT_CHEEK: center(l.leftPupil ?? l.leftEye),
+      LEFT_EAR: nil,
+      LEFT_EYE: center(l.leftPupil ?? l.leftEye),
+      MOUTH_BOTTOM: center(l.outerLips),
+      MOUTH_LEFT: landmarkPoints(l.outerLips)?.first,
+      MOUTH_RIGHT: landmarkPoints(l.outerLips)?.last,
+      NOSE_BASE: center(l.noseCrest ?? l.nose),
+      RIGHT_CHEEK: center(l.rightPupil ?? l.rightEye),
+      RIGHT_EAR: nil,
+      RIGHT_EYE: center(l.rightPupil ?? l.rightEye)
+    )
   }
 
   var contours: Contours? {
-    config.runContours ?
-    processFaceContours(face) : nil
+    guard config.runContours, let l = face.landmarks else { return nil }
+    return Contours(
+      FACE: landmarkPoints(l.faceContour),
+      LEFT_EYEBROW_TOP: landmarkPoints(l.leftEyebrow),
+      LEFT_EYEBROW_BOTTOM: landmarkPoints(l.leftEyebrow),
+      RIGHT_EYEBROW_TOP: landmarkPoints(l.rightEyebrow),
+      RIGHT_EYEBROW_BOTTOM: landmarkPoints(l.rightEyebrow),
+      LEFT_EYE: landmarkPoints(l.leftEye),
+      RIGHT_EYE: landmarkPoints(l.rightEye),
+      UPPER_LIP_TOP: landmarkPoints(l.outerLips),
+      UPPER_LIP_BOTTOM: landmarkPoints(l.innerLips),
+      LOWER_LIP_TOP: landmarkPoints(l.innerLips),
+      LOWER_LIP_BOTTOM: landmarkPoints(l.outerLips),
+      NOSE_BRIDGE: landmarkPoints(l.noseCrest),
+      NOSE_BOTTOM: landmarkPoints(l.nose),
+      LEFT_CHEEK: landmarkPoints(l.medianLine),
+      RIGHT_CHEEK: landmarkPoints(l.medianLine)
+    )
   }
 
   var leftEyeOpenProbability: Double? {
-    config.runClassifications ?
-    face.leftEyeOpenProbability : nil
+    guard config.runClassifications else { return nil }
+    return eyeOpenProbability(face.landmarks?.leftEye)
   }
 
   var rightEyeOpenProbability: Double? {
-    config.runClassifications ?
-    face.rightEyeOpenProbability : nil
+    guard config.runClassifications else { return nil }
+    return eyeOpenProbability(face.landmarks?.rightEye)
   }
 
-  var smilingProbability: Double? {
-    config.runClassifications ?
-    face.smilingProbability : nil
-  }
+  // Apple Vision does not expose ML Kit's smile classifier.
+  var smilingProbability: Double? { nil }
 
-  var trackingId: Double? {
-    config.trackingEnabled ?
-    Double(face.trackingID) : nil
-  }
+  // VNFaceObservation has a UUID but no stable numeric tracking identifier.
+  var trackingId: Double? { nil }
 
-  var pitchAngle: Double {
-    return face.headEulerAngleX
-  }
+  // Vision returns radians. Preserve the package's existing degree-based contract.
+  var pitchAngle: Double { (face.pitch?.doubleValue ?? 0) * 180.0 / .pi }
+  var rollAngle: Double { (face.roll?.doubleValue ?? 0) * 180.0 / .pi }
+  var yawAngle: Double { (face.yaw?.doubleValue ?? 0) * 180.0 / .pi }
 
-  var rollAngle: Double {
-    return face.headEulerAngleZ
-  }
-
-  var yawAngle: Double {
-    return face.headEulerAngleY
-  }
-
-  var frameWidth: Double {
-    return config.frameWidth
-  }
-
-  var frameHeight: Double {
-    return config.frameHeight
-  }
+  var frameWidth: Double { config.frameWidth }
+  var frameHeight: Double { config.frameHeight }
 }
