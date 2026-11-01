@@ -3444,8 +3444,7 @@ react-native-safe-area-context@~5.7.0:
   integrity sha512-/9/MtQz8ODphjsLdZ+GZAIcC/RtoqW9EeShf7Uvnfgm/pzYrJ75y3PV/J1wuAV1T5Dye5ygq4EAW20RoBq0ABQ==
 
 "react-native-vision-camera-face-detector@link:..":
-  version "0.0.0"
-  uid ""
+  version "2.1.0"
 
 react-native-vision-camera-worklets@../node_modules/react-native-vision-camera-worklets:
   version "5.2.2"
