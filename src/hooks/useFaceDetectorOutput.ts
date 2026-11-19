@@ -73,6 +73,13 @@ export function useFaceDetectorOutput( {
   const stableOnError = useRef( onError )
   stableOnError.current = onError
 
+  // `options` is a rest object, so it is a new object on every render.
+  // All detector options are primitives, so memoize on their serialized value instead.
+  const optionsKey = JSON.stringify( {
+    ...options,
+    outputResolution
+  } )
+
   return useMemo(
     () => createFaceDetectorOutput( {
       onFacesDetected( faces ) {
@@ -81,10 +88,12 @@ export function useFaceDetectorOutput( {
       onError( error ) {
         stableOnError.current( error )
       },
-      outputResolution: outputResolution,
-      ...options
+      ...JSON.parse( optionsKey ) as Omit<
+        FaceDetectorOutputOptions,
+        'onFacesDetected' | 'onError'
+      >
     } ),
-    [ options ]
+    [ optionsKey ]
   )
 }
 
